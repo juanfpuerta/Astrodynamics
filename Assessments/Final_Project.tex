@@ -1,0 +1,48 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[letterpaper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{amsmath, amssymb, graphicx, fancyhdr, booktabs}
+
+% Header/Footer Setup
+\setlength{\headheight}{35pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\vspace{10pt}\textbf{Astrodynamics 2026-1: Capstone}}
+\fancyhead[R]{\includegraphics[height=1cm]{UdeA+simplificado+Negro_Smaller.png}}
+\fancyfoot[C]{\thepage}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Final Project: End-to-End Mission Architecture}} \\
+    \vspace{0.2cm}
+    {\large \textit{Integrating Systems Engineering \& Astrodynamics}} \\
+    \vspace{0.4cm}
+    \textbf{Weight:} 30\% of Final Grade | \textbf{Team Size:} 2-3 Students \\
+    \textit{Prof. Juan | Aerospace Engineering Program}
+\end{center}
+
+\hrule
+\vspace{0.5cm}
+
+\section*{Project Objective}
+Design a complete, end-to-end interplanetary mission that touches upon every module of the course (Keplerian orbits, Perturbations, Patched Conics, and Spacecraft Propulsion constraints). Deliverables include this comprehensive technical report and all computational codes (Python/GMAT).
+
+\section*{1. Mission Concept of Operations (ConOps)}
+Define the mission objective. Detail the parking orbit, the transfer trajectory, and the arrival/capture conditions. 
+
+\section*{2. Architectural Trade Study}
+Compare at least two distinct propulsion architectures (e.g., Chemical Impulsive vs. Solar Electric Propulsion). Present a rigorous mathematical comparison of $\Delta V$, propellant mass fractions, and Time of Flight (TOF). 
+
+\section*{3. Trajectory Design \& Optimization}
+\begin{itemize}
+    \item \textbf{Analytical Phase:} Provide the Patched Conic and Lambert's problem approximations.
+    \item \textbf{Numerical Phase:} Detail the GMAT Differential Corrector setup used to finalize the trajectory, including any gravity assists or finite burn steering laws.
+\end{itemize}
+
+\section*{4. Chief Architect's Final Recommendation}
+Based on the data generated in Sections 2 and 3, which mission architecture is superior for the stated payload and timeline requirements? Justify your decision with engineering constraints, proving that you have verified all computational outputs.
+
+\end{document}

@@ -1,0 +1,207 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[letterpaper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm, headheight=40pt, headsep=0.8cm, footskip=1cm]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{enumitem}
+
+% --- Color Palette (UdeA Institutional Style) ---
+\definecolor{UdeAGreen}{HTML}{006241} % Dark green
+\definecolor{UdeAGold}{HTML}{D4AF37}  % Muted gold/yellow accent
+\definecolor{Charcoal}{HTML}{2B2B2B}  % Dark neutral text
+\definecolor{CodeBg}{HTML}{F8F9FA}     % Very light gray for code listings
+
+% --- Hyperref Setup ---
+\hypersetup{
+    colorlinks=true,
+    linkcolor=UdeAGreen,
+    filecolor=UdeAGreen,      
+    urlcolor=UdeAGreen,
+    citecolor=UdeAGreen,
+}
+
+% --- Header/Footer Configuration ---
+\pagestyle{fancy}
+\fancyhf{} % Clear default fields
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Left Header: Logo placeholder
+\lhead{\raisebox{-0.3cm}{\includegraphics[height=1.2cm]{UdeA+simplificado+Negro_Smaller.png}}}
+% Right Header: Course Name & Semester
+\rhead{\textcolor{Charcoal}{\large \textbf{Syllabus: Astrodynamics II}} \\ \normalsize \textcolor{UdeAGreen}{\textbf{Semester 2026-2}}}
+% Footer
+\cfoot{\thepage}
+\rfoot{\textcolor{Charcoal}{\small Universidad de Antioquia}}
+\lfoot{\textcolor{Charcoal}{\small Faculty of Engineering}}
+
+% --- Paragraph Spacing ---
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{\textcolor{UdeAGreen}{Course Operational Blueprint: Astrodynamics II}}} \\
+    \vspace{0.2cm}
+    {\large \textit{Forensic Numerical Engineering \& Constrained Interplanetary Flight Mechanics}} \\
+    \vspace{0.3cm}
+    \textbf{Professor:} Juan Francisco Puerta Ibarra \quad | \quad \textbf{Program:} Aerospace Engineering \\
+    \textbf{Level:} Year 4 / Semester VIII \quad | \quad \textbf{Prerequisite:} Spaceflight Dynamics
+\end{center}
+
+\hrule
+\vspace{0.5cm}
+
+\section{Executive Course Audit \& Rationale}
+The predecessor course layout (Semester 2026-1) established a robust baseline in absolute tracking and perturbed physical modeling. However, to meet the modern demands of 4th-year aerospace engineering students, the 2026-2 syllabus deepens computational and mathematical rigor across four critical areas:
+
+\begin{enumerate}
+    \item \textbf{Transition to Constrained Trajectory Optimization:} Rather than utilizing simple root-finding differential targeting ($f(x) = 0$), students will formulate continuous, multi-variable steering histories ($\mathbf{u}(t)$) using Pontryagin's Minimum Principle and state-to-costate mappings.
+    \item \textbf{Mathematical Rigor in High-Fidelity Deep Space Targets:} Interplanetary targeting moves from sphere-of-influence matching to explicit multi-variable 3D \textbf{B-Plane Navigation} ($\mathbf{B}\cdot\mathbf{T}$, $\mathbf{B}\cdot\mathbf{R}$).
+    \item \textbf{Conservation Auditing in Multi-Body Regimes:} Students will evaluate the preservation of the Jacobi Constant ($C$) within the synodic Circular Restricted Three-Body Problem (CR3BP) and identify why standard symplectic integration methods degrade under rotating Coriolis forces.
+    \item \textbf{Stochastic Estimation \& Proximity Operations:} Orbit Determination is updated to contrast Extended Kalman Filters (EKF) with Unscented Kalman Filters (UKF). This is paired with close-proximity relative maneuvering via the Hill-Clohessy-Wiltshire (HCW) formulation.
+\end{enumerate}
+
+---
+
+\section{General Course Objectives}
+Upon successful completion of this advanced module, students will be able to:
+\begin{itemize}
+    \item \textbf{Formulate Coupled Non-Spherical Loops:} Code vectorized perturbations mapping zonal harmonics alongside dynamic drag profiles to analyze orbital decay.
+    \item \textbf{Design 3D Interplanetary B-Plane Targets:} Map heliocentric Lambert arcs into planetocentric hyperbolic asymptotes to steer gravity assists via targeter vectors.
+    \item \textbf{Program Non-Keplerian Symplectic Sandboxes:} Implement specialized implicit solvers to model halo orbits and cislunar manifold pipelines.
+    \item \textbf{Expose Nonlinear Filter Divergence:} Demonstrate why Jacobian linearizations diverge under high uncertainties and execute derivative-free UKF filters.
+\end{itemize}
+
+---
+
+\section{Detailed Week-by-Week Course Structure}
+
+\subsection*{Module 1: High-Fidelity Orbital Perturbations \& Coupled Loops}
+\begin{description}
+    \item[Week 1: Foundations of Non-Keplerian Acceleration] \\
+    Vector formulation of non-conservative and third-body perturbation accelerations $\mathbf{a}_d$. Derivation of Lagrange's Planetary Equations (LPE) and Gauss's Variational Equations (GVE) mapping element rate changes:
+    \begin{equation}
+        \frac{da}{dt} = \frac{2 a^2}{h} \left( e \sin \nu \cdot R + \frac{p}{r} \cdot S \right)
+    \end{equation}
+    
+    \item[Week 2: Zonal Harmonics \& The Geopotential Spectrum] \\
+    Expansion of the Earth's non-spherical potential using Legendre polynomials. Derivation of the secular drift rates for the ascending node ($\dot{\Omega}$) and argument of perigee ($\dot{\omega}$) caused by Earth's oblateness ($J_2$).
+    
+    \item[Week 3: Advanced Constrained Orbit Design] \\
+    Sun-Synchronous Orbit (SSO) design constraints matching equatorial nodal precession rates to the Earth's mean heliocentric motion. Derivation of frozen-orbit conditions ($\dot{\omega} = 0$) at critical inclinations ($i = 63.435^\circ$ or $116.565^\circ$).
+    
+    \item[Week 4: Non-Conservative Force Coupling \& Lifetime Loops] \\
+    Atmospheric drag integration featuring dynamic ballistic coefficients ($B = C_D A / m$) and exponential density profiles. Coupling Solar Radiation Pressure (SRP) forces with shadows.
+    \textbf{Computational Lab 1:} Develop a vectorized $J_2$-drag propagator in Python to compute orbital decay lifetimes.
+\end{description}
+
+\subsection*{Module 2: 3D Interplanetary Trajectories \& B-Plane Navigation}
+\begin{description}
+    \item[Week 5: 3D Patched Conics \& Hyperbolic Asymptotes] \\
+    Expanding 2D heliocentric Lambert transfers into 3D inertial space. Analytical calculation of the hyperbolic departure right ascension ($\beta$) and declination ($\delta$). Mapping of launch geometry boundaries to avoid the "inclination trap" ($i \ge |\delta|$).
+    
+    \item[Week 6: Gravity Assist Mechanics \& Powered Flybys] \\
+    Momentum transfer physics within a planetary Sphere of Influence (SOI). Derivation of the turning angle ($\delta$) as a function of periapsis radius ($r_p$):
+    \begin{equation}
+        \sin\left(\frac{\delta}{2}\right) = \frac{1}{1 + \frac{r_p v_{\infty}^2}{\mu}}
+    \end{equation}
+    Formulating trailing vs. leading flybys to optimize heliocentric energy gains or losses.
+    
+    \item[Week 7: The B-Plane Targeting Framework] \\
+    Defining the B-Plane coordinate axes ($\mathbf{S}, \mathbf{T}, \mathbf{R}$) perpendicular to the incoming velocity vector $\mathbf{v}_\infty$. Projecting the miss vector $\mathbf{B}$ to obtain target parameters $\mathbf{B}\cdot\mathbf{T}$ and $\mathbf{B}\cdot\mathbf{R}$. Implementing multi-variable target finders in NASA's GMAT.
+    \textbf{Midterm Examination:} A 24-hour take-home analytical and numerical multi-stage trajectory design challenge.
+\end{description}
+
+\subsection*{Module 3: Continuous Thrust \& Non-Linear Trajectory Optimization}
+\begin{description}
+    \item[Week 8: Low-Thrust Flight Mechanics \& Expanding States] \\
+    Low-thrust Solar Electric Propulsion (SEP) modeling. Expanding state-space vectors to 7D systems by coupling continuous propellant mass depletion ($\dot{m} = -\frac{T}{I_{sp} g_0}$). Analytical treatments utilizing Edelbaum's asymptotic steering equations.
+    
+    \item[Week 9: Numerical Integration of Low-Thrust Regimes] \\
+    Constructing custom 7D derivative files to simulate tangential, radial, and normal steering schedules. Investigating continuous gravity losses ($\Delta V_{spiral} > \Delta V_{Hohmann}$) during long-duration spiral maneuvers.
+    \textbf{Computational Lab 2:} Code and run a custom 7D low-thrust RK-4 solver, cross-validating the output against GMAT's continuous finite burn model.
+    
+    \item[Week 10: Trajectory Optimization \& Optimal Control Theory] \\
+    Contrasting Root-Finding Targeters with Non-Linear Programming (NLP) Optimizers. Formulating the pseudo-Hamiltonian $\mathcal{H}$ and costate variables ($\boldsymbol{\lambda}$) under Pontryagin's Minimum Principle:
+    \begin{equation}
+        \mathcal{H} = \mathbf{f}(\mathbf{x}, \mathbf{u}, t)^T \boldsymbol{\lambda} + L(\mathbf{x}, \mathbf{u}, t)
+    \end{equation}
+    Exploring single shooting, multiple shooting, and collocation schemes to solve boundary-value problems.
+\end{description}
+
+\subsection*{Module 4: Multi-Body Dynamics \& Symplectic Numerical Sandbox}
+\begin{description}
+    \item[Week 11: The Synodic Frame \& CR3BP Equations of Motion] \\
+    Derivation of the equations of motion in the rotating (synodic) frame centered at the primary-secondary barycenter. Isolating the Jacobi Constant ($C$) as the system's fundamental conservation metric:
+    \begin{equation}
+        C = 2\Omega(x, y, z) - (v_x^2 + v_y^2 + v_z^2)
+    \end{equation}
+    Mapping Zero-Velocity Surfaces to define physical boundary limits.
+    
+    \item[Week 12: Libration Points, Halo Orbits, \& Numerical Breakdown] \\
+    Linearizing dynamics around the collinear equilibrium points ($L_1, L_2, L_3$). Analytical generation of periodic Halo and quasi-periodic Lissajous initial conditions using Richardson's third-order expansions.
+    \textbf{Computational Lab 3:} Write an implicit Gauss-collocation or velocity-extended splitting integrator to demonstrate why standard non-symplectic integrators artificially destroy the system energy over 100 periods.
+    
+    \item[Week 13: Invariant Manifold Theory \& Cislunar Transit] \\
+    Eigenstructure tracking of the Monodromy Matrix to identify stable and unstable invariant manifolds. Generating orbit-insertion "tubes" that act as free paths to and from libration orbits. Application to low-energy lunar captures (e.g., GRAIL mission profile).
+\end{description}
+
+\subsection*{Module 5: Stochastic Orbit Estimation \& Distributed Space Systems}
+\begin{description}
+    \item[Week 14: Initial Orbit Determination \& Sensor Realities] \\
+    Geometric foundations of Initial Orbit Determination (IOD). Solving the three-point position vector boundary problem via Gibbs' method. Formulating Gauss's angles-only optical tracking solver using iterative $f$ and $g$ series expansions.
+    
+    \item[Week 15: Extended vs. Unscented Kalman Filtering] \\
+    Recursive stochastic state estimation algorithms. Demonstrating EKF linearization divergence when propagating covariance ($\mathbf{P}_{k|k}$) through highly non-linear regimes. The Unscented Transform: Generating Sigma Points to capture true mean and covariance mappings up to 3rd-order Taylor expansions:
+    \begin{equation}
+        \boldsymbol{\chi}_i = \hat{\mathbf{x}} \pm \left( \sqrt{(n + \lambda)\mathbf{P}} \right)_i
+    \end{equation}
+    Transforming coordinates from ECI to RIC frames for Conjunction Risk assessments.
+    
+    \item[Week 16: Relative Orbit Dynamics \& Formation Flying] \\
+    Linearizing relative motion in the Local-Vertical Local-Horizontal (LVLH) frame. Integrating the classical Hill-Clohessy-Wiltshire (HCW) equations:
+    \begin{align}
+        \ddot{x} - 2n\dot{y} - 3n^2x &= f_x / m \\
+        \ddot{y} + 2n\dot{x} &= f_y / m \\
+        \ddot{z} + n^2z &= f_z / m
+    \end{align}
+    Designing closed relative passive ellipses for virtual formation instruments.
+\end{description}
+
+---
+
+\section{Pedagogical Rules \& AI-Proofing Framework}
+To enforce academic honesty and foster authentic problem-solving skills, this course implements a "Trust but Verify" methodology with structural computational checks:
+
+\begin{enumerate}
+    \item \textbf{Forbidden Black-Box Modules in Labs:} For specific computational milestones, the use of GMAT's native differential corrector target loops or Python's \texttt{scipy.optimize} functions is strictly forbidden. Students must write their own Newton-Raphson solvers from scratch, proving they understand the Jacobians and State Transition Matrices ($\boldsymbol{\Phi}(t, t_0)$) before using professional commercial suites.
+    \item \textbf{Forensic Bug Audits:} Instead of standard "design-from-scratch" tasks, students will be handed working scripts containing subtle, intentional physics flaws (e.g., continuous low-thrust out-of-plane steering without node-chopping, or violating the $i < |\delta|$ constraint). Grading is based on the student's ability to locate the bug, mathematically demonstrate the efficiency penalty, and implement the correct fix.
+    \item \textbf{Mandatory Cross-Frame Verification:} Every mathematical log must have a corresponding, scale-accurate 3D visualization. If a student's text report describes a warped three-body transfer but their integrated code plots a standard circular orbit due to reference frame coordinate mismatches, the visual variance will highlight the issue during grading.
+\end{enumerate}
+
+---
+
+\section{Grading \& Assessment Rubric}
+\begin{table}[h]
+\centering
+\begin{tabular}{lcl}
+\toprule
+\textbf{Assessment Component} & \textbf{Weight} & \textbf{Rationale \& Implementation Metrics} \\ \midrule
+\textbf{Computational Lab 1}   & 10\%            & Coupled J2-Drag dynamic lifetime decay loop. \\
+\textbf{Computational Lab 2}   & 10\%            & 7D Low-thrust custom integrator vs. GMAT finite burns. \\
+\textbf{Computational Lab 3}   & 10\%            & Custom Symplectic rotating frame integrator vs. GMAT API. \\
+\textbf{Computational Lab 4}   & 10\%            & Relative HCW trajectory targeting and EKF tracking. \\
+\textbf{Midterm Exam}          & 20\%            & 24-hour analytical/numerical 3D hyperbolic transfer. \\
+\textbf{Final Project Proposal}& 10\%            & Group scoping, initial guess calculation, and frame setup. \\
+\textbf{Final Project Delivery}& 30\%            & Full end-to-end mission profile \& forensic report. \\ \bottomrule
+\end{tabular}
+\caption{2026-2 Astrodynamics II Grading Framework.}
+\end{table}
+
+\end{document}

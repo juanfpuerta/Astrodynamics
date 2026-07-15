@@ -1,0 +1,107 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% UdeA Color Setup
+\definecolor{UdeAGreen}{RGB}{0, 115, 54}
+\setbeamercolor{structure}{fg=UdeAGreen}
+\setbeamercolor{title}{bg=UdeAGreen, fg=white}
+\setbeamercolor{frametitle}{bg=UdeAGreen, fg=white}
+\setbeamercolor{item}{fg=UdeAGreen}
+
+% Optional: Add UdeA Logo to all frames
+\addtobeamertemplate{frametitle}{}{%
+\begin{textblock*}{100mm}(.85\textwidth,-1cm)
+\includegraphics[height=0.8cm]{UdeA+simplificado+Negro_Smaller.png}
+\end{textblock*}}
+
+\title[Initial Orbit Determination]{Initial Orbit Determination (IOD)}
+\subtitle{The Classical \"Cold Start\": Gibbs vs. Gauss}
+\author[Prof. Juan F. Puerta I.]{Prof. Juan F. Puerta I.}
+\institute[UdeA]{Aerospace Engineering Program \\ Universidad de Antioquia}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}{The "Cold Start" Problem}
+    \textbf{Initial Orbit Determination (IOD)} is the classical astrodynamics problem of finding an orbit from scratch.
+    
+    \vspace{0.5cm}
+    \begin{itemize}
+        \item \textbf{The Scenario:} A new object is detected in space. We have no prior knowledge of its trajectory.
+        \item \textbf{The Goal:} Calculate the 3D State Vector $[x, y, z, \dot{x}, \dot{y}, \dot{z}]$ using only a few raw sensor observations.
+        \item \textbf{The Hurdle:} Sensors give us 1D or 2D clues (ranges or angles), but an orbit exists in 6 degrees of freedom.
+    \end{itemize}
+\end{frame}
+
+\section{The Observables}
+
+\begin{frame}{Sensor Data: What Can We Actually Measure?}
+    Before choosing a mathematical method, we must know what our hardware is giving us:
+    
+    \vspace{0.3cm}
+    \begin{block}{1. Angles-Only (Optical Telescopes)}
+        Provide \textit{Lines of Sight} (Right Ascension \& Declination). \\
+        \textbf{Missing:} Distance (Range).
+    \end{block}
+    
+    \begin{block}{2. Range and Angles (Radar / Deep Space Network)}
+        Provide 3D \textit{Position Vectors} ($\vec{r}$). \\
+        \textbf{Missing:} Velocity ($\vec{v}$).
+    \end{block}
+\end{frame}
+
+\section{The Gibbs Method}
+
+\begin{frame}{The Gibbs Method (1889)}
+    \textbf{Requirement:} Three 3D Position Vectors ($\vec{r}_1, \vec{r}_2, \vec{r}_3$).
+    
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{The Physics Concept:} An unperturbed orbit must lie entirely in a single 2D plane passing through the central body.
+        \item \textbf{The Geometry:} If we have three 3D points, we can use vector cross-products ($\vec{r}_1 \times \vec{r}_2$) to find the normal vector that defines the orbital plane.
+        \item \textbf{The Solution:} Gibbs created a purely \textit{geometric} formula that relates the lengths and angles of these vectors to find the ellipse. 
+        \item \textbf{Note:} Gibbs' method does not require the time of flight between observations.
+    \end{itemize}
+\end{frame}
+
+\section{The Gauss Method}
+
+\begin{frame}{The Gauss Method (1801)}
+    \textbf{Requirement:} Three sets of angles (Lines of Sight) at known times ($t_1, t_2, t_3$).
+    
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{The Challenge:} The satellite is a "bead" sliding somewhere on three infinite rays shooting out from Earth.
+        \item \textbf{The Physics Concept:} Gravity dictates the satellite must sweep out equal areas in equal times (Kepler's Second Law).
+        \item \textbf{The Solution:} Gauss used the \textbf{$f$ and $g$ series} to mathematically "slide" the hypothetical distances along the rays until he found the \textit{only} set of distances where the time-of-flight matched the physics of gravity.
+    \end{itemize}
+\end{frame}
+
+\section{Summary}
+
+\begin{frame}{Summary for Mission Design}
+    \begin{table}[]
+        \centering
+        \begin{tabular}{@{}lcc@{}}
+        \toprule
+        \textbf{Characteristic} & \textbf{Gibbs Method} & \textbf{Gauss Method} \\ \midrule
+        \textbf{Sensor Type} & Radar / Laser Ranging & Optical Telescopes \\
+        \textbf{Input Data} & 3 Position Vectors ($\vec{r}$) & 3 Lines of Sight ($\alpha, \delta$) \\
+        \textbf{Time Required?} & No & Yes ($t_1, t_2, t_3$) \\
+        \textbf{Mathematical Approach} & Geometric Fit & Iterative Physics Fit \\
+        \textbf{Historical Use} & Modern Space Tracking & Finding Dwarf Planet Ceres \\ \bottomrule
+        \end{tabular}
+    \end{table}
+    
+    \vspace{0.5cm}
+    \centering \textit{Both methods output a state guess, which is then fed into a Kalman Filter for statistical refinement!}
+\end{frame}
+
+\end{document}

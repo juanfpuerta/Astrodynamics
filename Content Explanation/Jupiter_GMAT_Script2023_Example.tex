@@ -1,0 +1,151 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, graphicx, listings, xcolor}
+\usepackage{bm}
+
+% Presentation Theme
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Code Block Styling
+\lstset{
+    language=Python, % Reusing Python highlighting for GMAT script readability
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    frame=single,
+    backgroundcolor=\color{gray!10}
+}
+
+\title[Jupiter Polar Mission]{Astrodynamics 2026-1}
+\subtitle{Advanced GMAT Targeting: \\ Polar Orbit Insertion \& Atmospheric Disposal}
+\author{Prof. Juan}
+\institute{Universidad de Antioquia - Aerospace Engineering}
+\date{Spring 2026}
+
+\begin{document}
+
+% --- Title Slide ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% ==========================================
+% SECTION 1: MISSION ARCHITECTURE
+% ==========================================
+\section{Mission Architecture}
+
+% --- Slide 1 ---
+\begin{frame}{Mission Architecture: The Grand Finale}
+    Our final mission simulation takes us from Low Earth Orbit (LEO) to a fiery disposal in the atmosphere of Jupiter. 
+    
+    \vspace{0.3cm}
+    \textbf{The Three Distinct Phases:}
+    \begin{enumerate}
+        \item \textbf{Trans-Jovian Injection (TJI):} A patched-conic departure using a Differential Corrector to target the Jupiter arrival B-Plane.
+        \item \textbf{Polar Orbit Insertion (JOI):} A massive retrograde braking burn at periapsis to capture the spacecraft into a $90^\circ$ inclination orbit around Jupiter.
+        \item \textbf{Atmospheric Disposal:} A final apocenter maneuver to drop the periapsis deep into Jupiter's crushing atmosphere, ensuring planetary protection protocols.
+    \end{enumerate}
+\end{frame}
+
+% ==========================================
+% SECTION 2: B-PLANE TARGETING
+% ==========================================
+\section{Targeting the Polar Orbit}
+
+% --- Slide 2 ---
+\begin{frame}{The B-Plane: Aiming for the Poles}
+    To achieve a polar orbit ($i = 90^\circ$), we cannot simply aim for the center of Jupiter. We must aim for a specific region of the \textbf{B-Plane}.
+    
+    \vspace{0.3cm}
+    Recall that the B-Plane is perpendicular to our incoming hyperbolic excess velocity vector ($\bm{v}_\infty$).
+    \begin{itemize}
+        \item \textbf{$\bm{B} \cdot \bm{T}$ (Horizontal):} Controls the arrival node. For a polar orbit, we often aim straight down the center axis.
+        \item \textbf{$\bm{B} \cdot \bm{R}$ (Vertical):} Controls the inclination. To fly exactly over the poles, our trajectory must be offset vertically in the B-Plane.
+    \end{itemize}
+    
+    \vspace{0.2cm}
+    \textit{In GMAT, our first Differential Corrector (DC1) will vary the Earth departure burn ($\Delta v$) to achieve the precise BdotT and BdotR needed for a $90^\circ$ arrival inclination.}
+\end{frame}
+
+% --- Slide 3 ---
+\begin{frame}[fragile]{GMAT: The Arrival Targeting Sequence}
+    Once we cross into Jupiter's Sphere of Influence, we use a second Differential Corrector (DC2) to execute the Jupiter Orbit Insertion (JOI).
+    
+\begin{lstlisting}
+% 1. Target the Capture Burn at Periapsis
+Target DC2 {SolveMode = Solve, ExitMode = SaveAndContinue};
+    
+    % Propagate to Periapsis (the most efficient place to burn)
+    Propagate DefaultProp(Sat) {Sat.Jupiter.Periapsis};
+    
+    % Vary the Retrograde Burn
+    Vary DC2(JOI_Burn.Element1 = -2.5); % Guess: 2.5 km/s braking
+    
+    Maneuver JOI_Burn(Sat);
+    
+    % Achieve the Desired Orbit 
+    Achieve DC2(Sat.Jupiter.ECC = 0.85); % Highly elliptical capture
+    Achieve DC2(Sat.Jupiter.INC = 90.0); % Polar orbit
+    
+EndTarget;
+\end{lstlisting}
+\end{frame}
+
+% ==========================================
+% SECTION 3: ATMOSPHERIC DISPOSAL
+% ==========================================
+\section{End of Mission: Atmospheric Disposal}
+
+% --- Slide 4 ---
+\begin{frame}{End of Mission: Planetary Protection}
+    To prevent future contamination of potentially habitable moons (like Europa), mission profiles dictate that the spacecraft must be destroyed in Jupiter's atmosphere.
+    
+    \vspace{0.3cm}
+    \textbf{The Orbital Mechanics of Disposal:}
+    To lower the altitude of periapsis ($r_p$), we must decrease the orbital energy. The most efficient place to perform this maneuver is at \textbf{apoapsis} ($r_a$), where the spacecraft's velocity is lowest.
+    
+    \begin{equation}
+        r_p = a(1-e) \quad \text{and} \quad r_a = a(1+e)
+    \end{equation}
+    
+    By firing our engines retrograde (against the direction of motion) at apoapsis, we flatten the ellipse, driving the new periapsis below the 1-bar pressure level of Jupiter ($R_J \approx 71,492 \text{ km}$).
+\end{frame}
+
+% --- Slide 5 ---
+\begin{frame}[fragile]{GMAT: The Disposal Sequence}
+    Our final GMAT sequence utilizes a simple targeter to calculate the exact $\Delta v$ required to drop the periapsis into the atmosphere.
+    
+\begin{lstlisting}
+% Propagate to the highest point in the orbit
+Propagate DefaultProp(Sat) {Sat.Jupiter.Apoapsis};
+
+Target DC3 {SolveMode = Solve, ExitMode = SaveAndContinue};
+    
+    % Vary the final retrograde maneuver
+    Vary DC3(Death_Dive_Burn.Element1 = -0.5); 
+    
+    Maneuver Death_Dive_Burn(Sat);
+    
+    % Achieve a periapsis radius deep inside Jupiter
+    % Jupiter Radius is ~71,492 km. Target 70,000 km.
+    Achieve DC3(Sat.Jupiter.RMAG = 70000.0); 
+    
+EndTarget;
+
+% Propagate the final plunge
+Propagate DefaultProp(Sat) {Sat.Jupiter.RMAG = 70000.0};
+\end{lstlisting}
+\end{frame}
+
+% --- Slide 6 ---
+\begin{frame}{Summary}
+    \textbf{Key Takeaways for Mission Design:}
+    \begin{itemize}
+        \item \textbf{Patched Conics $\rightarrow$ DC:} Analytical math gives us the initial guesses; GMAT's Differential Corrector makes it work in a perturbed 3D solar system.
+        \item \textbf{B-Plane Mastery:} Controlling inclination requires precise targeting of the B-Plane before you even arrive at the planet.
+        \item \textbf{Efficiency:} Always perform major orbit alterations at the apsides. Capture burns at periapsis (Oberth effect), and periapsis lowering burns at apoapsis.
+    \end{itemize}
+\end{frame}
+
+\end{document}

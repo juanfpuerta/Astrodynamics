@@ -1,0 +1,165 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, graphicx}
+\usepackage{bm} % For bold math symbols (vectors)
+
+% Presentation Theme
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\title[Lambert's Problem]{Astrodynamics 2026-1}
+\subtitle{Lambert's Boundary Value Problem \& Launch Energy ($C_3$)}
+\author{Prof. Juan}
+\institute{Universidad de Antioquia - Aerospace Engineering}
+\date{Spring 2026}
+
+\begin{document}
+
+% --- Title Slide ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% ==========================================
+% SECTION 1: THE BOUNDARY VALUE PROBLEM
+% ==========================================
+\section{The Boundary Value Problem}
+
+% --- Slide 1 ---
+\begin{frame}{Hohmann vs. Lambert}
+    \textbf{The Hohmann Transfer (The Forward Problem):}
+    \begin{itemize}
+        \item We constrain the \textit{geometry} (an ellipse tangent to two circular orbits).
+        \item The math dictates the required \textit{Time of Flight} ($\Delta t$).
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    \textbf{Lambert's Problem (The Inverse Problem):}
+    \begin{itemize}
+        \item We dictate the exact \textit{Time of Flight} ($\Delta t$).
+        \item The math dictates the required \textit{geometry} of the transfer ellipse.
+        \item This is essential for real planetary ephemerides, where planets are never perfectly aligned for a Hohmann transfer.
+    \end{itemize}
+\end{frame}
+
+% --- Slide 2 ---
+\begin{frame}{The Knowns and Unknowns}
+    To solve Lambert's problem, we set up a Boundary Value Problem (BVP).
+    
+    \vspace{0.3cm}
+    \textbf{The Inputs (Boundary Conditions):}
+    \begin{enumerate}
+        \item $\bm{r}_1$: The 3D position vector of the departure planet at $t_{dep}$.
+        \item $\bm{r}_2$: The 3D position vector of the arrival planet at $t_{arr}$.
+        \item $\Delta t$: The Time of Flight ($t_{arr} - t_{dep}$).
+    \end{enumerate}
+    
+    \vspace{0.3cm}
+    \textbf{The Outputs (What we must solve for):}
+    \begin{itemize}
+        \item $\bm{v}_1$: The required heliocentric velocity vector at departure.
+        \item $\bm{v}_2$: The resulting heliocentric velocity vector at arrival.
+    \end{itemize}
+\end{frame}
+
+% ==========================================
+% SECTION 2: TRANSFER GEOMETRY
+% ==========================================
+\section{Transfer Geometry}
+
+% --- Slide 3 ---
+\begin{frame}{Defining the Transfer Plane}
+    The position vectors $\bm{r}_1$ and $\bm{r}_2$ extend outward from the Sun. Together, they define a specific 2D plane in space (the transfer plane).
+    
+    \vspace{0.3cm}
+    \textbf{Key Geometric Parameters:}
+    \begin{itemize}
+        \item \textbf{Transfer Angle ($\Delta \nu$):} The angle between $\bm{r}_1$ and $\bm{r}_2$.
+        \item \textbf{The Chord ($c$):} The straight-line distance connecting the two planet positions.
+    \end{itemize}
+    \begin{equation}
+        c = \sqrt{r_1^2 + r_2^2 - 2 r_1 r_2 \cos(\Delta \nu)}
+    \end{equation}
+\end{frame}
+
+% --- Slide 4 ---
+\begin{frame}{The 180-Degree Singularity (The "Ridge")}
+    What happens if the planets are exactly $180^\circ$ apart ($\Delta \nu = \pi$)?
+    
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item The vectors $\bm{r}_1$ and $\bm{r}_2$ form a straight line, not a unique plane.
+        \item There are \textit{infinite} possible planes that can connect them.
+        \item If the planets have different orbital inclinations, a perfectly $180^\circ$ transfer requires an immense plane-change maneuver at departure.
+        \item This mathematical singularity appears as the high-energy \textbf{"Ridge"} dividing the Type I and Type II lobes on a Porkchop Plot.
+    \end{itemize}
+\end{frame}
+
+% ==========================================
+% SECTION 3: LAMBERT'S THEOREM
+% ==========================================
+\section{Lambert's Theorem}
+
+% --- Slide 5 ---
+\begin{frame}{Lambert's Theorem}
+    The numerical solvers we use (like the Izzo solver in Python) rely on a fundamental principle of orbital mechanics:
+    
+    \vspace{0.3cm}
+    \begin{block}{Lambert's Theorem}
+        The transfer time ($\Delta t$) between any two points on a conic trajectory depends \textbf{ONLY} on the sum of the radial distances ($r_1 + r_2$), the chord length ($c$), and the semi-major axis ($a$) of the transfer conic.
+    \end{block}
+    
+    \vspace{0.3cm}
+    Because $r_1$, $r_2$, and $c$ are fixed by the planetary ephemerides, the only free variable is the semi-major axis ($a$).
+\end{frame}
+
+% --- Slide 6 ---
+\begin{frame}{The Iterative Solution}
+    Because the relationship between time and the semi-major axis is transcendental (like Kepler's Equation), we cannot solve it algebraically.
+    
+    \vspace{0.3cm}
+    \textbf{The Algorithmic Process:}
+    \begin{enumerate}
+        \item The computer guesses a value for the semi-major axis ($a$).
+        \item It calculates the theoretical Time of Flight for that specific ellipse.
+        \item It compares the calculated time to our desired $\Delta t$.
+        \item It iterates using numerical methods (e.g., Newton-Raphson) until the times match.
+        \item Once converged, it calculates the departure velocity vector ($\bm{v}_1$).
+    \end{enumerate}
+\end{frame}
+
+% ==========================================
+% SECTION 4: DEPARTURE ENERGY
+% ==========================================
+\section{Departure Energy ($C_3$)}
+
+% --- Slide 7 ---
+\begin{frame}{From Heliocentric to Geocentric}
+    The solver outputs $\bm{v}_1$, the required \textit{heliocentric} velocity. We must translate this into launch vehicle requirements.
+    
+    \vspace{0.3cm}
+    \textbf{1. Hyperbolic Excess Velocity ($\bm{v}_\infty$):} \\
+    The spacecraft is already moving with the Earth ($\bm{v}_{Earth}$). The launch vehicle only needs to provide the vector difference.
+    \begin{equation}
+        \bm{v}_\infty = \bm{v}_1 - \bm{v}_{Earth}
+    \end{equation}
+    
+    \vspace{0.2cm}
+    \textit{Note: This $\bm{v}_\infty$ is the exact same asymptote vector we targeted in our Patched Conics GMAT lab!}
+\end{frame}
+
+% --- Slide 8 ---
+\begin{frame}{Calculating Characteristic Energy ($C_3$)}
+    \textbf{2. Characteristic Energy ($C_3$):} \\
+    Finally, we calculate the scalar energy state required for the launch vehicle. $C_3$ is the square of the magnitude of the excess velocity vector.
+    
+    \begin{equation}
+        C_3 = \bm{v}_\infty \cdot \bm{v}_\infty = |\bm{v}_\infty|^2
+    \end{equation}
+    
+    \vspace{0.3cm}
+    \textbf{Conclusion:} 
+    This final $C_3$ value is exactly what gets plotted on the Z-axis of our Porkchop plots. By looping this entire process over thousands of dates, we find the optimal launch windows!
+\end{frame}
+
+\end{document}

@@ -1,0 +1,113 @@
+\documentclass[11pt, letterpaper]{article}
+
+% --- Packages ---
+\usepackage{amsmath, graphicx, xcolor, listings, tcolorbox}
+\usepackage[left=1in, right=1in, bottom=1in, top=3cm, headheight=2cm, headsep=0.5cm]{geometry}
+\usepackage{fancyhdr}
+
+% --- Code Listing Formatting ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{ 
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    basicstyle=\ttfamily\small,
+    breaklines=true,                 
+    language=C++
+}
+
+% --- Header Configuration ---
+\pagestyle{fancy} 
+\fancyhf{} 
+\renewcommand{\headrulewidth}{0.4pt} 
+\lhead{\raisebox{-0.5cm}{\textbf{Universidad de Antioquia}}}
+\rhead{\large \textbf{The Targeting Cascade} \\ \normalsize Spaceflight Dynamics 2026-1} 
+\cfoot{\thepage} 
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Mission Architecture: The Targeting Cascade}} \\
+    \vspace{0.2cm}
+    {\large \textit{Integrating Python Analytics with GMAT Sequences}} \\
+    \vspace{0.4cm}
+    \textit{Prof. Juan | Aerospace Engineering Program}
+\end{center}
+\hrule
+\vspace{0.5cm}
+
+\section*{The "String of Pearls" Philosophy}
+Do not try to fly from Earth to Saturn in a single \texttt{Target} command. The Differential Corrector (DC) cannot handle the non-linear chaos. Instead, we use multiple \texttt{Target} blocks in a row. 
+
+Once \textbf{Target 1} succeeds, those burn parameters are permanently locked in memory. GMAT then moves to \textbf{Target 2}, coasting on the success of the first burn.
+
+\section*{The Python-to-GMAT Data Map}
+Here is exactly how the data from your Python script feeds the cascade.
+
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=1. Spacecraft Initialization]
+\textbf{Python Output:} \texttt{Earth Departure Date}, \texttt{RAAN Option 1} \\
+\textbf{GMAT Input:} Insert these into the \texttt{Spacecraft} properties before the Mission Sequence begins to set the parking orbit.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=green!5!white,colframe=green!75!black,title=2. Target 1: Trans-Jupiter Injection (TJI)]
+\textbf{Python Output:} Geocentric \texttt{C3}, \texttt{DLA}, \texttt{RLA} \\
+\textbf{GMAT Input:} Use these in the \texttt{Achieve} commands of your first targeter. This guarantees you leave Earth pointing generally toward Jupiter.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=orange!5!white,colframe=orange!75!black,title=3. Target 2: Deep Space TCM (Hitting Jupiter)]
+\textbf{Python Output:} \texttt{Earth->Jupiter TOF Days} (e.g., 1000 days) \\
+\textbf{GMAT Input:} Propagate into deep space for roughly half the TOF (e.g., 500 days), then create a second Targeter to fire a TCM. Tell this targeter to \texttt{Achieve} a specific Jupiter \texttt{BdotT} and \texttt{BdotR}.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\section*{The GMAT Script Architecture}
+
+Below is the conceptual skeleton of how these commands are stacked in the Mission Sequence.
+
+\begin{lstlisting}
+BeginMissionSequence;
+
+% ========================================================
+% TARGET 1: ESCAPE EARTH (Using Python C3, DLA, RLA)
+% ========================================================
+Target DefaultDC;
+    Vary DefaultDC(Voyager.TA = Voyager.TA, ...);
+    Vary DefaultDC(TJI.Element1 = 7.0, ...);
+    
+    Maneuver TJI(Voyager);
+    
+    Achieve DefaultDC(Voyager.EarthMJ2000Eq.C3Energy = <Python C3>);
+    Achieve DefaultDC(Voyager.EarthMJ2000Eq.DLA = <Python DLA>);
+    Achieve DefaultDC(Voyager.EarthMJ2000Eq.RLA = <Python RLA>);
+EndTarget;
+
+% The TJI burn is now locked. We coast safely into deep space.
+Propagate SunProp(Voyager) {Voyager.ElapsedDays = 150};
+
+% ========================================================
+% TARGET 2: TRAJECTORY CORRECTION MANEUVER (Hit Jupiter)
+% ========================================================
+Target DefaultDC;
+    % Micro-adjustments in deep space
+    Vary DefaultDC(TCM1.Element1 = 0.0, {Perturbation = 1e-5, MaxStep = 0.05});
+    Vary DefaultDC(TCM1.Element2 = 0.0, {Perturbation = 1e-5, MaxStep = 0.05});
+    Vary DefaultDC(TCM1.Element3 = 0.0, {Perturbation = 1e-5, MaxStep = 0.05});
+    
+    Maneuver TCM1(Voyager);
+    
+    % Fly to Jupiter (Using Python TOF as a fail-safe limit)
+    Propagate SunProp(Voyager) {Voyager.Jupiter.Periapsis, Voyager.ElapsedDays = 1200};
+    
+    % Target the B-Plane to bend the trajectory toward Saturn
+    Achieve DefaultDC(Voyager.Jupiter.BdotT = <Target Value>, {Tolerance = 50});
+    Achieve DefaultDC(Voyager.Jupiter.BdotR = <Target Value>, {Tolerance = 50});
+EndTarget;
+
+% The TCM is now locked. The spacecraft slingshots to Saturn.
+Propagate SunProp(Voyager) {Voyager.Saturn.Periapsis, Voyager.ElapsedDays = 1500};
+\end{lstlisting}
+
+\end{document}

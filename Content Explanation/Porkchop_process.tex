@@ -1,0 +1,58 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, geometry}
+\geometry{letterpaper, margin=1in}
+
+\title{\textbf{Steps to Calculate the Launch Window using a Pork Chop Plot}}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+This detailed approach moves systematically from defining parameters to analyzing the final visualization, breaking down the complex computational process into manageable stages, conceptually mimicking a professional brainstorming session.
+
+\begin{enumerate}
+    \item \textbf{Define Mission Parameters \& Constraints:}
+    \begin{itemize}
+        \item Identify the launch planet (e.g., Earth).
+        \item Identify the target planet (e.g., Mars).
+        \item Establish the overall search window dates, defining ranges for potential departure dates ($t_{dep}$) and potential arrival dates ($t_{arr}$). Consider realistic mission timelines and planetary alignments.
+        \item Define relevant mission constraints (e.g., maximum launch vehicle performance ($C_3$ limits), acceptable Time of Flight (TOF) ranges, arrival velocity constraints, etc.).
+    \end{itemize}
+
+    \item \textbf{Initialize the Grid Search:}
+    \begin{itemize}
+        \item Create a detailed 2D grid of potential departure dates and potential arrival dates within the defined search windows. This grid will populate the entire porkchop plot area.
+        \item Determine an appropriate step size (e.g., every 2 days) for both axes to step through sequentially, balancing resolution and computational time.
+        \item \textit{Conceptual Brainstorming Note:} This is where we create our map structure before exploring!
+    \end{itemize}
+
+    \item \textbf{Perform the Lambert Sweep (Iterative Loop):} \\
+    For every single combination of ($t_{dep}$, $t_{arr}$) in your initialized grid, the computer will iteratively perform the following sequential calculations:
+    \begin{enumerate}
+        \item \textbf{Calculate Precise Positions:} Use high-accuracy planetary ephemerides (e.g., NASA SPICE data kernels) to determine the exact heliocentric position vectors of the launch planet ($\mathbf{r}_1$ at $t_{dep}$) and the target planet ($\mathbf{r}_2$ at $t_{arr}$).
+        \item \textbf{Determine Time of Flight (TOF):} Calculate the Time of Flight, $TOF = t_{arr} - t_{dep}$. (Ensure $TOF$ is positive; impossible/negative flight times are conceptually discarded or handled by the loop logic).
+        \item \textbf{Solve Lambert's Boundary Value Problem:} Execute a Lambert solver numerical algorithm (like the Izzo solver) using the Sun's gravitational parameter, $\mathbf{r}_1$, $\mathbf{r}_2$, and $TOF$. This mathematically calculates the precise elliptical transfer orbit arc connecting the two planets in that specific time, outputting the necessary heliocentric velocity vectors ($\mathbf{v}_1$ at departure and $\mathbf{v}_2$ at arrival). For initial search, typically focus on direct, 0-revolution transfers.
+        \item \textbf{Calculate Hyperbolic Excess Velocity ($\mathbf{v}_{\infty}$):} Compute the $\mathbf{v}_{\infty}$ vector at departure, which is the vector difference between the heliocentric transfer velocity ($\mathbf{v}_1$) and the launch planet's actual heliocentric velocity at $t_{dep}$ ($\mathbf{v}_{planet\_1}$).
+        \item \textbf{Calculate $C_3$ Energy:} Compute the Characteristic Energy ($C_3$) by squaring the magnitude of the Hyperbolic Excess Velocity vector: $C_3 = | \mathbf{v}_{\infty} |^2$. (Conceptually, this is the energy cost associated with leaving the planet!)
+        \item \textbf{Store Calculated Data:} Systematically store the calculated $C_3$ value (and optionally other parameters like $\Delta V$, arrival $v_{\infty}$, DLA, TOF, etc.) associated specifically with the current ($t_{dep}$, $t_{arr}$) grid point.
+    \end{enumerate}
+
+    \item \textbf{Generate the Pork Chop Plot Visualization:}
+    \begin{itemize}
+        \item Once the computational sweep is complete for the entire grid, use data visualization software (like Matplotlib) to plot the stored $C_3$ values as a contour map.
+        \item \textit{Brainstorming Layout:} X-axis represents 'Departure Date', Y-axis represents 'Arrival Date', and contour lines indicate $C_3$ levels.
+        \item Apply dynamic filtering and shading – low-energy regions (cool colors/blue) are clearly highlighted, while high-energy/unfeasible regions are either filtered out or rendered in warm colors.
+    \end{itemize}
+
+    \item \textbf{Analyze \& Identify the Window of Opportunity:}
+    \begin{itemize}
+        \item Visually inspect the generated Pork Chop plot. The characteristic "porkchop" shapes with distinct low-energy centers (valleys) will become evident.
+        \item Identify these dark blue/cool-colored centers – they represent the multiple potential optimal launch opportunity windows.
+        \item Select a specific trajectory date combination within one of these valleys, conceptually trading off lowest $C_3$ energy (most payload) against desirable Time of Flight, feasible launch vehicle performance limits, and whether a Type I ($\Delta \nu < 180^\circ$) or Type II ($\Delta \nu > 180^\circ$) trajectory is preferred for mission objectives. \textit{Example:} For Mars 2020, designers used Porkchop plots to select a lower energy Type II window to maximize payload!
+    \end{itemize}
+\end{enumerate}
+
+\end{document}

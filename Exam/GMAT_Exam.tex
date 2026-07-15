@@ -1,0 +1,47 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{amsmath, amssymb, graphicx, fancyhdr, booktabs}
+
+% Header/Footer Setup
+\setlength{\headheight}{35pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\vspace{10pt}\textbf{Astrodynamics 2026-1}}
+\fancyhead[R]{\includegraphics[height=1cm]{UdeA+simplificado+Negro_Smaller.png}}
+\fancyfoot[C]{\thepage}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Exam No. 2: Computational Astrodynamics}} \\
+    \vspace{0.2cm}
+    {\large \textit{Applied GMAT: Interplanetary \& Continuous Thrust}} \\
+    \vspace{0.4cm}
+    \textbf{Weight:} 20\% of Final Grade \\
+    \textit{Prof. Juan | Aerospace Engineering Program}
+\end{center}
+
+\hrule
+\vspace{0.5cm}
+
+\section*{Submission Requirements}
+You must submit this PDF report alongside your executable \texttt{.script} files. Scripts that do not converge (Differential Corrector errors) will receive a maximum of 50\% credit for the associated problem.
+
+\section*{Problem 1: Low-Thrust Escape Spiral (50 Points)}
+Configure an \texttt{ElectricThruster} in GMAT to simulate a spiral escape from Earth to $C_3 = 0$. 
+\begin{enumerate}
+    \item[(a)] Detail your targeting sequence variables. Why did you choose your specific \texttt{Perturbation} step size?
+    \item[(b)] Provide a plot of the spacecraft's Semi-Major Axis ($a$) vs. Elapsed Days.
+\end{enumerate}
+
+\section*{Problem 2: B-Plane Targeting (50 Points)}
+You are capturing a probe into Martian orbit.
+\begin{enumerate}
+    \item[(a)] Using the \texttt{Target} sequence, vary the incoming \texttt{BdotT} and \texttt{BdotR} parameters to achieve a polar insertion orbit.
+    \item[(b)] Document the $\Delta V$ cost. If you included solar radiation pressure (SRP) in your force model, explain how it shifted your targeted insertion point compared to a pure point-mass model.
+\end{enumerate}
+
+\end{document}

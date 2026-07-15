@@ -1,0 +1,124 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{listings}
+
+% Code Block Styling
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{orange},
+    frame=single,
+    backgroundcolor=\color{gray!5},
+    showstringspaces=false,
+    breaklines=true
+}
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Astrodynamics 2026-1: Algorithm Design}} \\
+    \vspace{0.2cm}
+    {\huge \textbf{Numerical Integration of Low-Thrust Trajectories}} \\
+    \vspace{0.4cm}
+    \textit{Prof. Juan | Universidad de Antioquia - Aerospace Engineering}
+\end{center}
+
+\hrule
+\vspace{0.5cm}
+
+\section*{Objective}
+Develop a Python algorithm to numerically integrate a spacecraft's trajectory under continuous low-thrust propulsion. This algorithm replicates the core mathematical engine used by NASA's GMAT software.
+
+\section*{Step 1: Expand the State Vector}
+In Keplerian (impulsive) mechanics, the state vector has 6 dimensions (Position and Velocity). Because continuous thrust consumes propellant over time, mass becomes a dynamic variable. We must expand the state vector ($\boldsymbol{Y}$) to 7 dimensions:
+
+\begin{equation}
+    \boldsymbol{Y} = 
+    \begin{bmatrix}
+        x \\ y \\ z \\ v_x \\ v_y \\ v_z \\ m
+    \end{bmatrix}
+\end{equation}
+
+\section*{Step 2: Define the Constants \& Hardware}
+Before integrating, the algorithm must initialize the physical environment and the engine hardware parameters:
+\begin{itemize}
+    \item \textbf{Environment:} $\mu_\oplus$ (Gravitational parameter), $g_0$ (Standard gravity, $9.80665 \text{ m/s}^2$).
+    \item \textbf{Hardware:} $T$ (Engine Thrust in kN), $I_{sp}$ (Specific Impulse in seconds).
+\end{itemize}
+
+\section*{Step 3: Construct the ODE Derivative Function}
+This is the core of the algorithm. You must write a function that takes the current time $t$ and the current state vector $\boldsymbol{Y}$, and returns the \textit{rate of change} of the state vector ($d\boldsymbol{Y}/dt$).
+
+\textbf{Algorithm inside the ODE Function:}
+\begin{enumerate}
+    \item \textbf{Unpack the State:} Extract $\boldsymbol{r} = [x, y, z]$, $\boldsymbol{v} = [v_x, v_y, v_z]$, and $m$ from the input array.
+    \item \textbf{Calculate Gravity:} Compute the two-body gravitational acceleration:
+    \begin{equation}
+        \boldsymbol{a}_{grav} = -\frac{\mu}{|\boldsymbol{r}|^3} \boldsymbol{r}
+    \end{equation}
+    \item \textbf{Determine the Steering Law:} For a spiral transfer (maximizing energy gain), thrust is applied tangentially (parallel to the velocity vector). Calculate the unit velocity vector:
+    \begin{equation}
+        \boldsymbol{u}_v = \frac{\boldsymbol{v}}{|\boldsymbol{v}|}
+    \end{equation}
+    \item \textbf{Calculate Thrust Acceleration:} Convert the constant thrust force into an acceleration using the \textit{current} mass, pointed in the direction of $\boldsymbol{u}_v$:
+    \begin{equation}
+        \boldsymbol{a}_{thrust} = \frac{T}{m} \boldsymbol{u}_v
+    \end{equation}
+    \item \textbf{Calculate Mass Depletion:} Use the rocket equation derivative:
+    \begin{equation}
+        \dot{m} = -\frac{T}{I_{sp} g_0}
+    \end{equation}
+    \item \textbf{Pack and Return the Derivative:} Combine the rates of change into a new 7D array:
+    \begin{equation}
+        \frac{d\boldsymbol{Y}}{dt} = 
+        \begin{bmatrix}
+            v_x \\ v_y \\ v_z \\ a_{gx} + a_{tx} \\ a_{gy} + a_{ty} \\ a_{gz} + a_{tz} \\ \dot{m}
+        \end{bmatrix}
+    \end{equation}
+\end{enumerate}
+
+\section*{Step 4: Execute the Integrator}
+Use a robust numerical ODE solver (such as a Runge-Kutta 4/5 algorithm like Python's \texttt{scipy.integrate.solve\_ivp}) to step forward in time. 
+
+\begin{lstlisting}[language=Python, title=Python Skeleton: The ODE Function]
+import numpy as np
+from scipy.integrate import solve_ivp
+
+def low_thrust_ode(t, state, mu, thrust, isp, g0):
+    # 1. Unpack state
+    r_vec = state[0:3]
+    v_vec = state[3:6]
+    m = state[6]
+    
+    # 2. Gravity Acceleration
+    r_mag = np.linalg.norm(r_vec)
+    a_grav = (-mu / r_mag**3) * r_vec
+    
+    # 3. Thrust Acceleration (Tangential Steering)
+    v_mag = np.linalg.norm(v_vec)
+    u_v = v_vec / v_mag          # Unit vector of velocity
+    a_thrust = (thrust / m) * u_v
+    
+    # 4. Total Acceleration
+    a_total = a_grav + a_thrust
+    
+    # 5. Mass Depletion Rate
+    mdot = -thrust / (isp * g0)
+    
+    # 6. Return derivatives [dx/dt, dy/dt, dz/dt, dvx/dt, dvy/dt, dvz/dt, dm/dt]
+    return np.concatenate((v_vec, a_total, [mdot]))
+
+# --- Execution Example ---
+# initial_state = [x0, y0, z0, vx0, vy0, vz0, m0]
+# result = solve_ivp(low_thrust_ode, [0, max_time], initial_state, 
+#                    args=(mu, T, Isp, g0), method='RK45')
+\end{lstlisting}
+
+\section*{Step 5: Validation against GMAT}
+Once the Python script runs, plot the $(x, y)$ coordinates to verify the spiral shape. Then, compare the final mass and transfer time against a GMAT \texttt{FiniteBurn} simulation. Because both scripts are integrating the same ODEs, the results should be nearly identical (assuming no environmental perturbations like drag or third-body gravity are enabled).
+
+\end{document}

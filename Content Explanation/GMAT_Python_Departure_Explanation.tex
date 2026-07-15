@@ -1,0 +1,110 @@
+\documentclass[11pt, letterpaper]{article}
+
+% --- Packages ---
+\usepackage{amsmath, graphicx, xcolor, listings, tcolorbox}
+\usepackage[left=1in, right=1in, bottom=1in, top=3cm, headheight=2cm, headsep=0.5cm]{geometry}
+\usepackage{fancyhdr}
+
+% --- Code Listing Formatting ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{ 
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\small,
+    breaklines=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    language=C++
+}
+
+% --- Header Configuration ---
+\pagestyle{fancy} 
+\fancyhf{} 
+\renewcommand{\headrulewidth}{0.4pt} 
+\lhead{\raisebox{-0.5cm}{\textbf{Universidad de Antioquia}}}
+\rhead{\large \textbf{Mission Sequence Architecture} \\ \normalsize Spaceflight Dynamics 2026-1} 
+\cfoot{\thepage} 
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{The GMAT Mission Sequence}} \\
+    \vspace{0.2cm}
+    {\large \textit{Line-by-Line Execution for the Voyager Gravity Assist}} \\
+    \vspace{0.4cm}
+    \textit{Prof. Juan | Aerospace Engineering Program}
+\end{center}
+\hrule
+\vspace{0.5cm}
+
+\section*{Phase 1: Trans-Jupiter Injection (TJI)}
+In this phase, we command GMAT's Differential Corrector to find the exact moment to ignite the engine (\texttt{TA}) and the exact thrust required to bend the trajectory into the Python-calculated asymptote ($C_3$, DLA, RLA).
+
+\begin{lstlisting}
+BeginMissionSequence;
+
+% Initialize the solver for the Earth escape burn
+Target DefaultDC {SolveMode = Solve, ExitMode = SaveAndContinue, MaxIterations = 50};
+    
+    % VARY 1: Tell GMAT to slide the ignition point around the parking orbit (True Anomaly)
+    Vary DefaultDC(Voyager.TA = Voyager.TA, {Perturbation = 0.001, Lower = 0, Upper = 360, MaxStep = 10});
+    
+    % VARY 2: Tell GMAT to adjust the Thrust (Velocity, Normal, Binormal)
+    % We give Element1 an initial guess of 7.0 km/s because TJI requires massive energy
+    Vary DefaultDC(TJI.Element1 = 7.0, {Perturbation = 0.0001, MaxStep = 0.5});
+    Vary DefaultDC(TJI.Element2 = 0.0, {Perturbation = 0.0001, MaxStep = 0.5});
+    Vary DefaultDC(TJI.Element3 = 0.0, {Perturbation = 0.0001, MaxStep = 0.5});
+
+    % ACTION: Fire the engine in Low Earth Orbit
+    Maneuver TJI(Voyager);
+
+    % ACHIEVE: Immediately check the resulting hyperbola against Python's analytical data
+    Achieve DefaultDC(Voyager.EarthMJ2000Eq.C3Energy = <Insert Python C3>, {Tolerance = 0.001});
+    Achieve DefaultDC(Voyager.EarthMJ2000Eq.DLA = <Insert Python DLA>, {Tolerance = 0.01});
+    Achieve DefaultDC(Voyager.EarthMJ2000Eq.RLA = <Insert Python RLA>, {Tolerance = 0.01});
+EndTarget;
+\end{lstlisting}
+
+\section*{Phase 2: The Deep Space Trajectory Correction (TCM)}
+Because GMAT simulates the gravity of the Moon, the Sun, and all other planets, the spacecraft will slowly drift off the idealized Python path. We must coast into deep space, then fire a tiny correction thruster to perfectly hit Jupiter's B-plane.
+
+\begin{lstlisting}
+% ACTION: Coast for 30 days to get clear of Earth's chaotic local gravity
+Propagate SunProp(Voyager) {Voyager.ElapsedDays = 30};
+
+% Initialize the solver for the deep space correction burn
+Target DefaultDC {SolveMode = Solve, ExitMode = SaveAndContinue, MaxIterations = 50};
+    
+    % VARY 3: Adjust the TCM thruster. Initial guess is 0.0 km/s because it is a micro-adjustment
+    Vary DefaultDC(TCM.Element1 = 0.0, {Perturbation = 0.0001, MaxStep = 0.2});
+    Vary DefaultDC(TCM.Element2 = 0.0, {Perturbation = 0.0001, MaxStep = 0.2});
+    Vary DefaultDC(TCM.Element3 = 0.0, {Perturbation = 0.0001, MaxStep = 0.2});
+
+    % ACTION: Fire the deep space correction thruster
+    Maneuver TCM(Voyager);
+
+    % ACTION: Propagate to Jupiter. 
+    % CRITICAL FAIL-SAFE: The "ElapsedDays = 1500" prevents the Runaway Ephemeris Error!
+    Propagate SunProp(Voyager) {Voyager.Jupiter.Periapsis, Voyager.ElapsedDays = 1500};
+
+    % ACHIEVE: Hit the exact B-Plane coordinates required to slingshot to Saturn
+    Achieve DefaultDC(Voyager.Jupiter.BdotT = <Insert Target BdotT>, {Tolerance = 1.0});
+    Achieve DefaultDC(Voyager.Jupiter.BdotR = <Insert Target BdotR>, {Tolerance = 1.0});
+EndTarget;
+
+% Phase 3: Coast to Saturn
+Propagate SunProp(Voyager) {Voyager.Saturn.Periapsis, Voyager.ElapsedDays = 1500};
+\end{lstlisting}
+
+\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=The Targeter Rule]
+Never put a \texttt{Propagate} command between a \texttt{Maneuver} and an \texttt{Achieve} command unless it is absolutely necessary. In Phase 1, we evaluate the asymptote \textbf{immediately} after the TJI burn. This prevents the Differential Corrector from calculating 3 years of deep-space math just to see if the Earth departure angle was slightly off.
+\end{tcolorbox}
+
+\end{document}

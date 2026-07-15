@@ -1,0 +1,150 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, graphicx, listings, xcolor}
+\usepackage{bm}
+
+% Presentation Theme
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Code Block Styling
+\lstset{
+    language=Python, % Reusing Python highlighting for GMAT script readability
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    frame=single,
+    backgroundcolor=\color{gray!10}
+}
+
+\title[Sequential Targeting in GMAT]{Astrodynamics 2026-1}
+\subtitle{Advanced GMAT Architecture: \\ Sequential Targeting \& Patched Conics}
+\author{Prof. Juan}
+\institute{Universidad de Antioquia - Aerospace Engineering}
+\date{Spring 2026}
+
+\begin{document}
+
+% --- Title Slide ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% ==========================================
+% SECTION 1: THE PROBLEM WITH ONE TARGETER
+% ==========================================
+\section{Mission Architecture}
+
+% --- Slide 1 ---
+\begin{frame}{The Problem with "One Giant Targeter"}
+    If we try to solve the entire Earth-to-Jupiter mission inside a single Differential Corrector, we force the software to calculate how a 1-degree change in Earth parking orbit affects an arrival altitude 800 million kilometers away.
+    
+    \vspace{0.3cm}
+    \textbf{The Consequence:}
+    \begin{itemize}
+        \item The Jacobian Sensitivity Matrix becomes highly non-linear and unstable.
+        \item The solver requires massive iteration counts or diverges completely.
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    \textbf{The Solution: Sequential Targeting}
+    We mimic the \textit{Patched Conic Approximation} computationally. We use one Targeter to escape Earth, coast to the Sphere of Influence (SOI), and then use a second Targeter to navigate to Jupiter.
+\end{frame}
+
+% ==========================================
+% SECTION 2: TARGET 1 - EARTH DEPARTURE
+% ==========================================
+\section{Target 1: Earth Escape}
+
+% --- Slide 2 ---
+\begin{frame}[fragile]{Target 1: Securing the Escape Vector}
+    Our first goal is solely to leave Earth with the correct energy ($C_3$) and the correct geometric direction (Right Ascension and Declination of the Asymptote).
+    
+\begin{lstlisting}
+% 1. Target the Escape Hyperbola
+Target Target_EarthEscape {SolveMode = Solve};
+    
+    % Vary the True Anomaly (Injection Point)
+    Vary Target_EarthEscape(Sat.TA = 180.0, {MaxStep = 10.0});
+    Propagate EarthProp(Sat) {Sat.Earth.TrueAnomaly = Sat.TA};
+    
+    % Vary the Delta-V Magnitude
+    Vary Target_EarthEscape(TJI_Burn.Element1 = 6.5, {MaxStep = 0.1});
+    Maneuver TJI_Burn(Sat);
+    
+    % Achieve the Analytical Goals (No Jupiter propagation yet!)
+    Achieve Target_EarthEscape(Sat.Earth.C3Energy = 82.5);
+    Achieve Target_EarthEscape(Sat.Earth.RLA = -15.4);
+    
+EndTarget;
+\end{lstlisting}
+\end{frame}
+
+% ==========================================
+% SECTION 3: THE SOI TRANSITION
+% ==========================================
+\section{Crossing the Sphere of Influence}
+
+% --- Slide 3 ---
+\begin{frame}[fragile]{The Transition: Crossing the Boundary}
+    Once \texttt{Target\_EarthEscape} converges, the spacecraft has the exact velocity needed. However, it is still sitting just a few hundred kilometers above Earth.
+    
+    \vspace{0.2cm}
+    We must now propagate the spacecraft outward until it escapes Earth's gravitational grip ($\approx 925,000 \text{ km}$). We do this \textbf{outside} the Targeters using a \texttt{While} loop.
+    
+\begin{lstlisting}
+% 2. Coast to the edge of the Sphere of Influence
+% This occurs AFTER Target 1 has locked in the maneuver
+
+While Sat.Earth.RMAG < 925000.0
+    Propagate EarthProp(Sat) {Sat.ElapsedDays = 1.0};
+EndWhile;
+
+% At this exact line of code, we are officially in deep space!
+\end{lstlisting}
+\end{frame}
+
+% ==========================================
+% SECTION 4: TARGET 2 - MID-COURSE & ARRIVAL
+% ==========================================
+\section{Target 2: Deep Space \& Polar Orbit}
+
+% --- Slide 4 ---
+\begin{frame}[fragile]{Target 2: Reaching Jupiter's Poles}
+    Now in the Sun-centered frame, we open our second Targeter. Here, we calculate the Deep Space Maneuvers (DSMs) needed to hit the Jupiter B-Plane and insert into a polar orbit.
+    
+\begin{lstlisting}
+% 3. Target the Jupiter Arrival and Capture
+Target Target_JupiterPolar {SolveMode = Solve};
+    
+    % Vary mid-course corrections (e.g., 200 days into flight)
+    Propagate SunProp(Sat) {Sat.ElapsedDays = 200};
+    Vary Target_JupiterPolar(DSM_Burn.Element1 = 0.5, ...);
+    Vary Target_JupiterPolar(DSM_Burn.Element2 = 0.5, ...);
+    Maneuver DSM_Burn(Sat);
+    
+    % Propagate to Jupiter and Capture
+    Propagate SunProp(Sat) {Sat.Jupiter.Periapsis};
+    
+    % Achieve Polar Orbit conditions
+    Achieve Target_JupiterPolar(Sat.Jupiter.BdotT = 0.0);
+    Achieve Target_JupiterPolar(Sat.Jupiter.BdotR = 10000.0);
+    
+EndTarget;
+\end{lstlisting}
+\end{frame}
+
+% --- Slide 5 ---
+\begin{frame}{Summary of Sequential Architecture}
+    \textbf{Why this makes you a better Astrodynamicist:}
+    \begin{enumerate}
+        \item \textbf{Decoupled Physics:} You separate the highly volatile Earth-escape physics from the deep-space cruise mechanics.
+        \item \textbf{Easier Debugging:} If the script fails, you know exactly which phase broke. If Target 1 converges but Target 2 fails, you know your departure energy was fine, but your mid-course correction limits are wrong.
+        \item \textbf{Real-World Accuracy:} Mission controllers do not plan the final Jupiter Orbit Insertion engine burn on the launchpad. They launch, cross the SOI, track the spacecraft, and \textit{then} calculate the mid-course corrections. Your script now behaves exactly like a real mission operations center!
+    \end{enumerate}
+\end{frame}
+
+\end{document}
+
+
+By teaching the script this way, you are showing your students that GMAT is not just a calculator, but a logical programming environment where they have total control over how the math is executed. Separating the `Target` blocks to mimic patched conics is exactly how professional mission designers keep their massive simulations stable!

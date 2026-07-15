@@ -1,0 +1,121 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, graphicx}
+\usepackage{bm}
+
+% Presentation Theme
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\title[The B-Plane]{Astrodynamics 2026-1}
+\subtitle{Interplanetary Targeting: \\ Understanding the B-Plane Coordinate System}
+\author{Prof. Juan}
+\institute{Universidad de Antioquia - Aerospace Engineering}
+\date{Spring 2026}
+
+\begin{document}
+
+% --- Title Slide ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% ==========================================
+% SECTION 1: WHAT IS THE B-PLANE?
+% ==========================================
+\section{Defining the Target}
+
+% --- Slide 1 ---
+\begin{frame}{The Targeting Dilemma}
+    When approaching a planet from millions of kilometers away, targeting a specific Keplerian element (like periapsis radius or inclination) is numerically difficult. The coordinate space is highly non-linear.
+    
+    \vspace{0.3cm}
+    \textbf{The Solution: The B-Plane}
+    Instead of targeting the orbit directly, mission designers target a specific $(x, y)$ coordinate on an imaginary 2D plane located next to the target planet. 
+    
+    \vspace{0.2cm}
+    By changing where we "pierce" this plane, we uniquely define the resulting hyperbolic flyby or orbit insertion.
+\end{frame}
+
+% --- Slide 2 ---
+\begin{frame}{Defining the B-Plane}
+    The \textbf{B-Plane} is a plane passing through the center of the target body, oriented strictly perpendicular to the incoming hyperbolic excess velocity vector ($\bm{v}_\infty$).
+    
+    \vspace{0.3cm}
+    \textbf{The B-Vector ($\bm{B}$):}
+    \begin{itemize}
+        \item The vector $\bm{B}$ lies entirely within the B-Plane.
+        \item It points from the center of the planet to the point where the incoming asymptote pierces the plane.
+        \item The magnitude of this vector, $|\bm{B}|$, is the \textbf{Impact Parameter} (the theoretical closest approach distance if the planet had no gravity).
+    \end{itemize}
+\end{frame}
+
+% ==========================================
+% SECTION 2: THE S, T, R COORDINATE SYSTEM
+% ==========================================
+\section{The S, T, R Frame}
+
+% --- Slide 3 ---
+\begin{frame}{The $\bm{S}, \bm{T}, \bm{R}$ Coordinate System}
+    To define coordinates on this plane, we construct an orthogonal basis triad centered on the target planet:
+    
+    \begin{enumerate}
+        \item \textbf{The $\bm{S}$ Vector:} Points parallel to the incoming velocity ($\bm{v}_\infty$). It is normal to the B-Plane.
+        $$ \bm{S} = \frac{\bm{v}_\infty}{|\bm{v}_\infty|} $$
+        \item \textbf{The $\bm{T}$ Vector:} Lies in the B-Plane. It is typically defined to be parallel to the ecliptic plane (or the planet's equatorial plane). It points roughly "horizontal".
+        \item \textbf{The $\bm{R}$ Vector:} Completes the right-handed set. It points generally "vertical".
+        $$ \bm{R} = \bm{S} \times \bm{T} $$
+    \end{enumerate}
+\end{frame}
+
+% --- Slide 4 ---
+\begin{frame}{Projecting the B-Vector}
+    Since the B-vector lies entirely in the B-Plane, it can be expressed as a 2D coordinate using the $\bm{T}$ and $\bm{R}$ axes. We use the dot product to find these projections.
+    
+    \vspace{0.3cm}
+    \textbf{The Target Coordinates:}
+    \begin{itemize}
+        \item \textbf{$\bm{B \cdot T}$:} The horizontal offset. In GMAT, this is \texttt{BdotT}.
+        \item \textbf{$\bm{B \cdot R}$:} The vertical offset. In GMAT, this is \texttt{BdotR}.
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    The total impact parameter (the aiming radius) is simply the hypotenuse:
+    $$ |\bm{B}| = \sqrt{(\bm{B \cdot T})^2 + (\bm{B \cdot R})^2} $$
+\end{frame}
+
+% ==========================================
+% SECTION 3: MISSION DESIGN IMPLICATIONS
+% ==========================================
+\section{Flying the Mission}
+
+% --- Slide 5 ---
+\begin{frame}{How the B-Plane Controls the Trajectory}
+    The specific coordinates $(\bm{B \cdot T}, \bm{B \cdot R})$ dictate the exact 3D geometry of the flyby:
+    
+    \begin{itemize}
+        \item \textbf{Closest Approach ($r_p$):} Controlled by the magnitude $|\bm{B}|$. Moving the target point outward (larger B) results in a higher altitude flyby and a smaller Turn Angle ($\delta$).
+        \item \textbf{Orbital Plane (Inclination):} Controlled by the angle $\theta = \tan^{-1}\left(\frac{\bm{B \cdot R}}{\bm{B \cdot T}}\right)$. 
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    \textit{Example:} To enter a perfectly equatorial orbit, you aim purely along the $\bm{T}$ axis ($\bm{B \cdot R} = 0$). To enter a polar orbit (like our Jupiter mission), you aim offset along the $\bm{R}$ axis!
+\end{frame}
+
+% --- Slide 6 ---
+\begin{frame}{Gravity Assists and the B-Plane}
+    For a gravity assist, the B-Plane target is the ultimate control knob. 
+    
+    \vspace{0.3cm}
+    By tweaking \texttt{BdotT} and \texttt{BdotR} in a Differential Corrector:
+    \begin{enumerate}
+        \item We dictate the exact Turn Angle $\delta$ (via the impact parameter magnitude).
+        \item We dictate the 3D plane in which that turn happens.
+        \item We aim the outbound $\bm{v}_\infty$ vector precisely toward the next planet!
+    \end{enumerate}
+    
+    \vspace{0.2cm}
+    \textbf{Summary:} The B-Plane turns 3D orbital mechanics into a simple game of throwing darts at a 2D board.
+\end{frame}
+
+\end{document}

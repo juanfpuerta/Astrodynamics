@@ -1,0 +1,99 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, geometry, graphicx, setspace, xcolor}
+\geometry{letterpaper, margin=1in}
+\setstretch{1.15}
+
+\title{\textbf{Computational Lab Assignment: \\ Interplanetary Departure Geometry}}
+\author{Module: Astrodynamics 2026-1}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Objective}
+Bridge the analytical geometry of the Patched Conic approximation with numerical mission design. You will calculate the required departure maneuver and asymptote angle ($\beta$) for a mission to Jupiter by hand, and then use NASA GMAT's Differential Corrector to find the exact True Anomaly in the parking orbit where the engines must be ignited.
+
+\section*{The Mission Scenario}
+A spacecraft is currently waiting in a Low Earth Orbit (LEO) to begin its heliocentric cruise to Jupiter. The mission design team has determined that the heliocentric transfer requires a departure Hyperbolic Excess Velocity ($v_\infty$) of \textbf{5.60 km/s}. 
+
+To merge onto this interplanetary highway, the spacecraft's outgoing asymptote must point precisely along the $+Y$ axis of the Earth-Centered Inertial (ECI) frame. 
+
+\textbf{Given Parameters:}
+\begin{itemize}
+    \item Parking Orbit Altitude: $h = 400 \text{ km}$ (Circular, Equatorial: $i = 0^\circ$)
+    \item Target Hyperbolic Excess Velocity: $v_\infty = 5.60 \text{ km/s}$
+    \item Target Asymptote Direction: Right Ascension (RLA) $= 90^\circ$, Declination (DLA) $= 0^\circ$
+    \item Standard Earth Gravity: $\mu_\oplus = 398600.4415 \text{ km}^3/\text{s}^2$
+    \item Earth Radius: $R_\oplus = 6378.136 \text{ km}$
+\end{itemize}
+
+\vspace{0.5cm}
+
+\section*{Part A: Analytical Baseline (Hand Calculation)}
+Before touching the mission design software, you must understand the geometry of the escape hyperbola. Show all work for the following:
+\begin{enumerate}
+    \item \textbf{The Burn:} Calculate the specific energy ($C_3$) of the required departure hyperbola, the required burnout velocity at periapsis ($v_p$), and the prograde engine burn ($\Delta V$).
+    \item \textbf{The Shape:} Calculate the eccentricity ($e$) of the departure hyperbola.
+    \item \textbf{The Aiming Angle:} Calculate the Asymptote Angle ($\beta$). Based on this angle, explain conceptually where in the circular parking orbit the engine burn must occur relative to the desired $90^\circ$ outgoing asymptote.
+\end{enumerate}
+
+\newpage
+
+\section*{Part B: Numerical Targeting (NASA GMAT)}
+We will now use GMAT to find the exact True Anomaly (TA) where the burn must occur. 
+
+\textit{Note: Ensure your `DefaultProp` is set to a Point Mass gravity model for Earth with no atmospheric drag to match your 2-body analytical math.}
+
+\begin{enumerate}
+    \item \textbf{Initialize:} Set your `DefaultSC` to the 400 km circular, equatorial parking orbit. \textit{Leave the True Anomaly at $0^\circ$ for now.} Add an `ImpulsiveBurn` (VNB frame).
+    \item \textbf{The Control Sequence:} Build a \texttt{Target} sequence with the Differential Corrector. You have two goals ($C_3$ energy and RLA pointing direction), so you must give GMAT two control variables.
+        \begin{itemize}
+            \item \texttt{Vary} `ImpulsiveBurn1.Element1`. Use your Part A $\Delta V$ as the initial guess.
+            \item \texttt{Vary} `DefaultSC.TA`. Set the initial guess to $0^\circ$, with limits from $0^\circ$ to $360^\circ$.
+            \item Apply the \texttt{Maneuver}.
+            \item \texttt{Propagate} to the edge of the Sphere of Influence (`DefaultSC.Earth.RMAG = 925000`).
+            \item \texttt{Achieve} `DefaultSC.Earth.C3Energy` = [Your Part A $C_3$ calculation].
+            \item \texttt{Achieve} `DefaultSC.Earth.RLA` = 90.0.
+        \end{itemize}
+    \item \textbf{Deliverable:} Run the mission. Record the required $\Delta V$ and the required True Anomaly (TA) found by GMAT. How does GMAT's resulting True Anomaly mathematically relate to your analytical $\beta$ angle from Part A? Provide a screenshot of your 3D trajectory.
+\end{enumerate}
+
+\newpage
+
+% ---------------------------------------------------------
+% INSTRUCTOR SOLUTION KEY
+% ---------------------------------------------------------
+\section*{Instructor Solution Key}
+
+\subsection*{Part A: Analytical Solutions}
+\textbf{1. The Burn Requirements:}
+\begin{itemize}
+    \item $C_3 = v_\infty^2 = 5.60^2 = \mathbf{31.36 \text{ km}^2/\text{s}^2}$
+    \item $r_p = 6378.136 + 400 = 6778.136 \text{ km}$
+    \item $v_c = \sqrt{\mu_\oplus / r_p} = \sqrt{398600.4415 / 6778.136} = 7.6686 \text{ km/s}$
+    \item $v_p = \sqrt{v_\infty^2 + \frac{2\mu_\oplus}{r_p}} = \sqrt{31.36 + \frac{2(398600.4415)}{6778.136}} = \sqrt{148.974} = \mathbf{12.2055 \text{ km/s}}$
+    \item $\Delta V = v_p - v_c = 12.2055 - 7.6686 = \mathbf{4.5369 \text{ km/s}}$
+\end{itemize}
+
+\textbf{2. The Shape (Eccentricity):}
+\begin{equation*}
+    e = 1 + \frac{r_p v_\infty^2}{\mu_\oplus} = 1 + \frac{6778.136 (31.36)}{398600.4415} = 1 + 0.5333 = \mathbf{1.5333}
+\end{equation*}
+
+\textbf{3. The Aiming Angle ($\beta$):}
+\begin{equation*}
+    \beta = \cos^{-1}\left(\frac{1}{e}\right) = \cos^{-1}\left(\frac{1}{1.5333}\right) = \mathbf{49.3^\circ}
+\end{equation*}
+\textit{Conceptual Explanation:} Because the angle between the periapsis (burn location) and the asymptote is $49.3^\circ$, the spacecraft must ignite its engines exactly $49.3^\circ$ \textit{before} its trajectory aligns with the target $90^\circ$ asymptote.
+
+\subsection*{Part B: GMAT Validation \& Grading Rubric}
+\textcolor{blue}{\textbf{Instructor Checks:}}
+\begin{itemize}
+    \item \textbf{Delta-V Verification:} The Differential Corrector output for `Element1` should converge to $\mathbf{4.5369 \text{ km/s}}$ (matching the vis-viva calculation exactly).
+    \item \textbf{True Anomaly Verification:} GMAT will adjust the parking orbit's initial True Anomaly to correctly orient the hyperbola. Because the target asymptote is at RLA $= 90^\circ$, and the apse line must be $\beta = 49.3^\circ$ behind the asymptote in the orbital plane, the DC will converge on a True Anomaly of $90^\circ - 49.3^\circ = \mathbf{40.7^\circ}$. 
+    \item \textit{Note on Quadrants:} Depending on the initial guess, GMAT might converge on a mirror trajectory where the burn happens on the opposite side ($TA = 139.3^\circ$). Either answer is physically valid and demonstrates that the student successfully linked the analytical $\beta$ angle to the numerical targeting constraints!
+\end{itemize}
+
+\end{document}

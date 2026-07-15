@@ -1,0 +1,68 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[letterpaper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{amsmath, amssymb, graphicx, fancyhdr, xcolor, booktabs}
+
+% Header/Footer Setup
+\setlength{\headheight}{35pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\vspace{10pt}\textbf{Astrodynamics 2026-1: In-Class Exercise}}
+\fancyhead[R]{\includegraphics[height=1cm]{UdeA+simplificado+Negro_Smaller.png}}
+\fancyfoot[C]{\thepage}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{In-Class Exercise: Interplanetary Targeting}} \\
+    \vspace{0.2cm}
+    {\large \textit{Patched Conics, The B-Plane, and Launch Windows}} \\
+    \vspace{0.4cm}
+    \textbf{Time Limit:} 60 Minutes | \textbf{Tools:} Google Colab (Python) \& GMAT \\
+    \textit{Prof. Juan Francisco Puerta I.| Aerospace Engineering Program}
+\end{center}
+
+\hrule
+\vspace{0.5cm}
+
+\section*{Scenario: The Martian Intercept}
+We are launching a 1,500 kg scientific probe to Mars. The spacecraft is currently parked in a 300 km circular Low Earth Orbit (LEO). You must calculate the departure energy, target a specific arrival trajectory using the B-Plane, and analyze the sensitivity of the launch window.
+
+\section*{Part 1: The Analytical Baseline (Colab) -- [15 Minutes]}
+Open your Python/Colab patched conic scripts. Assuming a Hohmann transfer from Earth to Mars (assuming circular, coplanar planetary orbits for this baseline approximation):
+\begin{enumerate}
+    \item Calculate the required departure hyperbolic excess velocity ($\boldsymbol{v}_\infty$) and the specific energy ($C_3$).
+    \item Calculate the impulsive $\Delta V$ required to inject the spacecraft from the 300 km LEO parking orbit onto the interplanetary escape hyperbola.
+\end{enumerate}
+\textit{Record these values. They are your initial guesses for the GMAT numerical solver.}
+
+\section*{Part 2: B-Plane Targeting (GMAT) -- [30 Minutes]}
+You have been provided with a baseline GMAT script (\texttt{Mars\_BPlane\_Base.script}) containing the spacecraft, a heliocentric propagator, and the Earth-Mars celestial mechanics.
+
+Your task is to configure the \texttt{DifferentialCorrector} to achieve a polar Martian flyby at an altitude of 500 km.
+\begin{enumerate}
+    \item Set up a \texttt{Vary} command for the Trans-Mars Injection (TMI) burn. Vary the Velocity (\texttt{Element1}), Normal (\texttt{Element2}), and Binormal (\texttt{Element3}) components.
+    \item Use the B-Plane to target the arrival. Set up your \texttt{Achieve} commands:
+    \begin{itemize}
+        \item \texttt{Achieve DC(Sat.Mars.BdotT = 0.0, \{Tolerance = 0.1\});} (Forces the polar geometry)
+        \item \texttt{Achieve DC(Sat.Mars.RMAG = 3896.2, \{Tolerance = 0.1\});} (500 km altitude + Mars radius)
+    \end{itemize}
+    \item Run the sequence. Record the final numerical $\Delta V$ components. How do they compare to your Colab approximation?
+\end{enumerate}
+
+\section*{Part 3: The Launch Window (GMAT) -- [15 Minutes]}
+Planetary alignments wait for no one. 
+\begin{enumerate}
+    \item Go to the spacecraft's initial state and shift the \texttt{Epoch} forward by exactly \textbf{48 hours} (representing a launch delay).
+    \item Re-run your Differential Corrector target sequence.
+    \item Record the new $\Delta V$ required to hit the exact same B-Plane target. 
+\end{enumerate}
+
+\section*{Deliverable: Chief Architect's Memo (CAM)}
+Submit a single-page PDF containing your Colab baseline outputs, the GMAT numerical outputs, and a concluding CAM paragraph. 
+
+\textbf{CAM Prompt:} \textit{Based on your findings in Part 3, mathematically explain why the $\Delta V$ penalty occurred when the launch was delayed by 48 hours. Connect your explanation back to the patched conic planetary phasing you modeled in Part 1.}
+
+\end{document}

@@ -1,0 +1,30 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage{amsmath, graphicx, listings, tcolorbox, fancyhdr, geometry}
+\geometry{left=1in, right=1in, bottom=1in, top=3cm}
+
+% --- Header Configuration ---
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\raisebox{-0.5cm}{\includegraphics[height=1.2cm]{UdeA+simplificado+Negro_Smaller.png}}}
+\rhead{\large \textbf{Mission Analysis: Patch-Point Optimization} \\ \normalsize Spaceflight Dynamics 2026-1}
+\cfoot{\thepage}
+
+\begin{document}
+
+\section*{Analysis of \texttt{Ex\_Yukon\_MarsLaunchWindowAnalysis}}
+
+This GMAT script utilizes a \textbf{Multiple Shooting} strategy to find a valid interplanetary trajectory. Rather than guessing an initial Earth-departure velocity that magically hits Mars (which is nearly impossible due to numerical sensitivity), we use an optimizer to "stitch" together two trajectories.
+
+\subsection*{Key Algorithmic Components}
+\begin{itemize}
+    \item \textbf{Dual Propagation:} The script creates \texttt{satForward} (propagated from Earth) and \texttt{satBackward} (propagated from Mars). They meet at a temporal \texttt{patchEpoch}.
+    \item \textbf{NonLinearConstraint (The Bridge):} The solver iterates until the position ($X,Y,Z$) and velocity ($V_X, V_Y, V_Z$) of both spacecraft are identical at the patch point. 
+    \begin{lstlisting}[language=C++]
+NonlinearConstraint Yukon1(satForward.SunMJ2000Ec.X = satBackward.SunMJ2000Ec.X);
+NonlinearConstraint Yukon1(satForward.SunMJ2000Ec.VX = satBackward.SunMJ2000Ec.VX);
+    \end{lstlisting}
+    \item \textbf{The Cost Function:} \texttt{cost = sqrt(satForward.EarthSunRot.VX\^2 + ...)}
+    This calculates the velocity discontinuity. The optimizer's goal is to drive this cost to zero (perfect continuity) while minimizing the total energy required.
+\end{itemize}
+
+\end{document}

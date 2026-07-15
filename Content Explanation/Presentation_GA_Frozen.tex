@@ -1,0 +1,137 @@
+\documentclass[aspectratio=169]{beamer}
+
+% --- Packages & Theme ---
+\usetheme{Madrid}
+\usecolortheme{whale}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tcolorbox}
+\usepackage{tikz}
+
+% --- UdeA Customization ---
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{navigation symbols}{}
+\definecolor{UdeAGreen}{RGB}{0, 102, 51}
+\setbeamercolor{structure}{fg=UdeAGreen}
+\setbeamercolor{frametitle}{bg=UdeAGreen, fg=white}
+
+% --- Title Page ---
+\title[Astrodynamics: Multi-Planet Optimization]{Navigating the Solar System}
+\subtitle{The 3D Time Problem \& Gravity Assist Optimization}
+\author{Prof. Juan}
+\institute{Aerospace Engineering Program \\ Universidad de Antioquia}
+\date{Spaceflight Dynamics 2026-1}
+
+\begin{document}
+
+% Slide 1: Title
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Slide 2: The Dimensionality Curse
+\begin{frame}{The Dimensionality Curse}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{Standard Porkchop Plot (2D)}
+            \begin{itemize}
+                \item Earth $\rightarrow$ Mars
+                \item Variable 1: Earth Departure Date (X-Axis)
+                \item Variable 2: Mars Arrival Date (Y-Axis)
+                \item Result: A 2D contour map of $C_3$ energy.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \textbf{Gravity Assist Mission (3D)}
+            \begin{itemize}
+                \item Earth $\rightarrow$ Jupiter $\rightarrow$ Saturn
+                \item Variable 1: Earth Departure Date
+                \item Variable 2: Jupiter Flyby Date
+                \item Variable 3: Saturn Arrival Date
+            \end{itemize}
+            \vspace{0.3cm}
+            \begin{alertblock}{The Problem}
+                We cannot easily visualize a 3D cube of time, and it is computationally exhausting to calculate every possible combination of three dates!
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Slide 3: The Solution - Freezing Time
+\begin{frame}{The Solution: Freezing the Time of Flight}
+    To reduce the 3D problem back into a manageable 2D map, we must \textbf{freeze one of the time dimensions}. 
+    
+    \vspace{0.5cm}
+    Usually, mission designers fix the \textbf{Time of Flight (TOF)} between the gas giants:
+    \begin{equation}
+        t_{Saturn} = t_{Jupiter} + \text{Fixed\_TOF}
+    \end{equation}
+    
+    \vspace{0.3cm}
+    \textbf{Why?} 
+    \begin{itemize}
+        \item If we set $TOF = 3 \text{ years}$, the Saturn arrival date is now strictly locked to the Jupiter flyby date.
+        \item We only have to search for $t_{Earth}$ and $t_{Jupiter}$. 
+        \item We can plot this on a standard 2D grid again!
+    \end{itemize}
+\end{frame}
+
+% Slide 4: The Physics of the "Free" Ride
+\begin{frame}{The Physics of a "Free" Gravity Assist}
+    For every combination of $(t_{Earth}, t_{Jupiter})$, our Python script splits the mission into two Lambert problems:
+    \vspace{0.3cm}
+    \begin{enumerate}
+        \item \textbf{Leg 1 (Earth $\rightarrow$ Jupiter):} Gives us the incoming velocity vector ($\vec{V}_{in}$) relative to Jupiter.
+        \item \textbf{Leg 2 (Jupiter $\rightarrow$ Saturn):} Gives us the required outgoing velocity vector ($\vec{V}_{out}$) to reach Saturn in exactly 3 years.
+    \end{enumerate}
+    
+    \vspace{0.3cm}
+    \begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=Energy Conservation at Jupiter]
+        Jupiter's gravity can easily change the \textit{direction} of the spacecraft, but it cannot change its \textit{speed} relative to Jupiter. Therefore, a "free" unpowered slingshot is only possible if:
+        $$ |\vec{V}_{in}| = |\vec{V}_{out}| $$
+    \end{tcolorbox}
+\end{frame}
+
+% Slide 5: The Delta-V Penalty
+\begin{frame}{Mapping the $\Delta V$ Penalty}
+    If the magnitudes do not match, the spacecraft must fire its engine at Jupiter to make up the difference (A Powered Flyby).
+    
+    \begin{equation}
+        \text{Penalty } \Delta V = \left| |\vec{V}_{out}| - |\vec{V}_{in}| \right|
+    \end{equation}
+    
+    \vspace{0.3cm}
+    \textbf{Reading the Output Plot:}
+    \begin{itemize}
+        \item \textbf{High Penalty (Red/Yellow):} The planets are out of alignment. Massive engine burns are required at Jupiter.
+        \item \textbf{Zero Penalty (Dark Blue Valleys):} The geometry is perfect. Jupiter's gravity does 100\% of the work to bend the trajectory toward Saturn.
+    \end{itemize}
+\end{frame}
+
+% Slide 6: What Happens When We Unfreeze the TOF?
+\begin{frame}{Dynamic Kinematics: Shifting the TOF}
+    What happens if we change the fixed TOF from 3 years to 2 years?
+    
+    \vspace{0.3cm}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{Shorter TOF (e.g., 2 Years)}
+            \begin{itemize}
+                \item Requires a much higher $\vec{V}_{out}$ to reach Saturn quickly.
+                \item Requires a much higher $\vec{V}_{in}$ to match it.
+                \item \textit{Result:} The launch windows (dark blue valleys) shrink, requiring massive Earth departure rockets.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \textbf{Longer TOF (e.g., 6 Years)}
+            \begin{itemize}
+                \item Requires a lower $\vec{V}_{out}$ to coast lazily to Saturn.
+                \item \textit{Result:} Launch windows widen, and the required Earth departure energy drops significantly.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    \vspace{0.5cm}
+    \centering \textit{(Switch to Interactive Simulation)}
+\end{frame}
+
+\end{document}

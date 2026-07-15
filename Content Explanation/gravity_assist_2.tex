@@ -1,0 +1,131 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, graphicx}
+\usepackage{bm}
+
+% Presentation Theme
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\title[Gravitational Assists]{Astrodynamics 2026-1}
+\subtitle{Interplanetary Trajectories: \\ Gravitational Assists \& The Vector Mechanics of Flybys}
+\author{Prof. Juan Felipe Puerta}
+\institute{Universidad de Antioquia - Aerospace Engineering}
+\date{Spring 2026}
+
+\begin{document}
+
+% --- Title Slide ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% ==========================================
+% SECTION 1: THE AIMING RADIUS & TURN ANGLE
+% ==========================================
+\section{Geometry of the Encounter}
+
+% --- Slide 1 ---
+\begin{frame}{The Encounter Hyperbola}
+    When a spacecraft enters a planet's sphere of influence (SOI), its trajectory relative to the planet is a hyperbola. The energy relative to the planet remains constant, meaning the inbound and outbound hyperbolic excess speeds are equal:
+    \begin{equation}
+        |\bm{v}_{\infty}^-| = |\bm{v}_{\infty}^+| = v_\infty
+    \end{equation}
+    
+    However, the planet's gravity rotates the velocity vector by a specific \textbf{Turn Angle ($\delta$)}.
+\end{frame}
+
+% --- Slide 2 ---
+\begin{frame}{Calculating the Turn Angle ($\delta$)}
+    The turn angle depends entirely on how close the spacecraft passes to the planet. We define the eccentricity ($e$) of the flyby hyperbola using the periapsis radius ($r_p$):
+    \begin{equation}
+        e = 1 + \frac{r_p v_\infty^2}{\mu_{planet}}
+    \end{equation}
+    
+    The turn angle ($\delta$) is the angle between the incoming and outgoing asymptotes:
+    \begin{equation}
+        \sin\left(\frac{\delta}{2}\right) = \frac{1}{e} \quad \implies \quad \delta = 2 \sin^{-1}\left(\frac{1}{e}\right)
+    \end{equation}
+    
+    \textit{A smaller $r_p$ (closer flyby) results in a smaller eccentricity $e$ and a larger turn angle $\delta$.}
+\end{frame}
+
+% --- Slide 3 ---
+\begin{frame}{The Impact Parameter ($\Delta$)}
+    Mission designers control the periapsis radius by targeting a specific \textbf{Aiming Radius} or \textbf{Impact Parameter} ($\Delta$) on the planet's B-Plane.
+    
+    The impact parameter is the perpendicular distance from the planet's center to the incoming asymptote:
+    \begin{equation}
+        \Delta = \frac{\mu_{planet}}{v_\infty^2} \sqrt{e^2 - 1} = r_p \sqrt{\frac{r_p v_\infty^2 + 2\mu_{planet}}{r_p v_\infty^2}}
+    \end{equation}
+    
+    By shifting $\Delta$ during the deep-space cruise phase, we precisely control the turn angle $\delta$.
+\end{frame}
+
+% ==========================================
+% SECTION 2: VECTOR MECHANICS
+% ==========================================
+\section{Vector Velocity Triangles}
+
+% --- Slide 4 ---
+\begin{frame}{Heliocentric Velocity Transformation}
+    The purpose of a flyby is to change the spacecraft's velocity relative to the \textbf{Sun}. We translate the planetary frame back to the heliocentric frame using vector addition.
+    
+    Let $\bm{V}_{planet}$ be the heliocentric velocity of the planet.
+    \begin{align}
+        \text{Inbound Heliocentric Velocity: } \bm{V}^- &= \bm{V}_{planet} + \bm{v}_{\infty}^- \\
+        \text{Outbound Heliocentric Velocity: } \bm{V}^+ &= \bm{V}_{planet} + \bm{v}_{\infty}^+
+    \end{align}
+    
+    The net change in the spacecraft's heliocentric velocity ($\Delta \bm{V}$) is exactly equal to the change in the hyperbolic excess velocity vectors:
+    \begin{equation}
+        \Delta \bm{V} = \bm{V}^+ - \bm{V}^- = \bm{v}_{\infty}^+ - \bm{v}_{\infty}^-
+    \end{equation}
+\end{frame}
+
+% --- Slide 5 ---
+\begin{frame}{Magnitude of the Velocity Change}
+    Using the law of cosines on the vector triangle formed by the incoming and outgoing asymptotes, the magnitude of the $\Delta \bm{V}$ imparted by the planet is:
+    
+    \begin{equation}
+        |\Delta \bm{V}| = 2 v_\infty \sin\left(\frac{\delta}{2}\right)
+    \end{equation}
+    
+    Substituting our previous eccentricity relation $\sin(\delta/2) = 1/e$:
+    \begin{equation}
+        |\Delta \bm{V}| = \frac{2 v_\infty}{e} = \frac{2 v_\infty}{1 + \frac{r_p v_\infty^2}{\mu_{planet}}}
+    \end{equation}
+    
+    This represents "free" delta-v provided by the momentum exchange with the planet.
+\end{frame}
+
+% ==========================================
+% SECTION 3: TRAILING VS. LEADING
+% ==========================================
+\section{Trajectory Pumping \& Cranking}
+
+% --- Slide 6 ---
+\begin{frame}{Trailing-Side Flyby: "Pumping" Energy}
+    To travel to the outer solar system (e.g., Jupiter to Saturn), we must increase our heliocentric speed.
+    
+    \begin{itemize}
+        \item \textbf{Geometry:} The spacecraft crosses the planet's orbit \textit{behind} the planet (Trailing Side).
+        \item \textbf{Vector Result:} The turn angle $\delta$ rotates $\bm{v}_{\infty}^+$ so it aligns more closely with $\bm{V}_{planet}$.
+        \item \textbf{Outcome:} The vector sum $\bm{V}^+ = \bm{V}_{planet} + \bm{v}_{\infty}^+$ produces a larger magnitude $|\bm{V}^+| > |\bm{V}^-|$. 
+        \item Heliocentric energy increases.
+    \end{itemize}
+\end{frame}
+
+% --- Slide 7 ---
+\begin{frame}{Leading-Side Flyby: Reducing Energy}
+    To travel to the inner solar system (e.g., Earth to Mercury), we must decrease our heliocentric speed.
+    
+    \begin{itemize}
+        \item \textbf{Geometry:} The spacecraft crosses the planet's orbit \textit{in front} of the planet (Leading Side).
+        \item \textbf{Vector Result:} The turn angle $\delta$ rotates $\bm{v}_{\infty}^+$ so it points away from $\bm{V}_{planet}$.
+        \item \textbf{Outcome:} The vector sum produces a smaller magnitude $|\bm{V}^+| < |\bm{V}^-|$.
+        \item Heliocentric energy decreases, dropping perihelion closer to the Sun.
+    \end{itemize}
+\end{frame}
+
+\end{document}

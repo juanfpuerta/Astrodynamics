@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Targeter vs. Optimizer</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        #runTargeter { background-color: #e74c3c; color: white; }
+        #runOptimizer { background-color: #2ecc71; color: white; }
+        #resetBtn { background-color: #95a5a6; color: white; }
+        button:hover { opacity: 0.8; }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        canvas {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #status {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>Astrodynamics: Targeter vs. Optimizer</h2>
+        <p>Explore how different algorithms navigate the "Fuel Cost" landscape.</p>
+    </div>
+
+    <div class="controls">
+        <div class="slider-container">
+            <label for="initialGuess">Initial Guess (X): <span id="guessValue">30</span></label>
+            <input type="range" id="initialGuess" min="0" max="100" value="30">
+        </div>
+        <button id="runTargeter">Run Targeter</button>
+        <button id="runOptimizer">Run Optimizer</button>
+        <button id="resetBtn">Reset</button>
+    </div>
+
+    <canvas id="mathChart" width="800" height="400"></canvas>
+    
+    <div id="status">Ready. Adjust the initial guess and select an algorithm.</div>
+
+    <script>
+        // Mathematical landscape generation
+        const f = (x) => 0.05 * Math.pow(x - 50, 2) + 20 * Math.sin(0.2 * x) + 100;
+        const df = (x) => 0.1 * (x - 50) + 4 * Math.cos(0.2 * x); // Derivative for gradient descent
+        const targetConstraint = 150;
+
+        let curveData = [];
+        let targetLineData = [];
+        for (let x = 0; x <= 100; x++) {
+            curveData.push({x: x, y: f(x)});
+            targetLineData.push({x: x, y: targetConstraint});
+        }
+
+        // Initialize Chart.js
+        const ctx = document.getElementById('mathChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: 'Fuel Cost Curve',
+                        data: curveData,
+                        borderColor: '#3498db',
+                        borderWidth: 3,
+                        fill: false,
+                        pointRadius: 0,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Target Constraint (e.g., Altitude)',
+                        data: targetLineData,
+                        borderColor: '#e74c3c',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Current State',
+                        data: [{x: 30, y: f(30)}],
+                        backgroundColor: '#2c3e50',
+                        borderColor: '#2c3e50',
+                        pointRadius: 8,
+                        pointHoverRadius: 10,
+                        type: 'scatter'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { type: 'linear', position: 'bottom', min: 0, max: 100, title: { display: true, text: 'Variable X (e.g., Burn Duration)' } },
+                    y: { min: 0, max: 300, title: { display: true, text: 'Fuel Cost (ΔV)' } }
+                },
+                animation: { duration: 0 } 
+            }
+        });
+
+        // HTML Elements
+        const guessSlider = document.getElementById('initialGuess');
+        const guessValue = document.getElementById('guessValue');
+        const statusText = document.getElementById('status');
+        let animationFrame;
+        let isAnimating = false;
+
+        // Reset function
+        function resetState() {
+            cancelAnimationFrame(animationFrame);
+            isAnimating = false;
+            let x = parseFloat(guessSlider.value);
+            chart.data.datasets[2].data = [{x: x, y: f(x)}];
+            chart.update();
+            statusText.innerText = "Ready. Adjust the initial guess and select an algorithm.";
+        }
+
+        // Event Listeners
+        guessSlider.addEventListener('input', (e) => {
+            if (!isAnimating) {
+                guessValue.innerText = e.target.value;
+                resetState();
+            }
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', resetState);
+
+        // TARGETER: Drops straight down to the constraint
+        document.getElementById('runTargeter').addEventListener('click', () => {
+            if (isAnimating) return;
+            isAnimating = true;
+            let currentPt = chart.data.datasets[2].data[0];
+            let targetY = targetConstraint;
+            statusText.innerText = "Targeter running: Satisfying constraint, ignoring fuel cost...";
+
+            function animateTargeter() {
+                if (currentPt.y > targetY + 1) {
+                    currentPt.y -= 2; // Step down
+                    chart.update();
+                    animationFrame = requestAnimationFrame(animateTargeter);
+                } else if (currentPt.y < targetY - 1) {
+                     currentPt.y += 2; // Step up if below
+                     chart.update();
+                     animationFrame = requestAnimationFrame(animateTargeter);
+                } else {
+                    currentPt.y = targetY;
+                    chart.update();
+                    isAnimating = false;
+                    statusText.innerText = `Targeter stopped at (X: ${currentPt.x.toFixed(1)}, Y: ${currentPt.y.toFixed(1)}). Constraint met!`;
+                }
+            }
+            animateTargeter();
+        });
+
+        // OPTIMIZER: Gradient descent to local minimum
+        document.getElementById('runOptimizer').addEventListener('click', () => {
+            if (isAnimating) return;
+            isAnimating = true;
+            let currentPt = chart.data.datasets[2].data[0];
+            const learningRate = 0.5;
+            statusText.innerText = "Optimizer running: Minimizing fuel cost via gradient descent...";
+
+            function animateOptimizer() {
+                let gradient = df(currentPt.x);
+                let step = learningRate * gradient;
+                
+                // If the gradient is very small, we've found the minimum
+                if (Math.abs(gradient) > 0.05) {
+                    currentPt.x -= step;
+                    
+                    // Keep within bounds
+                    if (currentPt.x < 0) currentPt.x = 0;
+                    if (currentPt.x > 100) currentPt.x = 100;
+                    
+                    currentPt.y = f(currentPt.x);
+                    chart.update();
+                    animationFrame = requestAnimationFrame(animateOptimizer);
+                } else {
+                    isAnimating = false;
+                    statusText.innerText = `Optimizer settled at local minimum (X: ${currentPt.x.toFixed(1)}, Y: ${currentPt.y.toFixed(1)}). Fuel optimized!`;
+                }
+            }
+            animateOptimizer();
+        });
+    </script>
+</body>
+</html>

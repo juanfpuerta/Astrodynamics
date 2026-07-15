@@ -1,0 +1,248 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, graphicx}
+
+% Presentation Theme
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\title[Interplanetary Trajectories]{Astrodynamics 2026-1}
+\subtitle{Patched Conics: Inner vs. Outer Trajectories \& Departure Geometry}
+\author{Prof. Juan}
+\institute{Aerospace Engineering Program}
+\date{Spring 2026}
+
+\begin{document}
+
+% --- Title Slide ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% --- Slide 1 ---
+\begin{frame}{The Patched Conic Method: A Quick Recap}
+    Interplanetary flight is a complex $N$-body problem. We simplify it into three distinct $2$-body zones, "patching" them together at the planet's Sphere of Influence (SOI):
+    
+    \vspace{0.3cm}
+    \begin{enumerate}
+        \item \textbf{Planetocentric Departure:} A hyperbola leaving the home planet.
+        \item \textbf{Heliocentric Cruise:} An elliptical transfer orbit around the Sun.
+        \item \textbf{Planetocentric Arrival:} A hyperbola entering the target planet's SOI.
+    \end{enumerate}
+    
+    \vspace{0.3cm}
+    \textit{The critical link between these phases is the Hyperbolic Excess Velocity ($v_\infty$).}
+\end{frame}
+
+% --- Slide 2 ---
+\begin{frame}{Inner vs. Outer Solar System Trajectories}
+    The direction we leave Earth depends entirely on our destination.
+    
+    \vspace{0.3cm}
+    \textbf{Outer Planets (e.g., Mars, Jupiter)}
+    \begin{itemize}
+        \item Target orbit is \textit{larger} than Earth's.
+        \item We must \textbf{add} energy to our heliocentric orbit.
+        \item The departure $v_\infty$ must point \textbf{in the same direction} as Earth's velocity vector (Prograde departure).
+    \end{itemize}
+
+    \vspace{0.3cm}
+    \textbf{Inner Planets (e.g., Venus, Mercury)}
+    \begin{itemize}
+        \item Target orbit is \textit{smaller} than Earth's.
+        \item We must \textbf{remove} energy from our heliocentric orbit.
+        \item The departure $v_\infty$ must point \textbf{opposite} to Earth's velocity vector (Retrograde departure).
+    \end{itemize}
+\end{frame}
+
+% --- Slide 3 ---
+\begin{frame}{The Departure Hyperbola: Energy Parameters}
+    Once we know $v_\infty$ from the heliocentric cruise, we design the departure hyperbola.
+    
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Excess Velocity ($v_\infty$):} The residual speed the spacecraft has as it crosses the SOI ($r \to \infty$).
+        \item \textbf{Periapsis Velocity ($v_p$):} The maximum speed, occurring at the parking orbit altitude, immediately after the engine burn.
+        \begin{equation}
+            v_p = \sqrt{v_\infty^2 + \frac{2\mu}{r_p}}
+        \end{equation}
+        \item \textbf{Delta-V ($\Delta V$):} The engine effort required to transition from the circular parking orbit ($v_c$) to the hyperbola ($v_p$).
+        \begin{equation}
+            \Delta V = v_p - v_c
+        \end{equation}
+    \end{itemize}
+\end{frame}
+
+% --- Slide 4 ---
+\begin{frame}{Hyperbolic Geometry: The Asymptote Angle ($\beta$)}
+    To properly aim the spacecraft, we must know the angle between the \textbf{apse line} (where we burn our engines) and the \textbf{asymptote} (the direction we eventually travel). 
+    
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Eccentricity ($e$):} For an escape hyperbola, $e > 1$. It dictates the "flatness" of the curve.
+        \begin{equation}
+            e = 1 + \frac{r_p v_\infty^2}{\mu}
+        \end{equation}
+        \item \textbf{Asymptote Angle ($\beta$):} Calculated directly from eccentricity. This angle gives the orientation of the hyperbola's apse line relative to the target departure vector.
+        \begin{equation}
+            \beta = \cos^{-1}\left(\frac{1}{e}\right)
+        \end{equation}
+    \end{itemize}
+\end{frame}
+
+% --- Slide 5 (NEW) ---
+\begin{frame}{Mission Operations: When to Burn?}
+    How does the asymptote angle ($\beta$) relate to the True Anomaly ($\theta$)? We must distinguish between our two orbits:
+    
+    \vspace{0.3cm}
+    \textbf{1. True Anomaly of the Hyperbola}
+    \begin{itemize}
+        \item To maximize efficiency (Oberth effect), the engine burn must happen at the exact periapsis of the escape hyperbola.
+        \item Therefore, on the new hyperbolic orbit, the burn occurs at $\theta = 0^\circ$.
+    \end{itemize}
+
+    \vspace{0.2cm}
+    \textbf{2. True Anomaly of the Parking Orbit}
+    \begin{itemize}
+        \item The heliocentric transfer dictates the required direction of our asymptote ($v_\infty$).
+        \item Because $\beta$ is the angle between the asymptote and periapsis, the spacecraft must coast in its circular parking orbit until it is exactly $\beta$ degrees away from the target $v_\infty$ direction before firing!
+    \end{itemize}
+\end{frame}
+
+% --- Slide 6 ---
+\begin{frame}{Analytical Example: Earth to Venus (Inner Trajectory)}
+    \textbf{Mission:} Earth (300 km parking orbit) to Venus.
+    \begin{itemize}
+        \item Earth Orbit: $R_\oplus = 149.6 \times 10^6$ km, $V_\oplus = 29.78$ km/s.
+        \item Venus Orbit: $R_v = 108.2 \times 10^6$ km.
+    \end{itemize}
+    
+    \textbf{1. Heliocentric Transfer:} \\
+    $a_{tx} = (149.6 + 108.2)/2 = 128.9 \times 10^6$ km. \\
+    Velocity needed at Earth ($V_{tx}$):
+    \begin{equation*}
+        V_{tx} = \sqrt{\mu_{sun} \left( \frac{2}{R_\oplus} - \frac{1}{a_{tx}} \right)} = 27.28 \text{ km/s}
+    \end{equation*}
+    
+    \textbf{2. Excess Velocity ($v_\infty$):} \\
+    Because $V_{tx} < V_\oplus$, we must slow down relative to the Sun!
+    \begin{equation*}
+        v_\infty = |27.28 - 29.78| = 2.50 \text{ km/s}
+    \end{equation*}
+\end{frame}
+
+% --- Slide 7 ---
+\begin{frame}{Analytical Example: Earth to Venus (Continued)}
+    \textbf{3. Earth Departure Burn ($\Delta V$):}
+    \begin{itemize}
+        \item Parking Orbit Radius ($r_p$): $6378 + 300 = 6678$ km.
+        \item Parking Orbit Speed ($v_c$): $\sqrt{\mu_\oplus / r_p} = 7.73$ km/s.
+    \end{itemize}
+    
+    Calculate Periapsis Velocity ($v_p$):
+    \begin{equation*}
+        v_p = \sqrt{v_\infty^2 + \frac{2\mu_\oplus}{r_p}} = \sqrt{2.50^2 + \frac{2(398600)}{6678}} = 11.21 \text{ km/s}
+    \end{equation*}
+    
+    Calculate Required Engine Burn:
+    \begin{equation*}
+        \Delta V = v_p - v_c = 11.21 - 7.73 = \mathbf{3.48 \text{ km/s}}
+    \end{equation*}
+\end{frame}
+
+% --- Slide 8 ---
+\begin{frame}{Analytical Example: Earth to Venus (Departure Angle)}
+    \textbf{4. The Departure Geometry:} \\
+    Now that we have the excess velocity ($v_\infty = 2.50$ km/s) and the parking radius ($r_p = 6678$ km), we must find where to ignite the engines.
+    
+    \vspace{0.3cm}
+    \textbf{Calculate Eccentricity ($e$):}
+    \begin{equation*}
+        e = 1 + \frac{r_p v_\infty^2}{\mu_\oplus} = 1 + \frac{6678 (2.50)^2}{398600} = \mathbf{1.1047}
+    \end{equation*}
+    \textit{Because $e$ is just barely greater than 1, this hyperbola is highly curved.}
+    
+    \vspace{0.3cm}
+    \textbf{Calculate the Asymptote Angle ($\beta$):}
+    \begin{equation*}
+        \beta = \cos^{-1}\left(\frac{1}{e}\right) = \cos^{-1}\left(\frac{1}{1.1047}\right) = \mathbf{25.15^\circ}
+    \end{equation*}
+    
+    \vspace{0.2cm}
+    \textbf{Conclusion:} The engine burn (periapsis) must occur when the spacecraft is located $25.15^\circ$ away from the desired outgoing escape trajectory.
+\end{frame}
+
+% --- Slide 8 ---
+\begin{frame}{Planetary Rendezvous: The Problem of Timing}
+    We calculated the $\Delta V$ to reach Venus's orbit, but Venus is moving! If we launch at the wrong time, we will cross Venus's orbit when the planet is millions of kilometers away.
+    
+    \vspace{0.3cm}
+    \textbf{The Phase Angle ($\phi$):} \\
+    The angular position of the target planet (Planet 2) relative to the departure planet (Planet 1).
+    \begin{equation}
+        \phi = \theta_2 - \theta_1
+    \end{equation}
+    
+    \textbf{The Goal:} \\
+    We must launch when the initial phase angle ($\phi_0$) is perfectly sized so that Planet 2 arrives at the transfer ellipse's apoapsis (or periapsis) at the exact same moment the spacecraft does.
+\end{frame}
+
+% --- Slide 9 ---
+\begin{frame}{Calculating the Launch Window}
+    \textbf{1. Time of Flight ($t_{12}$):} \\
+    The time it takes the spacecraft to fly the Hohmann transfer (half of the ellipse's period).
+    \begin{equation}
+        t_{12} = \frac{\pi}{\sqrt{\mu_{sun}}} \left( \frac{R_1 + R_2}{2} \right)^{3/2}
+    \end{equation}
+    
+    \textbf{2. Required Initial Phase Angle ($\phi_0$):} \\
+    During the time $t_{12}$, the target planet moves at its own angular velocity ($n_2$). Because the spacecraft travels exactly $180^\circ$ ($\pi$ radians), the target planet must have a specific "head start" (or lag).
+    \begin{equation}
+        \phi_0 = \pi - n_2 t_{12}
+    \end{equation}
+\end{frame}
+
+% --- Slide 10 ---
+\begin{frame}{Analytical Example: Earth to Venus (Timing)}
+    Let's find the launch window for our Earth-to-Venus mission. 
+    \begin{itemize}
+        \item $a_{tx} = 128.9 \times 10^6$ km (calculated previously)
+        \item Venus mean motion ($n_2$): $360^\circ / 224.7 \text{ days} = 1.602^\circ/\text{day}$
+    \end{itemize}
+    
+    \vspace{0.2cm}
+    \textbf{Calculate Time of Flight ($t_{12}$):}
+    \begin{equation*}
+        t_{12} = \frac{\pi}{\sqrt{1.327 \times 10^{11}}} (128.9 \times 10^6)^{3/2} = 12,668,775 \text{ s} = \mathbf{146.6 \text{ days}}
+    \end{equation*}
+    
+    \vspace{0.2cm}
+    \textbf{Calculate Required Phase Angle ($\phi_0$):} \\
+    \textit{(Converting $\pi$ to $180^\circ$ for intuitive degrees)}
+    \begin{equation*}
+        \phi_0 = 180^\circ - (1.602^\circ/\text{day} \times 146.6 \text{ days}) = 180^\circ - 234.8^\circ = \mathbf{-54.8^\circ}
+    \end{equation*}
+    
+    \textbf{Conclusion:} We can only launch when Venus is $54.8^\circ$ \textit{behind} Earth in its orbit!
+\end{frame}
+
+% --- Slide 11 ---
+\begin{frame}{The Synodic Period ($T_{syn}$)}
+    If we miss our launch window today, how long do we have to wait for Venus to be exactly $54.8^\circ$ behind Earth again? 
+    
+    \vspace{0.3cm}
+    Because planets move at different speeds, this exact alignment repeats periodically. This wait time is called the \textbf{Synodic Period}.
+    \begin{equation}
+        T_{syn} = \frac{T_1 T_2}{|T_1 - T_2|}
+    \end{equation}
+    
+    \textbf{For our Venus Mission:} \\
+    Using Earth ($T_1 = 365.26$ days) and Venus ($T_2 = 224.7$ days):
+    \begin{equation*}
+        T_{syn} = \frac{365.26 \times 224.7}{|365.26 - 224.7|} = \mathbf{583.9 \text{ days}}
+    \end{equation*}
+    
+    Launch windows to Venus only open once every 1.6 years!
+\end{frame}
+
+\end{document}

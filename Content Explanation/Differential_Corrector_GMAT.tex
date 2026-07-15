@@ -1,0 +1,120 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, graphicx}
+\usepackage{bm} % For bold math symbols (vectors)
+
+% Presentation Theme
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\title[GMAT \& The Shooting Method]{Astrodynamics 2026-1}
+\subtitle{High-Fidelity Targeting: The Differential Corrector \\ \& The Shooting Method}
+\author{Prof. Juan}
+\institute{Universidad de Antioquia - Aerospace Engineering}
+\date{Spring 2026}
+
+\begin{document}
+
+% --- Title Slide ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% ==========================================
+% SECTION 1: THE HIGH-FIDELITY PROBLEM
+% ==========================================
+\section{The High-Fidelity Problem}
+
+% --- Slide 1 ---
+\begin{frame}{Bridging Theory and Reality}
+    We have successfully used Python and Lambert's problem to find the optimal transfer geometry. Why must we now use NASA GMAT?
+    
+    \vspace{0.3cm}
+    \textbf{The Analytical Assumption:} Lambert solvers assume ideal 2-Body physics (only the Sun's point-mass gravity acts on the spacecraft).
+    
+    \vspace{0.3cm}
+    \textbf{The High-Fidelity Reality:} When we ignite our engines in Low Earth Orbit, our spacecraft immediately experiences:
+    \begin{itemize}
+        \item Earth's Oblateness ($J_2$ perturbations).
+        \item Atmospheric Drag.
+        \item Solar Radiation Pressure (SRP).
+        \item N-Body Gravity (The Moon, Jupiter, etc.).
+    \end{itemize}
+    \vspace{0.2cm}
+    \textit{Because of these perturbations, our perfect analytical guess will always "miss" the target in a real mission.}
+\end{frame}
+
+% ==========================================
+% SECTION 2: THE SHOOTING METHOD
+% ==========================================
+\section{The Shooting Method}
+
+% --- Slide 2 ---
+\begin{frame}{The Core Concept: The Shooting Method}
+    To hit our target in a chaotic physical environment, numerical solvers use a technique called the \textbf{Shooting Method}. 
+    
+    \vspace{0.3cm}
+    \textbf{The Artillery Analogy:}
+    \begin{enumerate}
+        \item You guess an angle and gunpowder charge, fire the cannon, and watch where it lands.
+        \item It lands 10 meters short.
+        \item You add a tiny perturbation of gunpowder, fire again, and see that it now lands 8 meters short.
+        \item By measuring how the distance changed based on that tiny addition, you calculate the "slope" (the derivative).
+        \item You use that derivative to calculate exactly how much gunpowder is needed to eliminate the remaining error.
+    \end{enumerate}
+\end{frame}
+
+% ==========================================
+% SECTION 3: GMAT ARCHITECTURE
+% ==========================================
+\section{GMAT Architecture}
+
+% --- Slide 3 ---
+\begin{frame}{GMAT Architecture: The Target Sequence}
+    NASA GMAT implements this exact methodology using three specific script commands inside a \texttt{Target} sequence.
+    
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Vary (The Independent Variables):} These are the "knobs" GMAT is allowed to turn (e.g., Burn Magnitude $\Delta V$, True Anomaly). We initialize these with our analytical Lambert guesses.
+        \item \textbf{Propagate (The Function):} GMAT runs its high-fidelity numerical integrator (e.g., Runge-Kutta 8/9), moving the spacecraft forward in time subject to all real-world physics.
+        \item \textbf{Achieve (The Dependent Variables / Goals):} These are the target conditions we must hit (e.g., Lunar Flyby Radius, Arrival $C_3$, B-Plane coordinates).
+    \end{itemize}
+\end{frame}
+
+% ==========================================
+% SECTION 4: THE MATHEMATICS
+% ==========================================
+\section{The Mathematics}
+
+% --- Slide 4 ---
+\begin{frame}{The Mathematics: The Jacobian Matrix}
+    How does GMAT calculate the corrections? It builds a \textbf{Jacobian Matrix ($\mathbf{J}$)}.
+    
+    \vspace{0.2cm}
+    Let $\mathbf{X}$ be the vector of our variables (e.g., $\Delta V$) and $\mathbf{F}(\mathbf{X})$ be the error in our targets. We want $\mathbf{F}(\mathbf{X}) = 0$. GMAT uses forward finite-differences:
+    
+    \begin{enumerate}
+        \item \textbf{Nominal Run:} Propagate the initial guess $\mathbf{X}_0$ and record the error.
+        \item \textbf{Perturbation Run:} Add a tiny perturbation (defined in your script) to the first variable. Propagate the entire trajectory again and record the new error.
+        \item \textbf{Calculate Gradients:} Calculate the partial derivative. \textit{("If I change $\Delta V$ by 0.0001 km/s, my flyby radius changes by 50 km.")} This populates the Jacobian.
+    \end{enumerate}
+\end{frame}
+
+% --- Slide 5 ---
+\begin{frame}{The Iterative Update}
+    Once the Jacobian matrix ($\mathbf{J}$) is fully populated for all variables, GMAT applies a multi-variable Newton-Raphson update.
+    
+    \vspace{0.3cm}
+    It inverts the matrix to find the macroscopic correction required for the next iteration:
+    \begin{equation}
+        \mathbf{X}_{i+1} = \mathbf{X}_i - \mathbf{J}^{-1} \mathbf{F}(\mathbf{X}_i)
+    \end{equation}
+    
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item $\mathbf{X}_{i+1}$: The new, updated guesses for the \texttt{Vary} commands.
+        \item GMAT repeats this entire process, firing the "cannon" over and over, until the error $\mathbf{F}(\mathbf{X})$ drops below your defined tolerance.
+    \end{itemize}
+\end{frame}
+
+\end{document}

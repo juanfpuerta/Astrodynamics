@@ -1,0 +1,131 @@
+\documentclass[11pt, letterpaper]{article}
+
+% --- Packages ---
+\usepackage{amsmath, graphicx, amsfonts, enumitem, xcolor, listings, tcolorbox}
+\usepackage[left=1in, right=1in, bottom=1in, top=3cm, headheight=2cm, headsep=0.5cm, footskip=1cm]{geometry}
+\usepackage{fancyhdr}
+
+% --- Code Listing Formatting ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{ 
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\scriptsize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=Python
+}
+
+% --- Header Configuration ---
+\pagestyle{fancy} 
+\fancyhf{} 
+\renewcommand{\headrulewidth}{0.4pt} 
+\lhead{\raisebox{-0.5cm}{\textbf{Universidad de Antioquia}}}
+\rhead{\large \textbf{Code Walkthrough: The Voyager Script} \\ \normalsize Spaceflight Dynamics 2026-1} 
+\cfoot{\thepage} 
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Deconstructing the Gravity Assist Search Engine}} \\
+    \vspace{0.2cm}
+    {\large \textit{Simulating the Voyager 1 \& 2 Launch Windows}} \\
+    \vspace{0.4cm}
+    \textit{Prof. Juan | Aerospace Engineering Program}
+\end{center}
+\hrule
+\vspace{0.5cm}
+
+\section*{Introduction to the Problem}
+In 2-body orbital mechanics, we design transfers from Point A to Point B using a 2D Porkchop Plot (Departure Date vs. Arrival Date). However, designing a mission that visits \textit{three} planets (Earth $\rightarrow$ Jupiter $\rightarrow$ Saturn) introduces a 3D time problem. 
+
+To solve this, our Python script freezes one time variable (the Jupiter-to-Saturn transit time is fixed at 3 years) and searches for the optimal Earth Departure and Jupiter Flyby dates that yield a "free" gravity assist.
+
+% ---------------------------------------------------------
+\section*{Step 1 \& 2: The SPICE Engine and the Search Grid}
+Before solving any orbital mechanics problems, the computer must know exactly where the planets are. We use NASA's SPICE toolkit (\texttt{spiceypy}) to load the \texttt{de442.bsp} kernel, which contains the precise ephemeris (positional) data of the solar system.
+
+\begin{lstlisting}[caption=Defining the Time Grids]
+# Freeze Jupiter->Saturn TOF to 3 years (in seconds)
+fixed_jup_sat_tof_sec = 3 * 365 * 86400
+
+# Earth Departure Dates (1977 - 1979)
+dep_start = spy.utc2et("1977-01-01T00:00:00")
+dep_end   = spy.utc2et("1979-05-01T00:00:00")
+earth_dates = np.linspace(dep_start, dep_end, 100)
+
+# Jupiter Flyby Dates (1979 - 1981)
+jup_dates = np.linspace(flyby_start, flyby_end, 100)
+
+dv_penalty_grid = np.full((100, 100), np.nan)
+\end{lstlisting}
+
+\textbf{Astrodynamics Concept:} We initialize a 100x100 grid (\texttt{dv\_penalty\_grid}) filled with \texttt{NaN} (Not a Number) values. The script will iterate through all 10,000 combinations of Earth and Jupiter dates. If the physics engine fails (e.g., trying to arrive at Jupiter before leaving Earth), the grid space remains \texttt{NaN} and is ignored in the final plot.
+
+% ---------------------------------------------------------
+\section*{Step 3 \& 4: The Core Physics Loop (Patched Conics)}
+This is the heart of the simulation. For every valid date combination, we break the mission into two independent legs and solve Lambert's Problem for each.
+
+\subsection*{Leg 1: Earth to Jupiter}
+\begin{lstlisting}[numbers=none]
+pos_E, _ = spy.spkpos('EARTH', t_earth, 'J2000', 'NONE', 'SOLAR SYSTEM BARYCENTER')
+pos_J_in, _ = spy.spkpos('JUPITER BARYCENTER', t_jup, 'J2000', 'NONE', 'SOLAR SYSTEM BARYCENTER')
+
+# Solve Lambert for Leg 1
+solutions_1 = list(izzo.lambert(mu_sun_u, pos_E_u, pos_J_in_u, tof_1_u))
+v1_E, v1_J = solutions_1[0] 
+\end{lstlisting}
+Notice we query the \texttt{'JUPITER BARYCENTER'} instead of \texttt{'JUPITER'}. In deep space, the spacecraft's trajectory is influenced by the mass of Jupiter \textit{and} its massive Galilean moons. We solve Lambert to find \texttt{v1\_J}, which is the heliocentric velocity the spacecraft has right as it arrives at Jupiter.
+
+\subsection*{Leg 2: Jupiter to Saturn}
+We repeat the exact same process for the fixed 3-year leg from Jupiter to Saturn, calculating \texttt{v2\_J}, which is the heliocentric velocity the spacecraft \textit{must} have leaving Jupiter to successfully reach Saturn in exactly 3 years.
+
+\subsection*{The Matching Penalty (The Gravity Assist Check)}
+\begin{lstlisting}[numbers=none]
+# Find Jupiter's true velocity
+state_J, _ = spy.spkezr('JUPITER BARYCENTER', t_jup, 'J2000', 'NONE', 'SUN')
+vel_J_planet = state_J[3:6]
+
+# Calculate V-infinity vectors
+v_inf_in = v1_J - vel_J_planet
+v_inf_out = v2_J - vel_J_planet
+
+# The Penalty Calculation
+mag_in = np.linalg.norm(v_inf_in)
+mag_out = np.linalg.norm(v_inf_out)
+dv_penalty_grid[i, j] = abs(mag_out - mag_in)
+\end{lstlisting}
+
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=The Golden Rule of Gravity Assists]
+Jupiter's gravity can completely change the \textit{direction} of the $V_\infty$ vector, but it cannot change the \textit{magnitude} (speed) relative to the planet. Therefore, a perfectly "free" unpowered gravity assist is only possible if $|\vec{V}_{\infty, in}| = |\vec{V}_{\infty, out}|$. If they do not match, the spacecraft must fire its engine to make up the difference. This difference is our \texttt{dv\_penalty}.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\section*{Step 5: Extracting the GMAT Initial Guess}
+Once the loop finishes all 10,000 combinations, the script uses \texttt{np.nanargmin} to find the exact matrix indices ($i, j$) that contain the absolute lowest $\Delta V$ penalty. 
+
+\begin{lstlisting}[numbers=none]
+rmag_E = np.linalg.norm(pos_E)
+vmag_E = np.linalg.norm(v1_E.value)
+\end{lstlisting}
+
+We recalculate the Lambert solutions for those specific dates and print the Cartesian vectors (X, Y, Z, VX, VY, VZ). 
+\\
+\textbf{Why do we need this?} GMAT's Yukon optimizer is highly accurate but easily confused. If we give it a random guess, the N-body physics engine will crash. By feeding the Yukon optimizer the exact analytical vectors output by this Python script, we provide a "warm start", allowing GMAT to simply polish the trajectory to account for multi-body perturbations.
+
+\end{document}

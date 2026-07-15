@@ -1,0 +1,74 @@
+\documentclass[12pt, letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, geometry}
+\geometry{margin=1in}
+
+\title{\textbf{Applied Astrodynamics: Perturbations Workshop}}
+\author{Aerospace Engineering Program \\ Universidad de Antioquia}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Instructions}
+Solve the following applied problems concerning orbital perturbations. Assume the following standard parameters for Earth unless otherwise specified:
+\begin{itemize}
+    \item $R_{\oplus} = 6378$ km
+    \item $\mu_{\oplus} = 398,600$ km$^3$/s$^2$
+    \item $J_2 = 1.08263 \times 10^{-3}$
+\end{itemize}
+
+\vspace{0.5cm}
+
+\section*{Exercise 1: The Baseline $J_2$ Effect}
+Assume a satellite is in a circular orbit around the Earth with a semi-major axis of $a = 30,000$ km. 
+\begin{enumerate}
+    \item[a)] Calculate the unperturbed mean motion, $n$.
+    \item[b)] Calculate the variations in the longitude of the ascending node ($\dot{\Omega}$) and the argument of periapsis ($\dot{\omega}$) for an \textbf{equatorial orbit} ($i = 0^\circ$).
+    \item[c)] Calculate the same variations ($\dot{\Omega}$ and $\dot{\omega}$) for a \textbf{polar orbit} ($i = 90^\circ$). What is the physical significance of the result for $\dot{\Omega}$?
+\end{enumerate}
+
+\section*{Exercise 2: Designing a Sun-Synchronous Orbit (SSO)}
+Earth observation missions often require a Sun-Synchronous Orbit (SSO) to maintain consistent lighting conditions. This is achieved by exploiting the $J_2$ perturbation to precess the orbital plane at the same rate the Earth revolves around the Sun ($\dot{\Omega}_{req} = 0.9856^\circ$/day).
+\begin{enumerate}
+    \item[a)] Convert $\dot{\Omega}_{req}$ into rad/s.
+    \item[b)] If the mission requires a circular orbit at an altitude of $h = 800$ km, calculate the exact inclination ($i$) required to achieve sun-synchronism.
+\end{enumerate}
+
+\section*{Exercise 3: Critical Inclination and Frozen Orbits}
+Highly elliptical communication orbits (such as Molniya orbits) require the apogee to remain fixed over a specific hemisphere. This means the apsidal drift rate ($\dot{\omega}$) caused by the $J_2$ perturbation must be exactly zero.
+\begin{enumerate}
+    \item[a)] Using the analytical equation for $\dot{\omega}$, mathematically derive the two "critical inclinations" where the argument of perigee remains constant.
+\end{enumerate}
+
+\section*{Exercise 4: Interplanetary Perturbations - Jupiter SSO}
+You are designing an observation probe for Jupiter. Jupiter is a massive, rapidly rotating gas giant with a significant oblateness.
+\begin{itemize}
+    \item $R_J = 69,911$ km
+    \item $\mu_J = 1.26686 \times 10^8$ km$^3$/s$^2$
+    \item $J_{2,J} = 0.014736$
+    \item Jovian Year = $4332.589$ Earth days
+\end{itemize}
+\begin{enumerate}
+    \item[a)] Calculate the required nodal precession rate ($\dot{\Omega}$) in rad/s to maintain a Sun-synchronous orbit around Jupiter.
+    \item[b)] Propose a circular orbit with a semi-major axis $a = 2 R_J$ (to avoid the intense inner radiation belts). Calculate the inclination required to make this orbit Sun-synchronous.
+\end{enumerate}
+
+\section*{Exercise 5: Orbital Decay via Atmospheric Drag}
+A university CubeSat is deployed into Low Earth Orbit. Atmospheric drag will act continuously as a non-conservative force, gradually decaying the semi-major axis.
+\begin{itemize}
+    \item Mass: $m = 3.0$ kg
+    \item Cross-sectional Area: $A = 0.03$ m$^2$
+    \item Drag Coefficient: $C_D = 2.0$
+    \item Initial Circular Altitude: $h = 500$ km ($a = 6,878,000$ m)
+    \item Atmospheric Density at 500 km: $\rho \approx 1.0 \times 10^{-12}$ kg/m$^3$
+    \item Earth Gravity Parameter: $\mu_{\oplus} = 3.986 \times 10^{14}$ m$^3$/s$^2$
+\end{itemize}
+\begin{enumerate}
+    \item[a)] Calculate the ballistic coefficient ($B$) of the CubeSat.
+    \item[b)] Estimate the initial rate of decay of the semi-major axis ($da/dt$) in meters per second. 
+    \item[c)] How many meters of altitude will the satellite lose in its first day of operations?
+\end{enumerate}
+
+\end{document}

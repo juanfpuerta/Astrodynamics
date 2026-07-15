@@ -1,0 +1,80 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[letterpaper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{amsmath, amssymb, graphicx, fancyhdr, xcolor}
+
+% Header/Footer Setup
+\setlength{\headheight}{35pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\vspace{10pt}\textbf{Astrodynamics 2026-1}}
+\fancyhead[R]{\includegraphics[height=1cm]{UdeA+simplificado+Negro_Smaller.png}}
+\fancyfoot[C]{\thepage}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Home Exam: Advanced Astrodynamics and Mission Design}} \\
+    \vspace{0.2cm}
+    {\large \textit{Module 1 (Perturbations) \& Module 2 (Advanced Trajectories/Low Thrust)}} \\
+    \vspace{0.4cm}
+    \textbf{Weight:} 30\% of Final Grade | \textbf{Submission day:} 29$^{th}$ of May - 11:59 pm \\
+    \textit{Prof. Juan Francisco Puerta I | Aerospace Engineering Program}
+\end{center}
+
+\hrule
+\vspace{0.5cm}
+
+\section*{Instructions \& Academic Integrity}
+This is a take-home examination. You are expected to demonstrate profound critical thinking, mathematical rigor, and computational proficiency. 
+\begin{itemize}
+    \item \textbf{Submission Format:} You must submit a single \texttt{.zip} file containing your consolidated analytical PDF report, your documented Python (\texttt{.py}) scripts, and your functional GMAT (\texttt{.script}) files.
+    \item \textbf{Show Your Work:} Show all steps in your derivations. Final numerical answers without supporting analytical frameworks will receive zero credit.
+    \item \textbf{Chief Architect's Memo (CAM):} For every design choice, orbital trade-off, or discrepancy between analytical and numerical results, you must include a brief CAM paragraph justifying \textit{why} the physics support your decision or explain the source of the error.
+\end{itemize}
+
+% ---------------------------------------------------------
+% PROBLEM 1
+% ---------------------------------------------------------
+\section*{Problem 1: Perturbative Forces (20 Points)}
+A spacecraft is in a Low Earth Orbit experiencing $J_2$ secular variations and atmospheric drag. 
+\begin{enumerate}
+    \item[(a)] Derive the vector acceleration $\boldsymbol{a}_{J2}$ acting on the spacecraft and explain its primary effects on the Right Ascension of the Ascending Node ($\Omega$) and the Argument of Perigee ($\omega$).
+    \item[(b)] Using Python, simulate the orbit for 30 days and plot the secular drift of $\Omega$. Compare your analytical drift rate to the numerical result. Write a CAM explaining any differences.
+\end{enumerate}
+
+% ---------------------------------------------------------
+% PROBLEM 2
+% ---------------------------------------------------------
+\section*{Problem 2: Interplanetary Mission to Venus (25 Points)}
+You are tasked with designing the interplanetary trajectory for an orbiter heading to Venus. Assume circular, coplanar orbits for the planets for your initial analytical guess.
+\begin{enumerate}
+    \item[(a)] Calculate the required departure energy ($C_3$) and the hyperbolic excess velocity ($\boldsymbol{v}_\infty$) for a Hohmann transfer from Earth to Venus.
+    \item[(b)] \textbf{Porkchop Plot Analysis:} Using Python and SPICE kernels (or a Lambert solver), generate a Porkchop plot for launch windows between 2028 and 2029. Identify the optimal departure date and extract the actual 3D $C_3$ and departure asymptote angles ($\delta$, $\beta$).
+    \item[(c)] \textbf{GMAT Implementation:} Build the departure sequence in GMAT from a 300 km Earth parking orbit. Use a Differential Corrector to target the required $C_3$ and B-plane coordinates. Provide the exact $\Delta V$ required and a screenshot of the trajectory.
+\end{enumerate}
+
+% ---------------------------------------------------------
+% PROBLEM 3
+% ---------------------------------------------------------
+\section*{Problem 3: Deep Space Gravity Assist - Earth-Jupiter-Saturn (35 Points)}
+A flagship mission to Saturn requires a gravity assist from Jupiter to minimize launch vehicle requirements.
+\begin{enumerate}
+    \item[(a)] \textbf{Vector Geometry:} Analytically define the velocity vectors for the spacecraft arriving at Jupiter ($\boldsymbol{v}_{arr}$) and departing Jupiter ($\boldsymbol{v}_{dep}$) toward Saturn. 
+    \item[(b)] \textbf{Flyby Parameters:} Calculate the required turning angle ($\Delta$) and the periapsis radius ($r_p$) at Jupiter required to achieve this assist. Is this flyby safe from Jupiter's atmosphere/radiation belts? Include a CAM analyzing the safety of the flyby altitude.
+    \item[(c)] \textbf{B-Plane Targeting in GMAT:} Construct this sequence in GMAT. You must use B-plane coordinates (\texttt{BdotT} and \texttt{BdotR}) at Jupiter to successfully \textit{thread the needle} and achieve an intercept trajectory with Saturn. Report the final B-plane parameters used and the total $\Delta V$ savings compared to a direct Earth-Saturn Hohmann transfer.
+\end{enumerate}
+
+% ---------------------------------------------------------
+% PROBLEM 4
+% ---------------------------------------------------------
+\section*{Problem 4: Low-Thrust Lunar Transfer Analysis (20 Points)}
+A new commercial lunar payload will utilize solar electric propulsion (SEP) to transfer from a 500 km LEO to lunar orbit. The spacecraft has an initial mass of $1,500 \text{ kg}$, a thrust of $200 \text{ mN}$, and an $I_{sp}$ of $2,000 \text{ s}$.
+\begin{enumerate}
+    \item[(a)] \textbf{Analytical Spiral:} Estimate the total $\Delta V$ and time of flight (in days) required to spiral out from LEO to the edge of the Moon's sphere of influence using continuous low thrust. Calculate the total propellant mass consumed.
+    \item[(b)] \textbf{Comparative Trade Study (CAM):} Write a detailed Chief Architect's Memo (max 400 words) comparing this low-thrust mission architecture to a traditional high-thrust chemical impulsive transfer (e.g., $I_{sp} = 315 \text{ s}$). Explicitly analyze the advantages and disadvantages regarding payload mass fraction, mission operations, time of flight, and passage through the Van Allen radiation belts. 
+\end{enumerate}
+
+\end{document}

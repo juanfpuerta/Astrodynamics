@@ -1,0 +1,48 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{amsmath, amssymb, graphicx, listings, xcolor, fancyhdr}
+
+% Header/Footer Setup
+\setlength{\headheight}{35pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\vspace{10pt}\textbf{Astrodynamics 2026-1: Laboratory}}
+\fancyhead[R]{\includegraphics[height=1cm]{UdeA+simplificado+Negro_Smaller.png}}
+\fancyfoot[C]{\thepage}
+
+% Code Block Styling
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    frame=single,
+    backgroundcolor=\color{gray!5}
+}
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Laboratory Report [Insert Lab Number]}} \\
+    \vspace{0.2cm}
+    {\large \textit{[Insert Lab Topic: e.g., Numerical Integration of Low Thrust]}} \\
+    \vspace{0.4cm}
+    \textbf{Weight:} 30\% (Total for 4 Labs) \\
+    \textit{Prof. Juan | Aerospace Engineering Program}
+\end{center}
+
+\hrule
+\vspace{0.5cm}
+
+\section*{The "Trust but Verify" Declaration}
+\textit{In this lab, you are free to use textbooks, code snippets, or AI tools to assist in your coding. However, you must prove you understand exactly what the tools are doing. Paste your code below and provide line-by-line mathematical justification.}
+
+\section*{1. Analytical Baseline (Python/Scilab)}
+[Insert the theoretical Python/Scilab calculations establishing the ground truth of the maneuver. Include the $\boldsymbol{r}$ and $\boldsymbol{v}$ state vectors.]
+
+\section*{2. Numerical Simulation (GMAT)}
+[Insert GMAT architecture description and Differential Corrector setup.]
+
+\section*{3. Verification \& Discrepancy Analysis}
+\textbf{Mandatory Analysis:} Compare your analytical baseline against the numerical GMAT output. Calculate the percentage error. Explain physically \textit{why} the discrepancy exists (e.g., continuous thrust penalty, integration tolerances, or $J_2$ inclusion).
+
+\end{document}

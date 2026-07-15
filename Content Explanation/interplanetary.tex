@@ -1,0 +1,127 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+
+% Presentation Theme
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\title[Interplanetary Mission Design]{Astrodynamics: Advanced Topics}
+\subtitle{Interplanetary Mission Design \& The Patched Conic Approximation}
+\author{Module: Astrodynamics}
+\date{Week 5}
+
+\begin{document}
+
+% --- Title Slide ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% --- Slide 1 ---
+\begin{frame}{The Challenge of Interplanetary Flight}
+    \textbf{The Reality ($N$-Body Problem):} \\
+    A spacecraft traveling to Mars is simultaneously pulled by the Earth, the Sun, Mars, and Jupiter. There is no analytical solution for this.
+    
+    \vspace{0.5cm}
+    \textbf{The Solution (Patched Conic Approximation):} \\
+    We divide the complex journey into three distinct 2-Body phases where only \textit{one} gravitational body dominates at a time:
+    \begin{enumerate}
+        \item \textbf{Phase 1:} Earth Departure (Geocentric Hyperbola)
+        \item \textbf{Phase 2:} Interplanetary Cruise (Heliocentric Ellipse)
+        \item \textbf{Phase 3:} Target Arrival (Planetocentric Hyperbola)
+    \end{enumerate}
+    
+    \vspace{0.3cm}
+    \textit{Concept: We "patch" these conics together at their boundaries.}
+\end{frame}
+
+% --- Slide 2 ---
+\begin{frame}{The Sphere of Influence (SOI)}
+    \textbf{Definition:} \\
+    The SOI is the imaginary boundary around a planet where its gravity becomes the primary influence on a spacecraft, superseding the Sun.
+    
+    \vspace{0.5cm}
+    \textbf{Laplace's Equation for SOI:}
+    \begin{equation}
+        r_{SOI} = R_p \left( \frac{m_{planet}}{M_{Sun}} \right)^{2/5}
+    \end{equation}
+    \textit{Where $R_p$ is the distance from the Sun to the planet.}
+    
+    \vspace{0.5cm}
+    \textbf{Scale:} \\
+    Earth's SOI is approximately $925,000$ km. Once a spacecraft crosses this boundary, we switch our reference frame to the Sun.
+\end{frame}
+
+% --- Slide 3 ---
+\begin{frame}{Phase 2: The Heliocentric Transfer (Macro View)}
+    \textit{Counterintuitively, we solve the middle of the journey first!}
+    
+    \vspace{0.3cm}
+    \textbf{The Transfer Ellipse:} \\
+    Assume Earth and Mars are points. We design a Hohmann transfer from Earth's orbital radius ($R_1$) to the target planet's radius ($R_2$).
+    
+    \vspace{0.3cm}
+    \textbf{Required Heliocentric Velocity ($V_{tx}$):}
+    \begin{equation}
+        V_{tx} = \sqrt{\mu_{Sun} \left( \frac{2}{R_1} - \frac{1}{a_{tx}} \right)}
+    \end{equation}
+    
+    \vspace{0.3cm}
+    \textbf{Hyperbolic Excess Velocity ($v_\infty$):} \\
+    The difference between the required transfer speed and the Earth's existing speed around the Sun.
+    \begin{equation}
+        v_{\infty} = V_{tx} - V_{Earth}
+    \end{equation}
+\end{frame}
+
+% --- Slide 4 ---
+\begin{frame}{Phase 1: Earth Departure (Micro View)}
+    \textbf{The Reference Frame Change:} \\
+    We zoom back into the Earth. The $v_\infty$ calculated in Phase 2 is the velocity the spacecraft must have \textit{as it exits the Earth's SOI}.
+    
+    \vspace{0.3cm}
+    \textbf{Energy Conservation (Vis-Viva Equation):} \\
+    Energy at the parking orbit ($r_{park}$) must equal energy at the SOI boundary ($r \to \infty$).
+    \begin{equation}
+        \frac{V_{bo}^2}{2} - \frac{\mu_{\oplus}}{r_{park}} = \frac{v_\infty^2}{2} - 0
+    \end{equation}
+    
+    \vspace{0.3cm}
+    \textbf{The Departure Burn ($\Delta V$):}
+    \begin{equation}
+        \Delta V_{depart} = \sqrt{v_\infty^2 + \frac{2\mu_{\oplus}}{r_{park}}} - \sqrt{\frac{\mu_{\oplus}}{r_{park}}}
+    \end{equation}
+\end{frame}
+
+% --- Slide 5 ---
+\begin{frame}{The Oberth Effect}
+    \textbf{Why do we burn deep in the gravity well?}
+    
+    \vspace{0.5cm}
+    \begin{itemize}
+        \item \textbf{The Concept:} A rocket maneuver is significantly more efficient when the vehicle is traveling at high speed.
+        \item \textbf{The Proof:} Look at the departure equation:
+        $$ V_{bo} = \sqrt{v_\infty^2 + \frac{2\mu_{\oplus}}{r_{park}}} $$
+        \item Because the $\frac{2\mu_{\oplus}}{r_{park}}$ term is under the square root alongside $v_\infty^2$, burning at a lower altitude (smaller $r_{park}$, higher speed) requires exponentially less $\Delta V$ to achieve the same $v_\infty$.
+    \end{itemize}
+\end{frame}
+
+% --- Slide 6 ---
+\begin{frame}{Phase 3: Target Arrival \& Capture}
+    \textbf{Arrival Geometry:} \\
+    The spacecraft crosses the target planet's SOI with an arrival hyperbolic excess velocity ($v_{\infty, arr}$). 
+    
+    \vspace{0.3cm}
+    \textbf{The Capture Hyperbola:} \\
+    To avoid a flyby, we must apply the brakes at the periapsis of the arrival hyperbola to enter a circular capture orbit ($r_{cap}$).
+    
+    \vspace{0.3cm}
+    \textbf{The Insertion Burn ($\Delta V$):} \\
+    This is the exact mathematical mirror of the departure burn.
+    \begin{equation}
+        \Delta V_{capture} = \sqrt{v_{\infty, arr}^2 + \frac{2\mu_{target}}{r_{cap}}} - \sqrt{\frac{\mu_{target}}{r_{cap}}}
+    \end{equation}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,110 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[letterpaper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{amsmath, amssymb, graphicx, fancyhdr, xcolor, booktabs, listings}
+
+% Header/Footer Setup
+\setlength{\headheight}{35pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\vspace{10pt}\textbf{Astrodynamics 2026-1: Solution Guide}}
+\fancyhead[R]{\includegraphics[height=1cm]{UdeA+simplificado+Negro_Smaller.png}}
+\fancyfoot[C]{\thepage}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+% Code Block Styling for Python Snippets
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{orange},
+    frame=single,
+    backgroundcolor=\color{gray!5}
+}
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Instructor Solution Manual}} \\
+    \vspace{0.2cm}
+    {\large \textit{In-Class Practicum: Interplanetary Targeting}} \\
+    \vspace{0.4cm}
+    \textbf{Topic:} Patched Conics, The B-Plane, and Launch Windows \\
+    \textit{Prof. Juan Francisco Puerta I. | Aerospace Engineering Program}
+\end{center}
+
+\hrule
+\vspace{0.5cm}
+
+\section*{Part 1: Analytical Baseline Solution (Colab / Python)}
+
+\textbf{Assumed Planetary Constants:}
+\begin{itemize}
+    \item Sun: $\mu_\odot = 132,712,440,018 \text{ km}^3/\text{s}^2$
+    \item Earth: $\mu_\oplus = 398,600 \text{ km}^3/\text{s}^2$, $R_\oplus = 6,378 \text{ km}$, $r_1 \approx 149.6 \times 10^6 \text{ km}$
+    \item LEO Parking Orbit: $h = 300 \text{ km} \rightarrow r_{park} = 6,678 \text{ km}$
+    \item Mars: $r_2 \approx 227.9 \times 10^6 \text{ km}$
+\end{itemize}
+
+\textbf{Step 1.1: The Heliocentric Transfer}
+Calculate the semi-major axis of the Hohmann transfer ellipse ($a_{tx}$) and the velocity required at perihelion ($V_{tx,1}$):
+\begin{align*}
+    a_{tx} &= \frac{r_1 + r_2}{2} = 188.75 \times 10^6 \text{ km} \\
+    V_\oplus &= \sqrt{\frac{\mu_\odot}{r_1}} = 29.78 \text{ km/s} \\
+    V_{tx,1} &= \sqrt{\mu_\odot \left( \frac{2}{r_1} - \frac{1}{a_{tx}} \right)} = 32.73 \text{ km/s}
+\end{align*}
+The required hyperbolic excess velocity ($\boldsymbol{v}_\infty$) and characteristic energy ($C_3$) are:
+\begin{align*}
+    v_\infty &= V_{tx,1} - V_\oplus = 32.73 - 29.78 = \textbf{2.95 km/s} \\
+    C_3 &= v_\infty^2 = \textbf{8.70 km}^2/\textbf{s}^2
+\end{align*}
+
+\textbf{Step 1.2: The Geocentric Escape Burn ($\Delta V_{TMI}$)}
+Calculate the velocity in the 300 km LEO parking orbit, and the required periapsis velocity of the escape hyperbola:
+\begin{align*}
+    V_{LEO} &= \sqrt{\frac{\mu_\oplus}{r_{park}}} = \sqrt{\frac{398600}{6678}} = 7.72 \text{ km/s} \\
+    V_{p} &= \sqrt{C_3 + \frac{2\mu_\oplus}{r_{park}}} = \sqrt{8.70 + \frac{2(398600)}{6678}} = 11.31 \text{ km/s}
+\end{align*}
+The impulsive Trans-Mars Injection burn is:
+\begin{equation}
+    \Delta V_{TMI} = V_{p} - V_{LEO} = 11.31 - 7.72 = \textbf{3.59 km/s}
+\end{equation}
+\textit{Grading Note: Accept analytical answers between 3.55 and 3.65 km/s depending on the precision of the planetary radii/ephemeris data used by the students.}
+
+\section*{Part 2: GMAT B-Plane Targeting Solution}
+
+When the students input their initial guess of $\approx 3.6 \text{ km/s}$ into the \texttt{Element1} (Velocity component) of the \texttt{Vary} command, the Differential Corrector should converge within 5 to 10 iterations.
+
+\textbf{Expected GMAT Outputs:}
+\begin{itemize}
+    \item \texttt{TMI.Element1 (Velocity):} $\approx 3.61 \text{ km/s}$
+    \item \texttt{TMI.Element2 (Normal):} $\approx -0.05 \text{ km/s}$
+    \item \texttt{TMI.Element3 (Binormal):} $\approx 0.12 \text{ km/s}$
+\end{itemize}
+
+\textbf{B-Plane Verification:}
+Students should show that \texttt{BdotT = 0} was achieved (confirming the polar flyby geometry) and that \texttt{RMAG} successfully converged to exactly $3896.2 \text{ km}$ (the 500 km target altitude).
+
+\section*{Part 3: The Launch Window \& CAM Evaluation}
+
+Upon shifting the \texttt{Epoch} forward by 48 hours, the students will observe that the targeter requires significantly more iterations to converge. The $\Delta V$ magnitude will increase, heavily loading the Normal and Binormal components.
+
+\subsection*{Model Chief Architect's Memo (CAM)}
+\textit{Look for the following physical justifications when grading the CAMs:}
+
+\begin{quote}
+\textbf{Student CAM:} ``The analytical Python baseline (3.59 km/s) assumed a perfectly optimal, coplanar Hohmann transfer where Earth and Mars are exactly aligned at $180^\circ$ at arrival. By shifting the launch epoch forward by 48 hours, we missed the optimal planetary phasing. 
+
+To still intercept Mars, the trajectory can no longer be a perfectly tangent, purely prograde ellipse. The GMAT Differential Corrector was forced to increase the $\Delta V$ magnitude, specifically utilizing the out-of-plane Normal and Binormal velocity vectors, to artificially 'bend' the flight path and crank the orbital plane to catch Mars at its new location. This validates why missing a launch window incurs severe propellant penalties.''
+\end{quote}
+
+\textbf{Grading Criteria for CAM (100 pts total):}
+\begin{itemize}
+    \item \textbf{40 pts:} Identifies the breakdown of the $180^\circ$ Hohmann alignment assumption.
+    \item \textbf{40 pts:} Explains that the extra $\Delta V$ went into out-of-plane/radial steering (changing the trajectory shape).
+    \item \textbf{20 pts:} Clearly bridges the gap between analytical limits and numerical realities.
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,112 @@
+\documentclass[11pt, letterpaper]{article}
+
+% --- Packages ---
+\usepackage{amsmath, graphicx, xcolor, listings, tcolorbox, booktabs}
+\usepackage[left=1in, right=1in, bottom=1in, top=3cm, headheight=2cm, headsep=0.5cm]{geometry}
+\usepackage{fancyhdr}
+
+% --- Code Listing Formatting ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{ 
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    basicstyle=\ttfamily\small,
+    breaklines=true,                 
+    language=C++
+}
+
+% --- Header Configuration ---
+\pagestyle{fancy} 
+\fancyhf{} 
+\renewcommand{\headrulewidth}{0.4pt} 
+\lhead{\raisebox{-0.5cm}{\textbf{Universidad de Antioquia}}}
+\rhead{\large \textbf{GMAT Targeter Tuning Guide} \\ \normalsize Spaceflight Dynamics 2026-1} 
+\cfoot{\thepage} 
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Heuristics for Deep-Space Differential Correction}} \\
+    \vspace{0.2cm}
+    {\large \textit{Parameter Selection for Vary, Propagate, and Achieve}} \\
+    \vspace{0.4cm}
+    \textit{Prof. Juan | Aerospace Engineering Program}
+\end{center}
+\hrule
+\vspace{0.5cm}
+
+\section*{1. The \texttt{Vary} Command: Controlling the Gradients}
+The \texttt{Vary} command calculates the sensitivity matrix (Jacobian) by slightly nudging a variable (\texttt{Perturbation}) and seeing how the outcome changes. It then takes a step toward the solution, limited by \texttt{MaxStep}.
+
+\subsection*{A. True Anomaly (Ignition Timing)}
+\begin{lstlisting}
+Vary DefaultDC(Voyager.TA = Voyager.TA, {Perturbation = 0.001, Lower = 0, Upper = 360, MaxStep = 5.0});
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{Perturbation:} $0.001^\circ$ to $0.01^\circ$. Orbit timing is sensitive. If the perturbation is too small, numerical noise ruins the gradient.
+    \item \textbf{MaxStep:} $5^\circ$ to $10^\circ$. If you allow the solver to jump $90^\circ$ in a single iteration, the physics become highly non-linear and the solver will diverge. 
+\end{itemize}
+
+\subsection*{B. Earth Departure Burn (Trans-Jupiter Injection)}
+\begin{lstlisting}
+Vary DefaultDC(TJI.Element1 = 7.0, {Perturbation = 1e-04, MaxStep = 0.5});
+Vary DefaultDC(TJI.Element2 = 0.0, {Perturbation = 1e-04, MaxStep = 0.1});
+Vary DefaultDC(TJI.Element3 = 0.0, {Perturbation = 1e-04, MaxStep = 0.1});
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{Element 1 (Velocity):} Give it a strong initial guess (e.g., $7.0$ km/s for Jupiter). Set \texttt{MaxStep = 0.5} km/s. Do not let it jump by $5$ km/s at a time.
+    \item \textbf{Element 2 \& 3 (Normal/Binormal):} Initial guess $0.0$. Keep \texttt{MaxStep = 0.1} km/s. Out-of-plane maneuvers are incredibly expensive; keep the solver from wasting fuel here.
+\end{itemize}
+
+\subsection*{C. Deep Space TCM (Trajectory Correction Maneuver)}
+\begin{lstlisting}
+Vary DefaultDC(TCM.Element1 = 0.0, {Perturbation = 1e-05, MaxStep = 0.05});
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{Perturbation:} $10^{-5}$ km/s. Deep space burns are micro-adjustments.
+    \item \textbf{MaxStep:} $0.01$ to $0.05$ km/s. A $1$ m/s change millions of kilometers away radically alters the Jupiter arrival point.
+\end{itemize}
+
+% ---------------------------------------------------------
+\section*{2. The \texttt{Achieve} Command: Defining Success}
+A common student mistake is demanding absolute mathematical perfection (e.g., $0.0000001$ tolerance). In an $N$-body universe, perfection is impossible and forces the solver into an infinite loop.
+
+\subsection*{A. Earth Escape Asymptote}
+\begin{lstlisting}
+Achieve DefaultDC(Voyager.EarthMJ2000Eq.C3Energy = 85.5, {Tolerance = 0.05});
+Achieve DefaultDC(Voyager.EarthMJ2000Eq.DLA = 15.2, {Tolerance = 0.05});
+Achieve DefaultDC(Voyager.EarthMJ2000Eq.RLA = 120.4, {Tolerance = 0.05});
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{Tolerances:} $0.01$ to $0.1$. The Earth departure burn does not need to be microscopic in its accuracy because the deep-space TCM will clean up the residual errors. Allow the solver to say "close enough."
+\end{itemize}
+
+\subsection*{B. Jupiter B-Plane Targeting}
+\begin{lstlisting}
+Achieve DefaultDC(Voyager.Jupiter.BdotT = 400000, {Tolerance = 50.0});
+Achieve DefaultDC(Voyager.Jupiter.BdotR = 150000, {Tolerance = 50.0});
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{Tolerances:} $10$ km to $50$ km. You are throwing a dart from Earth and trying to hit a moving target at Jupiter 3 years later. A $50$ km tolerance on a target that is $800$ million kilometers away is phenomenal engineering. 
+\end{itemize}
+
+% ---------------------------------------------------------
+\section*{3. The \texttt{Propagate} Command: The Fail-Safes}
+Never propagate to a spatial condition (\texttt{Periapsis} or \texttt{Apoapsis}) without including a temporal fail-safe (\texttt{ElapsedDays}).
+
+\begin{lstlisting}
+% Earth Escape (Clearing the Sphere of Influence)
+Propagate SunProp(Voyager) {Voyager.Earth.Distance = 1000000, Voyager.ElapsedDays = 30};
+
+% Jupiter Transit
+Propagate SunProp(Voyager) {Voyager.Jupiter.Periapsis, Voyager.ElapsedDays = 1500};
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{Jupiter Transit:} Earth to Jupiter takes roughly $1,000$ days. Setting the fail-safe to $1,500$ gives the targeter room to explore "slow" trajectories, but forcibly stops the simulation before the spacecraft flies off the end of the JPL Ephemeris calendar (preventing the \texttt{leDE1941.405} crash).
+\end{itemize}
+
+\end{document}

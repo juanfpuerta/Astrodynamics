@@ -1,0 +1,75 @@
+\documentclass[11pt, letterpaper]{article}
+
+% --- Packages ---
+\usepackage{amsmath, graphicx, amsfonts, enumitem, xcolor, listings, tcolorbox}
+\usepackage[left=1in, right=1in, bottom=1in, top=3cm, headheight=2cm, headsep=0.5cm, footskip=1cm]{geometry}
+\usepackage{fancyhdr}
+
+% --- Code Listing Formatting ---
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstset{backgroundcolor=\color{backcolour}, basicstyle=\ttfamily\footnotesize, breaklines=true}
+
+% --- Header Configuration ---
+\pagestyle{fancy} 
+\fancyhf{} 
+\renewcommand{\headrulewidth}{0.4pt} 
+\lhead{\raisebox{-0.5cm}{\textbf{Universidad de Antioquia}}}
+\rhead{\large \textbf{Tech Brief: The Voyager Pipeline} \\ \normalsize Spaceflight Dynamics 2026-1} 
+\cfoot{\thepage} 
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Multiple Shooting: From Python to GMAT}} \\
+    \vspace{0.2cm}
+    {\large \textit{Seeding the Yukon Optimizer for a Jupiter Gravity Assist}} \\
+    \vspace{0.4cm}
+    \textit{Prof. Juan | Aerospace Engineering Program}
+\end{center}
+\hrule
+\vspace{0.5cm}
+
+\section*{The Hand-Off Principle}
+Analytical solvers (like the Python script we used to generate the Porkchop plot) assume the solar system is simple: gravity is a perfect point mass, and planets do not pull on the spacecraft until it is infinitely close. GMAT uses full numerical integration, meaning the Sun, Earth, Jupiter, and Saturn are all pulling on the spacecraft simultaneously throughout the entire flight. 
+
+If we give GMAT's Yukon optimizer a random initial velocity, the chaotic nature of $N$-body physics will cause the solver to crash. We must provide a \textbf{Warm Start} by directly injecting our Python Lambert solutions into GMAT.
+
+\subsection*{1. Coordinate System Synchronization}
+Python calculated our Cartesian vectors relative to the Solar System Barycenter (J2000). To use these numbers in GMAT, we must create a custom matching coordinate system. Do not use \texttt{EarthMJ2000Eq}!
+
+\begin{lstlisting}[language=C++]
+% In your GMAT Resources:
+Create CoordinateSystem SunBarycenter;
+SunBarycenter.Origin = SolarSystemBarycenter;
+SunBarycenter.Axes = MJ2000Eq;
+\end{lstlisting}
+
+\subsection*{2. Seeding the Spacecraft}
+Take the terminal output from your Python script and paste it directly into your GMAT spacecraft configurations, ensuring they reference our new coordinate system.
+
+\begin{lstlisting}[language=C++]
+Create Spacecraft satEJ; % Earth to Jupiter Leg
+satEJ.CoordinateSystem = SunBarycenter;
+satEJ.DisplayStateType = Cartesian;
+% --- PASTE PYTHON OUTPUT HERE ---
+satEJ.Epoch = '05 Sep 1977 12:00:00.000'; 
+satEJ.X = ...; satEJ.Y = ...; satEJ.Z = ...;
+satEJ.VX = ...; satEJ.VY = ...; satEJ.VZ = ...;
+
+Create Spacecraft satJS; % Jupiter to Saturn Leg
+satJS.CoordinateSystem = SunBarycenter;
+satJS.DisplayStateType = Cartesian;
+% --- PASTE PYTHON OUTPUT HERE ---
+satJS.Epoch = '05 Mar 1979 12:00:00.000';
+satJS.X = ...; satJS.Y = ...; satJS.Z = ...;
+satJS.VX = ...; satJS.VY = ...; satJS.VZ = ...;
+\end{lstlisting}
+
+\subsection*{3. The Optimizer Loop}
+Because we seeded the spacecraft with near-perfect math, the Yukon optimizer only has to make micro-adjustments to account for the $N$-body perturbations. 
+
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=Optimization Tip]
+In the \texttt{Optimize} sequence, we vary the \textbf{Velocity} of \texttt{satEJ} and \texttt{satJS}, but we do \textbf{not} vary the Position. The planets dictate where we must start and where the flyby must occur; the optimizer's only job is to bend the velocity vectors until the end of Leg 1 seamlessly matches the beginning of Leg 2.
+\end{tcolorbox}
+
+\end{document}

@@ -1,0 +1,330 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, bm}
+\usepackage{booktabs}
+\usepackage{listings}
+
+% --- Universidad de Antioquia (UdeA) Custom Theme Setup ---
+\definecolor{UdeAGreen}{HTML}{006241}
+\definecolor{UdeAGold}{HTML}{D4AF37}
+\definecolor{Charcoal}{HTML}{2B2B2B}
+\definecolor{LightBg}{HTML}{F8F9FA}
+
+\setbeamercolor{palette primary}{bg=UdeAGreen, fg=white}
+\setbeamercolor{palette secondary}{bg=UdeAGreen, fg=white}
+\setbeamercolor{structure}{fg=UdeAGreen}
+\setbeamercolor{background canvas}{bg=LightBg}
+\setbeamercolor{text}{fg=Charcoal}
+
+% --- Block Style Customization ---
+\setbeamercolor{block title}{bg=UdeAGreen, fg=white}
+\setbeamercolor{block body}{bg=white, fg=Charcoal}
+\setbeamercolor{block title example}{bg=UdeAGold, fg=Charcoal}
+\setbeamercolor{block body example}{bg=white, fg=Charcoal}
+
+% --- Header/Footer Customization ---
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}{
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm]{palette primary}
+        \small Universidad de Antioquia -- Faculty of Engineering \hfill Module 1: Perturbations \hfill \insertframenumber/\inserttotalframenumber
+    \end{beamercolorbox}
+}
+\setbeamertemplate{navigation symbols}{}
+
+% --- Code Presentation Configuration ---
+\lstset{
+    backgroundcolor=\color{LightBg},
+    basicstyle=\tiny\ttfamily\color{Charcoal},
+    breaklines=true,
+    keywordstyle=\color{UdeAGreen}\bfseries,
+    commentstyle=\color{gray},
+    stringstyle=\color{UdeAGold},
+    frame=single
+}
+
+\title{\textbf{\LARGE Astrodynamics Module Content}}
+%\subtitle{\large Module 1: High-Fidelity Orbital Perturbations \& Coupled Loops (Weeks 1--4)}
+\author{Juan Francisco Puerta Ibarra}
+\institute{Department of Mechanical and Aerospace Engineering \\ Universidad de Antioquia (UdeA)}
+\date{Semester 2026-2}
+
+\begin{document}
+
+% --- TITLE SLIDE ---
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% --- MODULE OVERVIEW ---
+\begin{frame}{Module 1 Architecture and Operational Focus}
+    \begin{block}{The Core Shift: Descriptive $\rightarrow$ Forensic Numerical Analysis}
+        In foundational coursework, orbits exist in a pristine, analytical 2-body universe. In this module, we transition to high-fidelity environments. Fourth-year engineers will study the non-linear coupling mechanics of gravity fields and dynamic atmospheres.
+    \end{block}
+    
+    \vspace{0.2cm}
+    \textbf{Weekly Roadmap and Mathematical Benchmarks:}
+    \begin{itemize}
+        \item \textbf{Week 1:} Non-Keplerian State Spaces, LPE, and Gauss's Variational Equations.
+        \item \textbf{Week 2:} Non-Spherical Gravitational Fields and Zonal Potential Expansion ($J_2$).
+        \item \textbf{Week 3:} Constrained Orbit Optimization: Frozen and Jovian Sun-Synchronous Systems.
+        \item \textbf{Week 4:} Coupled Dynamic Force Environments and Atmospheric Decay Lifetime Loops.
+    \end{itemize}
+\end{frame}
+
+\section{Week 1: Non-Keplerian Spaces \& Variational Systems}
+
+% --- WEEK 1: SLIDE 1 ---
+\begin{frame}{Week 1: Moving Beyond the Two-Body Idealization}
+    The exact differential vector equation of motion for a point mass under conservative, non-spherical, and non-conservative forces is given by:
+    \[ \ddot{\mathbf{r}} = -\frac{\mu}{r^3}\mathbf{r} + \mathbf{a}_d \]
+    
+    Where $\mathbf{a}_d$ represents the sum of all perturbing accelerations:
+    \[ \mathbf{a}_d = \mathbf{a}_{\text{geopotential}} + \mathbf{a}_{\text{3rd-body}} + \mathbf{a}_{\text{drag}} + \mathbf{a}_{\text{SRP}} \]
+    
+    \begin{exampleblock}{Rigor Check for 4th-Year Engineers}
+        Because $\mathbf{a}_d \neq \mathbf{0}$, the orbital angular momentum vector $\mathbf{h} = \mathbf{r} \times \mathbf{v}$ and the eccentricity vector $\mathbf{e} = \frac{1}{\mu}\left[(\mathbf{v}\cdot\mathbf{v} - \frac{\mu}{r})\mathbf{r} - (\mathbf{r}\cdot\mathbf{v})\mathbf{v}\right]$ are no longer constants of integration. They become time-varying parameters.
+    \end{exampleblock}
+\end{frame}
+
+% --- WEEK 1: SLIDE 2 ---
+\begin{frame}{Week 1: Analytical Formulations -- GVE vs. LPE}
+    To propagate variations in the classical orbital elements $\bm{\text{\oe}} = [a, e, i, \Omega, \omega, M]^T$, two distinct analytical frameworks are utilized:
+    
+    \vspace{0.2cm}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Lagrange's Planetary Equations (LPE)}
+            \begin{itemize}
+                \item \textbf{Core Assumption:} Requires the perturbation to be derived from a scalar potential function $\mathcal{R}$ ($\mathbf{a}_d = \nabla\mathcal{R}$).
+                \item \textbf{Application:} Ideal for long-term analytical tracking of gravitational anomalies ($J_2, J_3$).
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Gauss's Variational Equations (GVE)}
+            \begin{itemize}
+                \item \textbf{Core Assumption:} Project the acceleration vector directly onto a local coordinate system ($R, S, W$ or $V, N, B$).
+                \item \textbf{Application:} Mandatory for non-conservative thrust vectors, aerodynamic drag, and low-thrust steering.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% --- WEEK 1: SLIDE 3 ---
+\begin{frame}{Week 1: Mechanics of Gauss's Variational Framework}
+    Decomposing the perturbing acceleration vector into the Radial ($R$), In-track/Transverse ($S$), and Cross-track/Normal ($W$) inertial frame, Gauss's equation for the rate of change of the semi-major axis ($a$) and inclination ($i$) is derived as:
+    
+    \begin{equation}
+        \frac{da}{dt} = \frac{2 a^2}{h} \left( e \sin \nu \cdot R + \frac{p}{r} \cdot S \right)
+    \end{equation}
+    
+    \begin{equation}
+        \frac{di}{dt} = \frac{r \cos(\omega + \nu)}{h} \cdot W
+    \end{equation}
+    
+    \begin{exampleblock}{Forensic Engineering Insights}
+        Observe that out-of-plane forces ($W$) decouple entirely from the semi-major axis rate ($\frac{da}{dt}$). Plane changes ($di/dt$) are geometrically optimized when the spacecraft crosses the argument of latitude boundaries $\omega + \nu = 0^\circ$ or $180^\circ$ (equatorial crossings).
+    \end{exampleblock}
+\end{frame}
+
+\section{Week 2: Zonal Harmonics and Geopotential Spectrum}
+
+% --- WEEK 2: SLIDE 1 ---
+\begin{frame}{Week 2: The Spherical Harmonics Gravitational Potential}
+    To model a non-spherical planet, the gravitational potential function $U$ is expanded via an infinite series of spherical harmonics:
+    
+    \[ U(r, \phi, \lambda) = \frac{\mu}{r} \left[ 1 - \sum_{n=2}^{\infty} J_n \left(\frac{R_{\text{eq}}}{r}\right)^n P_n(\sin\phi) + \sum_{n=2}^{\infty}\sum_{m=1}^{n}\left(\frac{R_{\text{eq}}}{r}\right)^n P_{nm}(\sin\phi)\left(C_{nm}\cos m\lambda + S_{nm}\sin m\lambda\right) \right] \]
+    
+    \begin{block}{Classification of Geopotential Asymmetries}
+        \begin{itemize}
+            \item \textbf{Zonal Harmonics ($J_n$):} Depend strictly on latitude ($\phi$). Symmetric about the spin axis.
+            \item \textbf{Sectoral Harmonics ($m=n$):} Depend strictly on longitude ($\lambda$). Slice the planet into orange-like wedges.
+            \item \textbf{Tesseral Harmonics ($m \neq n$):} Depend on both latitude and longitude, forming checkerboard boundary patterns.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+% --- WEEK 2: SLIDE 2 ---
+\begin{frame}{Week 2: The Oblateness Anomaly ($J_2$)}
+    The dominant term in the geopotential expansion is $J_2$, representing the equatorial bulge due to rotation. For Earth, $J_2 \approx 1.08263 \times 10^{-3}$, which is three orders of magnitude larger than any subsequent harmonic coefficient.
+    
+    \vspace{0.2cm}
+    Evaluating the gradient of the $J_2$ scalar potential yields the precise non-spherical perturbing acceleration vector in the Earth-Centered Inertial (ECI) frame:
+    
+    \begin{equation}
+        \mathbf{a}_{J_2} = -\frac{3 J_2 \mu R_{\text{eq}}^2}{2 r = 5} \begin{bmatrix}
+            x \left(1 - \frac{5z^2}{r^2}\right) \\
+            y \left(1 - \frac{5z^2}{r^2}\right) \\
+            z \left(3 - \frac{5z^2}{r^2}\right)
+        \end{bmatrix}
+    \end{equation}
+    
+    This acceleration breaks the symmetry of the gravity well, causing long-term deviations from Keplerian orbits.
+\end{frame}
+
+% --- WEEK 2: SLIDE 3 ---
+\begin{frame}{Week 2: Derivation of $J_2$ Secular Drift Rates}
+    By integrating Lagrange’s Planetary Equations over a full orbital period ($T$), we isolate the long-term, monotonic secular drift rates. The elements $a$, $e$, and $i$ experience zero net secular drift under $J_2$. The lines of nodes and apsides experience continuous linear precession:
+    
+    \begin{block}{Secular Precession Equations}
+        \begin{equation}
+            \dot{\Omega}_{\text{sec}} = -\frac{3\sqrt{\mu}\,J_2 R_{\text{eq}}^2}{2(1-e^2)^2 a^{7/2}} \cos i
+        \end{equation}
+        \begin{equation}
+            \dot{\omega}_{\text{sec}} = \frac{3\sqrt{\mu}\,J_2 R_{\text{eq}}^2}{4(1-e^2)^2 a^{7/2}} \left( 4 - 5\sin^2 i \right)
+        \end{equation}
+    \end{block}
+    
+    \textbf{Engineering Takeaway:} The sign of nodal drift ($\dot{\Omega}$) is dictated entirely by inclination: prograde orbits ($i < 90^\circ$) precess westward ($\dot{\Omega} < 0$), while retrograde orbits ($i > 90^\circ$) precess eastward ($\dot{\Omega} > 0$).
+\end{frame}
+
+\section{Week 3: Advanced Constrained Orbit Design}
+
+% --- WEEK 3: SLIDE 1 ---
+\begin{frame}{Week 3: Sun-Synchronous Orbit (SSO) Geometry}
+    An SSO forces the line of nodes to precess at a rate exactly matching the Earth's mean heliocentric orbital motion around the Sun, ensuring identical solar illumination angles across successive ground tracks.
+    
+    \[ \dot{\Omega}_{\text{sec}} = \dot{\theta}_{\text{Earth}} = \frac{360^\circ}{365.2422 \text{ days}} \approx 0.9856^\circ/\text{day} \approx 1.99106 \times 10^{-7} \text{ rad/s} \]
+    
+    Setting $\dot{\Omega}_{\text{sec}}$ equal to $\dot{\theta}_{\text{Earth}}$ defines the precise multi-variable constraint boundary:
+    
+    \begin{equation}
+        \cos i = -\frac{2}{3} \left( \frac{\dot{\theta}_{\text{Earth}}}{\sqrt{\mu}\,J_2 R_{\text{eq}}^2} \right) a^{7/2} (1-e^2)^2
+    \end{equation}
+    
+    \begin{alertblock}{Geometric Boundary Limit}
+        Because $\cos i < 0$, all true Sun-Synchronous orbits must be \textbf{retrograde} ($i > 90^\circ$).
+    \end{alertblock}
+\end{frame}
+
+% --- WEEK 3: SLIDE 2 ---
+\begin{frame}{Week 3: Nodal Precession and The Critical Inclination Boundary}
+    To eliminate apsidal rotation ($\dot{\omega}_{\text{sec}} = 0$) and lock the argument of perigee over long timelines (creating frozen orbits), engineers manipulate the mathematical roots of the bracketed expression:
+    
+    \[ 4 - 5\sin^2 i = 0 \implies \sin i = \sqrt{\frac{4}{5}} \]
+    
+    This yields two distinct critical inclination solutions:
+    \begin{equation}
+        i_{\text{crit}} = 63.435^\circ \quad (\text{Prograde Trajectories})
+    \end{equation}
+    \begin{equation}
+        i_{\text{crit}} = 116.565^\circ \quad (\text{Retrograde Trajectories})
+    \end{equation}
+    
+    \begin{exampleblock}{Planetary Scaling Case Study: Designing a Jovian SSO}
+        Jupiter's intense rotation generates a high gravitational oblateness coefficient: $J_{2,J} \approx 1.4736 \times 10^{-2}$ (nearly 14 times greater than Earth's). Students must resolve how to safely transition a Jovian science collector into an SSO configuration without entering the planet's atmospheric drag envelope or radiation belts.
+    \end{exampleblock}
+\end{frame}
+
+\section{Week 4: Non-Conservative Dynamics and Lifetime Loops}
+
+% --- WEEK 4: SLIDE 1 ---
+\begin{frame}{Week 4: Hypersonic Aerodynamic Drag Modeling}
+    In the Low Earth Orbit (LEO) regime, the thin upper atmosphere acts as a non-conservative energy sink. The drag acceleration vector acts in opposition to the velocity vector relative to the atmosphere:
+    
+    \[ \mathbf{a}_{\text{drag}} = -\frac{1}{2} \rho \left(\frac{C_D A}{m}\right) v_{\text{rel}} \mathbf{v}_{\text{rel}} = -\frac{1}{2} \rho \, B \, v_{\text{rel}} \mathbf{v}_{\text{rel}} \]
+    
+    Where $B = \frac{C_D A}{m}$ is defined as the spacecraft's \textbf{Ballistic Coefficient}.
+    
+    \begin{block}{Atmospheric Density Stagnation Realities}
+        Density ($\rho$) is modeled via highly non-linear profiles:
+        \begin{itemize}
+            \item \textbf{Analytical Model:} $\rho = \rho_0 \exp\left(-\frac{h - h_0}{H}\right)$, where $h$ is altitude and $H$ is the scale height.
+            \item \textbf{High-Fidelity Realities:} Dynamic atmospheric models (MSISE-90, JB2008) update density arrays in real time based on active solar flux indexes ($F_{10.7}$) and geomagnetic indicators ($Ap$).
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+% --- WEEK 4: SLIDE 2 ---
+\begin{frame}{Week 4: Coupled $J_2$-Drag Lifetime Evolution}
+    When combining non-spherical gravity with atmospheric drag, the orbital elements experience coupled decay loops. Drag drains mechanical energy ($E$), lowering the semi-major axis ($a$), while $J_2$ continuously shifts the spatial orientation of the line of nodes.
+    
+    \vspace{0.2cm}
+    Applying Gauss's Variational Equations for a circular orbit reveals the long-term coupled decay signature:
+    
+    \begin{equation}
+        \left\langle\frac{da}{dt}\right\rangle_{\text{drag}} = -\rho \, B \, a \cdot v
+    \end{equation}
+    
+    As $a$ drops, velocity ($v = \sqrt{\mu/a}$) increases, while local atmospheric density ($\rho$) grows exponentially. This sets up a non-linear feedback loop that accelerates orbital decay.
+    
+    \begin{alertblock}{The Core Computational Challenge}
+        Because $\rho(h)$ varies non-linearly, this coupled differential equation system lacks a closed-form analytical solution. It requires step-by-step numerical integration via vectorized ODE engines.
+    \end{alertblock}
+\end{frame}
+
+% --- LAB AUDIT BLUEPRINT ---
+\begin{frame}[fragile]{Forensic Lab 1: Python $J_2$-Drag Audit Sandbox}
+    \begin{block}{Operational Requirements and Anti-AI Protections}
+        The use of black-box integration packages (\texttt{scipy.integrate.solve\_ivp}) is strictly restricted for this exercise. Students must code a vectorized Runge-Kutta numerical integration loop from scratch.
+    \end{block}
+    
+\begin{lstlisting}[language=Python]
+import numpy as np
+
+def geopotential_j2_gradient(r_vec):
+    # TODO: Implement the 3D J2 vector equations derived in Slide 8
+    pass
+
+def atmospheric_density(alt):
+    # TODO: Implement an exponential density model using scale height variations
+    pass
+
+def state_derivative_engine(t, state, B_coeff):
+    r = state[0:3]
+    v = state[3:6]
+    r_mag = np.linalg.norm(r)
+    
+    # 2-Body Base Physics
+    a_2body = -(398600.4418 / (r_mag**3)) * r
+    
+    # TODO: Code out and inject custom high-fidelity coupling strings
+    # a_j2 = geopotential_j2_gradient(r)
+    # a_drag = -0.5 * atmospheric_density(r_mag - 6378.137) * B_coeff * ...
+    
+    return np.hstack((v, a_2body))
+\end{lstlisting}
+\end{frame}
+
+% --- FORENSIC Bug SHEET ---
+\begin{frame}{Forensic Assessment Framework: The Decay Bug Hunt}
+    \begin{block}{Adversarial Verification Protocol}
+        Your grading profile for Computational Lab 1 is based on a forensic script audit. You will be handed a pre-coded $J_2$-Drag decay simulation that produces anomalous energy trends.
+    \end{block}
+    
+    \vspace{0.3cm}
+    \textbf{Common Pitfalls and Audit Benchmarks:}
+    \begin{enumerate}
+        \item \textbf{Inertial vs. Co-Rotating Frame Errors:} Drag forces must account for the rotation of the upper atmosphere with the Earth ($\mathbf{v}_{\text{rel}} = \mathbf{v} - \boldsymbol{\omega}_{\oplus} \times \mathbf{r}$). Neglecting this vector triangle introduces systematic velocity mapping errors.
+        \item \textbf{Coordinate Frame Instabilities:} Truncation errors from low-order solvers can mimic drag energy losses. Students must execute a conservation check in a perturbation-free environment ($\mathbf{a}_d = \mathbf{0}$) to prove their solver maintains the Jacobi energy constant.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Week 15: Stochastic Estimation Lab Overview}
+    \begin{exampleblock}{The Mathematical Referee Concept}
+        Let's perform a live sensitivity sweep to observe how updating the Process Noise ($Q$) and Measurement Noise ($R$) alters state estimation.
+    \end{exampleblock}
+    
+    \vspace{0.3cm}
+    \begin{center}
+        % Using "run:" instead of "https://" forces the PDF player to open the local file
+        \href{run:Target_Optimizer.html}{
+            \beamerbutton{\color{white}\textbf{Launch Live Kalman Simulation Widget}}
+        }
+    \end{center}
+\end{frame}
+
+\begin{frame}{Week 12: Libration Points \& Symplectic Interventions}
+    \begin{block}{Numerical Integrator Audit}
+        Standard non-symplectic integration methods systematically destroy the system's energy conservation profile across extended timescales.
+    \end{block}
+    
+    \vspace{0.4cm}
+    \begin{center}
+        % Wraps a standard URL inside a native aesthetic Beamer button
+        \href{https://www.youtube.com/watch?v=2XhzTzIHJxw}{
+            \beamerbutton{\large Click Here to Watch: GMAT vs. Symplectic Integrators}
+        }
+    \end{center}
+\end{frame}
+
+\end{document}

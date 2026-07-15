@@ -1,0 +1,84 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[letterpaper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{amsmath, amssymb, graphicx, fancyhdr, xcolor, booktabs, listings, tcolorbox}
+
+% Header/Footer Setup matching UdeA format
+\setlength{\headheight}{35pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\vspace{10pt}\textbf{Astrodynamics 2026-1: Technical Brief}}
+\fancyhead[R]{\includegraphics[height=1.1cm]{UdeA+simplificado+Negro_Smaller.png}} % Ensure logo is in your directory
+\fancyfoot[C]{\thepage}
+
+% Setup for Code Formatting
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{UdeAGreen}{RGB}{0, 115, 54}
+
+\lstset{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
+}
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Orbit Determination: Forward Filters \& Backward Smoothers}} \\
+    \vspace{0.2cm}
+    {\large \textit{Analyzing the GMAT GPS PosVec Script}} \\
+    \vspace{0.4cm}
+    \textit{Prof. Juan | Aerospace Engineering Program}
+\end{center}
+\hrule
+\vspace{0.5cm}
+
+\section*{Overview: Real-Time vs. Post-Mission Analysis}
+In modern Astrodynamics, we must distinguish between real-time autonomous navigation and post-mission orbit reconstruction. The GMAT script \texttt{Ex\_FilterSmoother\_GpsPosVec} demonstrates both concepts. It processes raw GPS positional data through an Extended Kalman Filter (EKF) moving forward in time, and then refines that data using a Fraser-Potter Smoother moving backward in time.
+
+\section*{1. Script Architecture: Truth vs. Estimate}
+The script begins by establishing a controlled testing environment using two distinct spacecraft objects.
+
+\begin{itemize}
+    \item \textbf{\texttt{SimSat} (The True State):} This object represents physical reality. GMAT uses its exact, defined trajectory solely to generate simulated, noisy GPS measurements.
+    \item \textbf{\texttt{EstSat} (The Navigation Computer):} This represents our "belief" of the spacecraft's state. Notice that \texttt{EstSat} is initialized with a slightly incorrect position and velocity, alongside an \texttt{OrbitErrorCovariance} matrix. This simulates a \textbf{Cold Start}, meaning the navigation filter begins with high uncertainty.
+\end{itemize}
+
+\section*{2. The Forward Pass: Extended Kalman Filter (EKF)}
+The EKF processes the noisy GPS coordinates sequentially as time moves forward. 
+
+\begin{tcolorbox}[colback=white,colframe=UdeAGreen,title=\textbf{The EKF Objective}]
+Because \texttt{EstSat} starts with a poor initial guess, the EKF will initially diverge from the true orbit. Over time, as it ingests more GPS pings, the Kalman Gain adjusts, mathematically pulling the estimated trajectory toward the true physical path.
+\end{tcolorbox}
+
+\noindent \textbf{Advanced Dynamics Modeling:} 
+The script configures the EKF to estimate not just position and velocity, but also the \textit{Coefficient of Drag} ($C_d$) using a \textbf{First-Order Gauss-Markov (FOGM)} process. This allows the filter to dynamically "learn" and adapt to unmodeled fluctuations in atmospheric density as the satellite flies through Low Earth Orbit (LEO).
+
+\section*{3. The Backward Pass: Fraser-Potter Smoother}
+This is the critical phase for high-precision post-mission analysis. 
+
+\subsection*{The Problem with the EKF}
+An EKF running at time $t = 10$ minutes only possesses mathematical knowledge of the GPS data from $t=0$ to $t=10$. It does not know the future. Therefore, its state estimates during the first few minutes (the Cold Start period) are inherently inaccurate.
+
+\subsection*{The Smoother Solution}
+The \texttt{Smoother FPS} object takes the final output of the EKF and runs it in reverse. When the smoother calculates the state at $t=10$, it uses the statistical data from the \textit{entire} mission arc (incorporating data from $t=10$ to the end of the simulation). 
+
+\vspace{0.3cm}
+\noindent \textbf{Validation Check:} When you run this script in GMAT, open the output files. Look at the Position Residuals at Epoch 1. In the Filter file, the residual will be massive (due to the Cold Start). In the Smoother file, the residual at Epoch 1 will be nearly zero. The backward pass successfully used "future" data to fix "past" uncertainties.
+
+\end{document}

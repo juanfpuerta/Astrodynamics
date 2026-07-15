@@ -1,0 +1,232 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, graphicx, listings, xcolor}
+\usepackage{bm}
+
+% Presentation Theme
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Code Block Styling
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    frame=single,
+    backgroundcolor=\color{gray!10}
+}
+
+\title[Earth to Jupiter Mission Design]{Astrodynamics 2026-1}
+\subtitle{Capstone Mission: Earth to Jupiter \\ Analytical, Numerical, \& GMAT Solutions}
+\author{Prof. Juan}
+\institute{Universidad de Antioquia - Aerospace Engineering}
+\date{Spring 2026}
+
+\begin{document}
+
+% --- Title Slide ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% ==========================================
+% SECTION 1: ANALYTICAL SOLUTION
+% ==========================================
+\section{Analytical Solution (Patched Conics)}
+
+% --- Slide 1 ---
+\begin{frame}{Analytical Assumption: Ideal Hohmann}
+    We begin with the Patched Conic approximation, assuming circular, coplanar planetary orbits. Hohmann transfers are the easiest to analyze and the most energy efficient.
+    
+    \vspace{0.2cm}
+    \textbf{Given Planetary Constants:}
+    \begin{itemize}
+        \item $\mu_{sun} = 1.327 \times 10^{11} \text{ km}^3/\text{s}^2$
+        \item $R_{\oplus} = 149.6 \times 10^6 \text{ km}$ (Earth)
+        \item $R_{\jupiter} \approx 5.203 \text{ AU} = 778.4 \times 10^6 \text{ km}$ (Jupiter)
+    \end{itemize}
+    
+    \textbf{1. Heliocentric Transfer Orbit ($a_{tx}$):}
+    \begin{equation}
+        a_{tx} = \frac{R_{\oplus} + R_{\jupiter}}{2} = 464.0 \times 10^6 \text{ km}
+    \end{equation}
+    
+    \textbf{2. Transfer Velocity at Earth ($V_{D}^{(v)}$):}
+    \begin{equation}
+        V_{D}^{(v)} = \sqrt{2\mu_{sun}}\sqrt{\frac{R_{\jupiter}}{R_{\oplus}(R_{\oplus}+R_{\jupiter})}} = \mathbf{38.56 \text{ km/s}}
+    \end{equation}
+\end{frame}
+
+% --- Slide 2 ---
+\begin{frame}{Analytical: Departure Energy ($C_3$)}
+    To find the energy required from our launch vehicle, we subtract Earth's velocity to find the Hyperbolic Excess Speed ($v_\infty$).
+    
+    \vspace{0.2cm}
+    \textbf{3. Earth's Heliocentric Velocity ($V_{\oplus}$):}
+    \begin{equation}
+        V_{\oplus} = \sqrt{\frac{\mu_{sun}}{R_{\oplus}}} = \mathbf{29.78 \text{ km/s}}
+    \end{equation}
+    
+    \textbf{4. Hyperbolic Excess Speed ($v_\infty$):}
+    \begin{equation}
+        v_\infty = V_{D}^{(v)} - V_{\oplus} = 38.56 - 29.78 = \mathbf{8.78 \text{ km/s}}
+    \end{equation}
+    
+    \textbf{5. Characteristic Energy ($C_3$):}
+    \begin{equation}
+        C_3 = v_\infty^2 = \mathbf{77.09 \text{ km}^2/\text{s}^2}
+    \end{equation}
+\end{frame}
+
+% --- Slide 3 ---
+\begin{frame}{Analytical: LEO Parking Orbit $\Delta v$}
+    Assume our spacecraft is parked in a 300 km altitude Low Earth Orbit ($r_{p} = 6678 \text{ km}$). $\mu_{\oplus} = 398,600 \text{ km}^3/\text{s}^2$.
+    
+    \vspace{0.2cm}
+    \textbf{6. Velocity in Parking Orbit ($v_c$):}
+    \begin{equation}
+        v_c = \sqrt{\frac{\mu_{\oplus}}{r_{p}}} = \mathbf{7.73 \text{ km/s}}
+    \end{equation}
+    
+    \textbf{7. Required Velocity at Periapsis ($v_p$):}
+    \begin{equation}
+        v_p = \sqrt{v_\infty^2 + \frac{2\mu_{\oplus}}{r_{p}}} = \sqrt{77.09 + 119.38} = \mathbf{14.01 \text{ km/s}}
+    \end{equation}
+    
+    \textbf{8. Trans-Jovian Injection Engine Burn ($\Delta v$):}
+    \begin{equation}
+        \Delta v = v_p - v_c = 14.01 - 7.73 = \mathbf{6.28 \text{ km/s}}
+    \end{equation}
+\end{frame}
+
+% ==========================================
+% SECTION 2: NUMERICAL SOLUTION
+% ==========================================
+\section{Numerical Solution (SPICE \& Lambert)}
+
+% --- Slide 4 ---
+\begin{frame}{The Reality of the Jovian System}
+    Our analytical math yielded $\Delta v = 6.28 \text{ km/s}$. However, planets' orbits are not perfectly coplanar, and the transfer ellipse is often tangent to neither orbit. Jupiter has an orbital inclination of $1.3^\circ$ and eccentricity of $0.048$.
+    
+    \vspace{0.2cm}
+    \textbf{Targeting Jupiter numerically:}
+    \begin{itemize}
+        \item Non-Hohmann transfers require the solution of Lambert's problem.
+        \item We obtain the state vector of Earth ($R_1$) at departure and Jupiter ($R_2$) at arrival.
+        \item Lambert's problem yields the required departure velocity $V_{D}^{(v)}$ relative to the sun.
+    \end{itemize}
+    
+    \vspace{0.2cm}
+    To find a \textit{real} mission window, we use a Python script to sweep through thousands of Lambert solutions to generate a Porkchop Plot.
+\end{frame}
+
+% ==========================================
+% SECTION 3: GENERATING THE PORKCHOP PLOT
+% ==========================================
+\section{Generating the Porkchop Plot}
+
+% --- Slide 5 ---
+\begin{frame}[fragile]{Python/SPICE: Setting up the Jupiter Grid}
+    First, we adjust our Colab script to target Jupiter (NAIF ID: 599) and define our time grid based on the Earth-Jupiter synodic period (approx. 398 days).
+    
+\begin{lstlisting}
+# Constants & Target
+EARTH = '399'
+TARGET_ID = '599' # Jupiter Barycenter
+
+# Define the search windows for a specific opportunity
+dep_start = spy.str2et('2028-10-01')
+dep_end = spy.str2et('2028-12-01')
+
+arr_start = spy.str2et('2031-01-01')
+arr_end = spy.str2et('2032-06-01')
+
+# Initialize 2D grid to store C3 values
+c3_grid = np.full((len(arrival_dates), len(departure_dates)), np.nan)
+\end{lstlisting}
+\end{frame}
+
+% --- Slide 6 ---
+\begin{frame}[fragile]{Python/SPICE: Populating the $C_3$ Matrix}
+    We iterate over every departure and arrival date, solve Lambert's problem, and populate our 2D grid with the required Characteristic Energy ($C_3$).
+    
+\begin{lstlisting}
+for i, t_dep in enumerate(departure_dates):
+    r1, v_earth = get_state(EARTH, t_dep)
+    
+    for j, t_arr in enumerate(arrival_dates):
+        r2, _ = get_state(TARGET_ID, t_arr)
+        tof = t_arr - t_dep
+        
+        # Solve Lambert's Problem
+        solutions = list(izzo.lambert(MU_SUN, r1, r2, tof))
+        v_tx1, v_tx2 = solutions[0].value 
+        
+        # Calculate C3 and save to matrix
+        v_inf_vec = v_tx1 - v_earth
+        c3_grid[j, i] = np.dot(v_inf_vec, v_inf_vec)
+\end{lstlisting}
+\end{frame}
+
+% --- Slide 7 ---
+\begin{frame}{Analyzing the Earth-Jupiter Porkchop Plot}
+    When we plot \texttt{c3\_grid} using \texttt{matplotlib.contourf}, the topography of the launch window emerges.
+    
+    \vspace{0.3cm}
+    \textbf{What to look for on the Jupiter plot:}
+    \begin{itemize}
+        \item \textbf{High Energy Ridge ($\Delta \nu = \pi$):} A massive energy spike dividing the plot. Because Jupiter's orbit is inclined, a perfect 180-degree transfer requires an impossible plane-change maneuver.
+        \item \textbf{Type I Trajectory Lobe:} Shorter time of flight ($< 180^\circ$ around the sun). Often requires a slightly higher $C_3$.
+        \item \textbf{Type II Trajectory Lobe:} Longer time of flight ($> 180^\circ$).
+        \item \textbf{The Optimal Valley:} Because of 3D realities, the absolute minimum $C_3$ valley usually sits between \textbf{$80 \text{ to } 85 \text{ km}^2/\text{s}^2$}. This translates to an actual $\Delta v$ closer to \textbf{$6.5 \text{ km/s}$} (higher than our 6.28 km/s ideal analytical guess).
+    \end{itemize}
+\end{frame}
+
+% ==========================================
+% SECTION 4: GMAT VALIDATION
+% ==========================================
+\section{GMAT Validation}
+
+% --- Slide 8 ---
+\begin{frame}[fragile]{NASA GMAT: Mission Setup}
+    Once our script finds the minimum $C_3$ valley, we extract the optimal $\mathbf{v}_{\infty}$ vector and input it into GMAT's Differential Corrector.
+    
+    \vspace{0.3cm}
+    \textbf{The Targeting Script:}
+\begin{lstlisting}
+% 1. The Control Variables (Initial Guesses)
+% Use our numerical Delta V (~6.5 km/s) and Beta angle
+Vary DC1(TJI_Burn.Element1 = 6.5);
+Vary DC1(DefaultSC.TA = 120.0);
+Vary DC1(DefaultSC.RAAN = 0.0);
+
+% 2. Propagate Outward
+Maneuver TJI_Burn(DefaultSC);
+Propagate DefaultProp(DefaultSC) {DefaultSC.Earth.RMAG = 1e6};
+
+% 3. The Targets (From Python SPICE Output)
+Achieve DC1(DefaultSC.Earth.C3Energy = 82.5);
+Achieve DC1(DefaultSC.Earth.RLA = -15.4);
+Achieve DC1(DefaultSC.Earth.DLA = 5.2);
+\end{lstlisting}
+\end{frame}
+
+% --- Slide 9 ---
+\begin{frame}{GMAT: Arrival at Jupiter}
+    If the Departure sequence converges, the spacecraft is on a ballistic path to Jupiter. We use a second \texttt{Propagate} command to coast across the solar system.
+    
+    \vspace{0.3cm}
+    \textbf{The B-Plane Targeting Sequence:}
+    To hit a specific Jovian orbit (like the Galileo mission, which arrived at Jupiter in December 1995), we must use a second Differential Corrector midway through the cruise phase to target Jupiter's \textbf{B-Plane}.
+    
+    \begin{itemize}
+        \item \textbf{BdotT:} Targets the radial distance/altitude.
+        \item \textbf{BdotR:} Targets the orbital inclination upon arrival.
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    \textit{This multi-step approach—Analytical Estimate $\rightarrow$ Numerical Lambert Optimization $\rightarrow$ High-Fidelity GMAT targeting—is exactly how modern interplanetary missions are flown!}
+\end{frame}
+
+\end{document}

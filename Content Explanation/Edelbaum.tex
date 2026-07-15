@@ -1,0 +1,131 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, graphicx, xcolor}
+
+% Presentation Theme
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\title[Edelbaum's Equation]{Astrodynamics 2026-1}
+\subtitle{Low-Thrust Optimization: \\ Edelbaum's Equation \& Yaw Steering}
+\author{Prof. Juan}
+\institute{Universidad de Antioquia - Aerospace Engineering}
+\date{Spring 2026}
+
+\begin{document}
+
+% --- Title Slide ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% ==========================================
+% SECTION 1: THE PROBLEM
+% ==========================================
+\section{The Sequential Trap}
+
+\begin{frame}{The Problem: Orbital Plane Changes}
+    \textbf{Scenario:} We need to move a spacecraft from a 400 km LEO to a 600 km LEO, while simultaneously changing the inclination by $2^\circ$.
+    
+    \vspace{0.4cm}
+    \textbf{The "Sequential" (Impulsive) Instinct:}
+    \begin{enumerate}
+        \item \textbf{Altitude Raise:} Thrust tangentially to spiral out to 600 km.
+        \item \textbf{Plane Change:} Thrust purely in the normal direction (out-of-plane) to crank the inclination.
+    \end{enumerate}
+    
+    \vspace{0.4cm}
+    \textbf{The Reality for Electric Propulsion:}
+    Because SEP thrusters produce millinewtons of force, a pure out-of-plane maneuver is brutally inefficient and takes too much time. We need a better way.
+\end{frame}
+
+% ==========================================
+% SECTION 2: EDELBAUM's SOLUTION
+% ==========================================
+\section{Edelbaum's Equation}
+
+\begin{frame}{Edelbaum's Optimal Steering (1961)}
+    Theodore Edelbaum proved that we can save massive amounts of propellant by combining the maneuvers. We tilt the engine slightly sideways \textit{while} we spiral outward.
+    
+    \vspace{0.3cm}
+    He derived a closed-form analytical approximation for the total $\Delta V$ required for this combined maneuver:
+    
+    \begin{equation}
+        \Delta V = \sqrt{v_1^2 + v_2^2 - 2v_1 v_2 \cos\left(\frac{\pi}{2}\Delta i\right)}
+    \end{equation}
+    
+    \vspace{0.3cm}
+    \textbf{Variables:}
+    \begin{itemize}
+        \item $v_1$: Initial circular velocity (at starting altitude).
+        \item $v_2$: Final circular velocity (at target altitude).
+        \item $\Delta i$: The required inclination change (in radians).
+    \end{itemize}
+\end{frame}
+
+% ==========================================
+% SECTION 3: THE GEOMETRY
+% ==========================================
+\section{The Geometry of Edelbaum}
+
+\begin{frame}{It's Just the Law of Cosines!}
+    If you look closely at the equation, Edelbaum reduced a complex 3D orbital mechanics calculus problem into simple 2D geometry:
+    
+    \begin{equation}
+        c^2 = a^2 + b^2 - 2ab\cos(\theta)
+    \end{equation}
+    
+    \vspace{0.3cm}
+    Imagine a vector triangle:
+    \begin{itemize}
+        \item \textbf{Side A} is your initial velocity vector magnitude ($v_1$).
+        \item \textbf{Side B} is your final velocity vector magnitude ($v_2$).
+        \item \textbf{Side C} is the $\Delta V$ you must spend to bridge the gap.
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    \textit{But wait... why is the angle between them $\frac{\pi}{2}\Delta i$ instead of just $\Delta i$?}
+\end{frame}
+
+% ==========================================
+% SECTION 4: THE PENALTY FACTOR
+% ==========================================
+\section{The Continuous Thrust Penalty}
+
+\begin{frame}{The $\frac{\pi}{2}$ Continuous Thrust Penalty}
+    With a chemical rocket, we perform plane changes \textbf{impulsively} at the orbital nodes (the intersection of the old and new orbital planes). This is 100\% efficient.
+    
+    \vspace{0.3cm}
+    An electric thruster must thrust \textbf{continuously} all the way around the Earth.
+    \begin{itemize}
+        \item At the nodes: Out-of-plane thrust is highly effective.
+        \item At $90^\circ$ from the nodes: Out-of-plane thrust does absolutely nothing to change inclination; it just wastes propellant.
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    Averaging this efficiency loss over a full circular orbit reveals that continuous thrust is $\frac{2}{\pi}$ less efficient than impulsive thrust. When calculating the $\Delta V$ cost, that fraction flips to the penalty factor $\frac{\pi}{2}$ ($\approx 1.57$).
+\end{frame}
+
+% ==========================================
+% SECTION 5: WHY IT WORKS
+% ==========================================
+\section{The Synergy of Yaw Steering}
+
+\begin{frame}{The Vector Synergy}
+    Why does Edelbaum's simultaneous maneuver save so much propellant compared to doing them sequentially?
+    
+    \vspace{0.3cm}
+    \textbf{The Power of Small Angles:}
+    If you are thrusting 100\% in the tangential direction, tilting your engine by $5^\circ$ sideways (yaw steering) yields a significant out-of-plane force.
+    
+    \vspace{0.3cm}
+    However, the penalty to your forward thrust is governed by the cosine of the angle:
+    \begin{equation}
+        \cos(5^\circ) = 0.996
+    \end{equation}
+    
+    \vspace{0.3cm}
+    By tilting slightly, you keep \textbf{99.6\%} of your forward thrust to raise your altitude, while gaining "free" inclination change. Edelbaum's math perfectly optimizes this trade-off over the duration of the mission!
+\end{frame}
+
+\end{document}

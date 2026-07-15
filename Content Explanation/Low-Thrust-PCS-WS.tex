@@ -1,0 +1,116 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[letterpaper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+
+% Header/Footer Setup
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textbf{Astrodynamics 2026-1}}
+\fancyhead[R]{Universidad de Antioquia}
+\fancyfoot[C]{\thepage}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Astrodynamics Workshop 3}} \\
+    \vspace{0.2cm}
+    {\huge \textbf{Mission Architecture Trade Study:}} \\
+    {\LARGE \textbf{Impulsive vs. Continuous-Thrust Interplanetary Transfers}} \\
+    \vspace{0.4cm}
+    \textit{Prof. Juan Francisco Puerta I. | Aerospace Engineering Program}
+\end{center}
+
+\hrule
+\vspace{0.5cm}
+
+\section*{1. Workshop Objectives}
+The goal of this workshop is to perform a comprehensive systems-level trade study for an interplanetary mission. You will compare a classical Patched Conic impulsive architecture against a modern Solar Electric Propulsion (SEP) low-thrust architecture. 
+
+\textbf{Learning Outcomes:}
+\begin{itemize}
+    \item Develop Python scripts to estimate impulsive and continuous-thrust $\Delta V$ requirements.
+    \item Implement and validate both mission architectures in NASA GMAT.
+    \item Quantify the "gravity penalty" associated with finite burns.
+    \item Formulate an architectural justification based on Time-of-Flight (TOF) vs. Payload Mass trades.
+\end{itemize}
+
+\section*{2. Mission Scenario: The Ceres Interceptor}
+The ASTRA Research Group has been tasked with designing a probe to intercept the dwarf planet Ceres in the main asteroid belt. You must evaluate the propulsion system for the Earth-departure phase.
+
+\textbf{Spacecraft Initial State:}
+\begin{itemize}
+    \item \textbf{Initial Mass ($m_0$):} $2,500 \text{ kg}$
+    \item \textbf{Parking Orbit:} 400 km circular Low Earth Orbit (LEO).
+    \item \textbf{Departure Epoch:} 01 June 2028 12:00:00 UTC.
+\end{itemize}
+
+\textbf{Propulsion Options:}
+\begin{enumerate}
+    \item \textbf{Chemical Bipropellant (Impulsive):} $I_{sp} = 315 \text{ s}$. Assumed instantaneous burn.
+    \item \textbf{SEP Hall-Effect Thruster (Continuous):} $I_{sp} = 2800 \text{ s}$, Constant Thrust $T = 0.8 \text{ N}$.
+\end{enumerate}
+
+\textbf{Target:} 
+To reach Ceres, the Lambert solver dictates a required hyperbolic excess velocity ($v_\infty$) of $\boldsymbol{5.45 \text{ km/s}}$.
+
+\section*{3. Phase A: Analytical Baseline (Python)}
+Before opening GMAT, you must establish the theoretical limits of both architectures. \textbf{Automated code without mathematical documentation will receive zero credit.}
+
+\begin{enumerate}[label=\textbf{A.\arabic*}]
+    \item \textbf{Impulsive Baseline:} Use Patched Conic theory to calculate the $\Delta V$ required to inject the spacecraft from LEO into the departure hyperbola. Calculate the exact Propellant Mass ($m_p$) consumed.
+    \item \textbf{Continuous Baseline:} Use Vallado's quasi-circular spiral approximation to calculate the $\Delta V$ required to spiral from LEO until the spacecraft reaches escape velocity ($C_3 = 0$), plus the energy required to achieve the $5.45 \text{ km/s}$ $v_\infty$. Calculate the Propellant Mass ($m_p$) and the estimated Time of Flight (TOF) in days.
+\end{enumerate}
+
+\section*{4. Phase B: Numerical Simulation (GMAT)}
+You will now build both architectures in GMAT to capture the numerical realities of the maneuvers.
+
+\begin{enumerate}[label=\textbf{B.\arabic*}]
+    \item \textbf{Impulsive Architecture:} Create a script with a \texttt{Target} sequence and a \texttt{DifferentialCorrector}. Vary the True Anomaly and the \texttt{ImpulsiveBurn} magnitude to achieve the required $C_3$ energy ($\boldsymbol{v}_\infty^2$). Record the exact $\Delta V$ and mass drop.
+    \item \textbf{Continuous Architecture:} Create an \texttt{ElectricThruster} and \texttt{ElectricTank}. Use a \texttt{BeginFiniteBurn} wrapped in a \texttt{Target} sequence. Vary the \textbf{Burn Duration} variable to achieve the required $C_3$ energy. Use the VNB Local frame with tangential steering (ThrustDirection1 = 1). Record the total mass depleted and the exact TOF.
+\end{enumerate}
+
+\section*{5. Phase C: Critical Analysis \& Architectural Justification}
+This section evaluates your engineering judgment. Submit a formal 2-page memorandum addressing the following:
+
+\begin{enumerate}[label=\textbf{C.\arabic*}]
+    \item \textbf{The Gravity Penalty:} Calculate the percentage difference in $\Delta V$ between your Python analytical spiral and your GMAT finite burn simulation. Explain \textit{physically} why GMAT required more energy than Vallado's approximation. 
+    \item \textbf{State Vector Integration:} In the GMAT continuous thrust model, explain how the mass dimension ($m$) of the state vector influences the acceleration dimension ($\ddot{\boldsymbol{r}}$) over time. Why does this make targeter convergence highly sensitive to initial guesses?
+    \item \textbf{Final Recommendation:} The primary science instrument for the Ceres Interceptor requires $800 \text{ kg}$ of strict payload mass. The funding grant expires if the probe does not arrive within 4.5 years. Based on your mass and TOF data, which propulsion architecture do you recommend? \textbf{Justify your choice with your numerical data.}
+\end{enumerate}
+
+\vspace{0.5cm}
+\hrule
+\vspace{0.5cm}
+
+\section*{6. Deliverables and Grading Rubric}
+
+\textbf{Required Files:}
+\begin{itemize}
+    \item \texttt{analytical\_baseline.py} (Clean, commented Python script).
+    \item \texttt{impulsive\_departure.script} (GMAT Script).
+    \item \texttt{continuous\_departure.script} (GMAT Script).
+    \item \texttt{TradeStudy\_LastName.pdf} (LaTeX Memorandum).
+\end{itemize}
+
+\textbf{Evaluation Criteria:}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Category} & \textbf{Weight} \\ \midrule
+Accuracy of Python Analytical Models & 20\% \\
+GMAT Script Convergence and Stability & 30\% \\
+Physical Justification of Discrepancies (C.1 \& C.2) & 25\% \\
+Systems Engineering Trade-Off Logic (C.3) & 25\% \\ \bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}

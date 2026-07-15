@@ -1,0 +1,70 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[letterpaper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{amsmath, amssymb, graphicx, fancyhdr, xcolor, booktabs}
+
+% Header/Footer Setup
+\setlength{\headheight}{35pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\vspace{10pt}\textbf{Astrodynamics 2026-1: Technical Brief}}
+\fancyhead[R]{\includegraphics[height=1cm]{UdeA+simplificado+Negro_Smaller.png}}
+\fancyfoot[C]{\thepage}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Interplanetary Departure Geometry}} \\
+    \vspace{0.2cm}
+    {\large \textit{Defining the Hyperbolic Asymptote: $\beta$, $\delta$, and $C_3$}} \\
+    \vspace{0.4cm}
+    \textit{Prof. Juan | Aerospace Engineering Program}
+\end{center}
+
+\hrule
+\vspace{0.5cm}
+
+\section*{The Hyperbolic Departure Asymptote}
+When we calculate an interplanetary trajectory using Patched Conics, the solution provides a required \textbf{Hyperbolic Departure Asymptote} ($\boldsymbol{v}_\infty$). This is the mathematical "straight line" the spacecraft must follow as it leaves Earth's Sphere of Influence (SOI). 
+
+To define this asymptote in 3D geocentric space, we use three distinct parameters: Right Ascension ($\beta$), Declination ($\delta$), and Characteristic Energy ($C_3$).
+
+\subsection*{1. Right Ascension ($\beta$): The "Compass Heading"}
+Right Ascension is measured in the Earth's equatorial plane. It starts from the Vernal Equinox ($0^\circ$, defined as the +X axis) and rotates counter-clockwise.
+\begin{itemize}
+    \item \textbf{Physical Meaning:} $\beta$ dictates the general direction the spacecraft must fly horizontally. 
+    \item \textbf{Mission Impact:} Because the Earth rotates, a specific launch site will only sweep through the correct alignment for $\beta$ at a specific time of day. This drives the timing of the daily launch window.
+\end{itemize}
+
+\subsection*{2. Declination ($\delta$): The "Tilt"}
+Declination represents the latitude of the departure vector. It measures how far above ($+$) or below ($-$) the Earth's equator the spacecraft must fly to intercept the target planet.
+\begin{itemize}
+    \item \textbf{Mission Impact (The Inclination Trap):} To depart along a vector with a specific declination, the spacecraft's parking orbit \textit{must} be tilted to at least that same angle. Therefore, the absolute mathematical constraint for an interplanetary parking orbit is:
+    \begin{equation}
+        i \ge |\delta|
+    \end{equation}
+    If you attempt to launch to Mars ($\delta \approx 20^\circ$) from a purely equatorial orbit ($i = 0^\circ$), an impossible out-of-plane maneuver would be required.
+\end{itemize}
+
+\subsection*{3. Characteristic Energy ($C_3$): The "Muscle"}
+Characteristic energy represents the raw power required to escape Earth's gravity well and reach the target planet. It is defined mathematically as the square of the hyperbolic excess velocity:
+\begin{equation}
+    C_3 = v_\infty^2
+\end{equation}
+\begin{itemize}
+    \item \textbf{High $C_3$ ($> 20 \text{ km}^2/\text{s}^2$):} The spacecraft has massive kinetic energy. Earth's gravity has little time to act on it, resulting in a very flat, almost straight hyperbolic trajectory.
+    \item \textbf{Low $C_3$ ($< 10 \text{ km}^2/\text{s}^2$):} The spacecraft is barely escaping. Earth's gravity heavily bends the trajectory (Gravity Drag), causing the flight path to execute a sharp "U-turn" around the planet before straightening out along the asymptote.
+\end{itemize}
+
+\section*{Aligning the Parking Orbit (RAAN)}
+To successfully execute a Trans-Mars Injection (TMI), the spacecraft's parking orbit plane must perfectly slice through the $\boldsymbol{v}_\infty$ vector in 3D space. Once the inclination ($i$) is chosen, there are exactly two valid Right Ascension of the Ascending Node ($\Omega$) values that satisfy this geometry:
+
+\begin{equation}
+    \sin(\Omega - \beta) = \frac{-\tan(\delta)}{\tan(i)}
+\end{equation}
+
+By solving this equation analytically, mission designers determine the exact orbital elements required before inputting the scenario into numerical integrators like GMAT.
+
+\end{document}

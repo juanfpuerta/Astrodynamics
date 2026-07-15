@@ -1,0 +1,35 @@
+name: Compile Beamer Slides & Deploy Hub
+on:
+  push:
+    branches:
+      - main  # Triggers the pipeline every time you push to main
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Compile LaTeX Beamer Presentation
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: Astrodynamics_Content.tex
+          compiler: pdflatex
+
+      - name: Stage Deployment Directory
+        run: |
+          mkdir -p public
+          # Move the freshly compiled PDF to the web directory
+          mv main.pdf public/index.pdf
+          # Copy your interactive HTML simulation files into the same directory
+          cp *.html public/ 2>/dev/null || true
+
+      - name: Deploy static assets to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public

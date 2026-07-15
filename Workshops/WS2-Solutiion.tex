@@ -1,0 +1,172 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{amsfonts} % For vector hats
+\usepackage{enumitem}
+\usepackage{listings} % For Python and GMAT code blocks
+\usepackage{xcolor}   % For code block coloring
+\usepackage[
+    left=1in, right=1in, bottom=1in, top=3cm, headheight=2cm, headheight=40pt, headsep=0.5cm, footskip=1cm 
+    ]{geometry}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+% --- Code Listing Configuration ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% --- Header Configuration ---
+\pagestyle{fancy}
+\fancyhf{} % Clear default header/footer
+\renewcommand{\headrulewidth}{0.4pt} % Add a line under the header
+\lhead{\includegraphics[height=1.2cm]{UdeA+simplificado+Negro_Smaller.png}}
+\rhead{\large \textbf{Computational Hybrid Lab:} \\ \normalsize Solutions Guide 2026-1}
+\chead{} % Clear center header
+\cfoot{\thepage} % Add page number to the center footer
+% --- End of Header Configuration ---
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Instructor Solution Manual: Advanced Trajectories \& Estimation}}
+\end{center}
+
+\vspace{0.5cm}
+
+% ---------------------------------------------------------
+% SOLUTION: EXERCISE 1
+% ---------------------------------------------------------
+\section*{Exercise 1 Solution: Earth-Jupiter-Saturn Gravity Assist}
+
+\subsection*{Part A: Analytical \& Python Calculation}
+
+\textbf{1. Porkchop Plot \& Vector Extraction} \\
+While the specific output depends on the launch window analyzed by the student (e.g., using \texttt{poliastro} or a custom Lambert solver), let us assume the solver identifies an optimal departure vector for a 2030 Earth-Jupiter window. 
+Assume the extracted hyperbolic excess velocity vector in the EME2000 frame is:
+\begin{equation}
+    \mathbf{v}_\infty = 2.50 \hat{i} + 4.10 \hat{j} + 1.25 \hat{k} \text{ [km/s]}
+\end{equation}
+The magnitude is $v_\infty = \sqrt{2.5^2 + 4.1^2 + 1.25^2} = 4.96 \text{ km/s}$. \\
+The characteristic energy is $C_3 = v_\infty^2 = \mathbf{24.62 \text{ km}^2/\text{s}^2}$.
+
+\textbf{2. Calculating Departure Angles ($\delta$ and $\beta$)}
+\begin{align}
+    \text{Declination } (\delta) &= \arcsin\left(\frac{v_z}{v_\infty}\right) = \arcsin\left(\frac{1.25}{4.96}\right) = \mathbf{14.59^\circ} \\
+    \text{Right Ascension } (\beta) &= \text{atan2}(v_y, v_x) = \text{atan2}(4.10, 2.50) = \mathbf{58.62^\circ}
+\end{align}
+
+\textbf{3. The Inclination Trap \& RAAN ($\Omega$)} \\
+First, check the inclination condition: $i \ge |\delta|$. Since $28.5^\circ \ge 14.59^\circ$, a launch from KSC directly into the required plane is possible without a plane change.
+Using the geometric constraint:
+\begin{equation}
+    \sin(\Omega - \beta) = \frac{-\tan(\delta)}{\tan(i)} = \frac{-\tan(14.59^\circ)}{\tan(28.5^\circ)} = -0.479
+\end{equation}
+This yields two possible solutions for $(\Omega - \beta)$:
+\begin{align*}
+    (\Omega - \beta)_1 &= \arcsin(-0.479) = -28.62^\circ \\
+    (\Omega - \beta)_2 &= 180^\circ - (-28.62^\circ) = 208.62^\circ
+\end{align*}
+Adding $\beta$ ($58.62^\circ$) to both gives the two possible RAANs for the parking orbit:
+\begin{equation}
+    \Omega_1 = \mathbf{30.0^\circ} \quad \text{and} \quad \Omega_2 = \mathbf{267.24^\circ}
+\end{equation}
+
+\subsection*{Part B: GMAT Simulation Expected Setup}
+The students must show a GMAT script with the following logic:
+\begin{itemize}
+    \item \textbf{Coordinates Setup:} Two local coordinate systems must be defined: \texttt{JupiterBPlane} (Origin: Jupiter, Axes: ObjectReferenced, X: V, Y: N, Z: B) and \texttt{SaturnBPlane}.
+    \item \textbf{Target Sequence 1 (Jupiter Flyby):} They vary the V, N, and B components of the Earth departure maneuver. The constraints achieved at Jupiter periapsis must be \texttt{Sat.JupiterBPlane.BdotT} and \texttt{Sat.JupiterBPlane.BdotR}. A successful flyby typically requires a BdotT offset to achieve the gravity turn towards Saturn.
+    \item \textbf{Target Sequence 2 (Saturn Polar Arrival):} After leaving Jupiter's SOI, a small DSM is varied. To achieve a polar orbit at Saturn, the B-Plane constraint must strictly be: \texttt{Achieve Sat.SaturnBPlane.BdotT = 0} (forcing the trajectory over the poles).
+\end{itemize}
+
+
+% ---------------------------------------------------------
+% SOLUTION: EXERCISE 2
+% ---------------------------------------------------------
+\section*{Exercise 2 Solution: Low-Thrust \& Kalman Filters}
+
+\subsection*{Part A: GMAT Low-Thrust Output}
+With $m_0 = 1000 \text{ kg}$ and $T = 50 \text{ mN}$, the initial acceleration is $a_t = 5 \times 10^{-5} \text{ m/s}^2$. 
+Over 3 days ($259,200$ seconds), the total accumulated $\Delta V \approx a_t \Delta t \approx 12.96 \text{ m/s}$. 
+Because electric propulsion mass flow rate ($\dot{m} = \frac{T}{g_0 I_{sp}}$) is extremely small ($\approx 3.39 \times 10^{-6} \text{ kg/s}$), the spacecraft will burn less than $\mathbf{0.88 \text{ kg}}$ of propellant. The semi-major axis will have raised by roughly $\mathbf{24.5 \text{ km}}$.
+
+\subsection*{Part B: Python Kalman Filter}
+Below is the reference implementation for the 1D Kalman filter that students should provide to estimate the spacecraft altitude.
+
+\begin{lstlisting}[language=Python, caption=Basic 1D Kalman Filter for Altitude Estimation]
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 1. Data Generation
+dt = 1.0 # 1 second time step
+time = np.arange(0, 600, dt)
+true_alt = 500000 + 0.5 * time # True altitude in meters
+measurements = true_alt + np.random.normal(0, 100, len(time)) # Noisy radar
+
+# 2. Kalman Filter Initialization
+x = np.array([[500000], [0]]) # State: [altitude, velocity]
+P = np.array([[1000, 0], [0, 10]]) # Initial Covariance
+F = np.array([[1, dt], [0, 1]]) # State Transition Matrix
+H = np.array([[1, 0]]) # Observation Matrix
+R = np.array([[10000]]) # Measurement Noise Covariance (100^2)
+Q = np.array([[0.1, 0], [0, 0.01]]) # Process Noise Covariance
+
+# Storage for plotting
+kf_estimates = []
+
+# 3. Filter Loop
+for z in measurements:
+    # --- PREDICT ---
+    x_pred = F @ x
+    P_pred = F @ P @ F.T + Q
+    
+    # --- UPDATE ---
+    Z = np.array([[z]])
+    y = Z - (H @ x_pred) # Innovation
+    S = H @ P_pred @ H.T + R # Innovation Covariance
+    K = P_pred @ H.T @ np.linalg.inv(S) # Kalman Gain
+    
+    x = x_pred + K @ y # Updated State
+    P = (np.eye(2) - K @ H) @ P_pred # Updated Covariance
+    
+    kf_estimates.append(x[0,0])
+
+# 4. Plotting (Instructor Reference)
+plt.figure(figsize=(10, 5))
+plt.scatter(time, measurements, s=2, c='r', label='Noisy Radar', alpha=0.5)
+plt.plot(time, true_alt, 'k--', label='True Altitude', linewidth=2)
+plt.plot(time, kf_estimates, 'b-', label='Kalman Estimate', linewidth=2)
+plt.xlabel('Time (s)')
+plt.ylabel('Altitude (m)')
+plt.title('Low-Thrust Altitude Estimation via Kalman Filter')
+plt.legend()
+plt.grid(True)
+plt.show()
+\end{lstlisting}
+
+\textbf{Discussion on $Q$ Matrix:} 
+The students should note that increasing the Process Noise Matrix ($Q$) tells the filter to trust its internal kinematic model less and trust the noisy measurements more. This results in a "jagged" estimate that closely follows the noisy radar dots. Conversely, a very low $Q$ assumes the kinematics are nearly perfect, producing a much smoother line, but one that could suffer from lag if the actual physical velocity changes abruptly.
+
+\end{document}

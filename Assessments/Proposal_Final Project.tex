@@ -1,0 +1,84 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[letterpaper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{amsmath, amssymb, graphicx, fancyhdr, xcolor}
+\usepackage{enumitem}
+
+% Header/Footer Setup
+\setlength{\headheight}{35pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\vspace{10pt}\textbf{Astrodynamics 2026-1}}
+\fancyhead[R]{\includegraphics[height=1cm]{UdeA+simplificado+Negro_Smaller.png}}
+\fancyfoot[C]{\thepage}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Final Project: Proposal Guidelines}} \\
+    \vspace{0.2cm}
+    {\large \textit{Designing and Simulating a Complex Astrodynamics Mission}} \\
+    \vspace{0.4cm}
+    \textbf{Weight:} 20\% of Final Grade (Proposal) | \textbf{Submission Date:} 27$^{th}$ of May - 11:59 pm\\
+    \textit{Prof. Juan Francisco Puerta I | Aerospace Engineering Program}
+\end{center}
+
+\hrule
+\vspace{0.5cm}
+
+\section*{Overview}
+The final project is your opportunity to step into the role of a Mission Design Architect. You will select, define, and solve a realistic astrodynamics problem by synthesizing the theoretical concepts, analytical mathematics, and computational tools (Python/GMAT) you have learned throughout this course. 
+
+Before you begin executing the final project, you must submit a \textbf{Project Proposal}. This document will serve as a formal "pitch" to the Chief Architect (the instructor) to ensure your problem is well-defined, properly scoped, and feasible within the timeframe.
+
+\section*{Required Proposal Structure}
+Your proposal should be a concise, professional document (2 to 3 pages), in a \textbf{PDF document}, containing the following sections:
+
+\subsection*{1. Project Title and Team}
+Provide a clear, descriptive title for your mission or analysis (e.g., \textit{"Low-Thrust Trajectory Optimization for an Earth-Mars Cargo Transfer"}). List the names and IDs of your team members. The teams can have a maximum of \textbf{two (2) classmates}.
+
+\subsection*{2. Mission Objective and Problem Definition}
+Briefly explain the "what" and the "why." 
+\begin{itemize}
+    \item What is the primary goal of this project? 
+    \item What specific astrodynamics problem are you solving? (e.g., designing an interplanetary gravity assist, maintaining a satellite constellation under $J_2$ perturbations, orbit determination from noisy ground tracking, etc.)
+    \item Define the initial conditions (e.g., parking orbit) and the target conditions.
+\end{itemize}
+
+\subsection*{3. Astrodynamic Scope}
+Detail the specific physics and course modules this project will touch upon. 
+\begin{itemize}
+    \item What gravitational models are required? (Two-body, restricted three-body, spherical harmonics, point masses?)
+    \item Are there perturbative forces you must account for? (Atmospheric drag, SRP, $J_2$).
+    \item What types of maneuvers will be used? (Impulsive Hohmann/Lambert transfers, continuous finite burns).
+\end{itemize}
+
+\subsection*{4. Proposed Methodology}
+Explain \textit{how} you will solve the problem. Your final project must utilize a hybrid approach. Briefly outline your strategy for:
+\begin{enumerate}
+    \item \textbf{Analytical Foundation:} What equations and hand calculations will establish your baseline?
+    \item \textbf{Python Processing:} How will you use Python? (e.g., generating a Porkchop plot, solving Lambert's problem, coding a Kalman Filter, plotting data).
+    \item \textbf{GMAT Simulation:} How will you structure the mission sequence? Will you use the Differential Corrector for targeting or optimization?
+\end{enumerate}
+
+\subsection*{5. Expected Challenges}
+Identify at least \textit{two technical hurdles} you expect to face during the simulation or mathematical derivation, and propose a brief mitigation strategy for each.
+
+\subsection*{6. Proposed Timeline}
+Provide a brief schedule or bulleted list of milestones from the proposal approval date to the final submission date. Break the work down into analytical drafting, Python scripting, GMAT modeling, and final report writing.
+
+\vspace{0.5cm}
+\hrule
+\vspace{0.5cm}
+
+\section*{Evaluation Criteria for the Proposal}
+Your proposal will be graded on the following criteria:
+\begin{itemize}
+    \item \textbf{Clarity and Professionalism:} Is the document well-written, logically structured, and formatted professionally?
+    \item \textbf{Scope and Feasibility:} Is the project sufficiently challenging for a final course grade, yet realistic enough to complete before the deadline? (Note: If your scope is too narrow or too broad, it will be returned for revision).
+    \item \textbf{Technical Soundness:} Does the proposed methodology correctly identify the right tools and physics required to solve the stated problem?
+\end{itemize}
+
+\end{document}

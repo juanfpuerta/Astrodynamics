@@ -1,0 +1,159 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, graphicx, listings, xcolor}
+
+% Presentation Theme
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Code Block Styling
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\tiny, % Tiny font to fit the code on the slide
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{orange},
+    frame=single,
+    backgroundcolor=\color{gray!5},
+    showstringspaces=false
+}
+
+\title[Numerical Integration]{Astrodynamics 2026-1}
+\subtitle{Algorithm Design: \\ Numerical Integration of Low-Thrust Trajectories}
+\author{Prof. Juan}
+\institute{Universidad de Antioquia - Aerospace Engineering}
+\date{Spring 2026}
+
+\begin{document}
+
+% --- Title Slide ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% ==========================================
+% SECTION 1: THE STATE VECTOR
+% ==========================================
+\section{The 7D State Vector}
+
+\begin{frame}{Expanding the State Vector}
+    In Keplerian (impulsive) mechanics, the state vector has 6 dimensions (Position and Velocity). 
+    
+    \vspace{0.3cm}
+    Because continuous thrust consumes propellant over time, mass becomes a dynamic variable. We must expand the state vector ($\boldsymbol{Y}$) to \textbf{7 dimensions}:
+
+    \begin{equation}
+        \boldsymbol{Y} = 
+        \begin{bmatrix}
+            x \\ y \\ z \\ v_x \\ v_y \\ v_z \\ m
+        \end{bmatrix}
+    \end{equation}
+    
+    \vspace{0.3cm}
+    \textit{Mass is no longer a static constant; it is a coordinate that moves through time just like $x$ or $y$.}
+\end{frame}
+
+% ==========================================
+% SECTION 2: THE EQUATIONS OF MOTION
+% ==========================================
+\section{The ODE Physics}
+
+\begin{frame}{Constructing the Derivative (Physics)}
+    To numerically integrate the trajectory, we must calculate the rate of change of the state vector: $d\boldsymbol{Y}/dt$.
+    
+    \vspace{0.3cm}
+    \textbf{1. Gravity:}
+    \begin{equation}
+        \boldsymbol{a}_{grav} = -\frac{\mu}{|\boldsymbol{r}|^3} \boldsymbol{r}
+    \end{equation}
+    
+    \textbf{2. Thrust (Tangential Steering):}
+    \begin{equation}
+        \boldsymbol{a}_{thrust} = \frac{T}{m(t)} \left( \frac{\boldsymbol{v}}{|\boldsymbol{v}|} \right)
+    \end{equation}
+    
+    \textbf{3. Mass Depletion (Rocket Equation):}
+    \begin{equation}
+        \dot{m} = -\frac{T}{I_{sp} g_0}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{Constructing the Derivative (Output)}
+    By combining these rates of change, our Ordinary Differential Equation (ODE) function must return the following 7D array at every time step $t$:
+    
+    \vspace{0.3cm}
+    \begin{equation}
+        \frac{d\boldsymbol{Y}}{dt} = 
+        \begin{bmatrix}
+            v_x \\ 
+            v_y \\ 
+            v_z \\ 
+            a_{gx} + a_{tx} \\ 
+            a_{gy} + a_{ty} \\ 
+            a_{gz} + a_{tz} \\ 
+            \dot{m}
+        \end{bmatrix}
+    \end{equation}
+    
+    \vspace{0.3cm}
+    This is the exact mathematical engine operating inside GMAT's \texttt{FiniteBurn} routines!
+\end{frame}
+
+% ==========================================
+% SECTION 3: PYTHON IMPLEMENTATION
+% ==========================================
+\section{Python Code}
+
+\begin{frame}[fragile]{Python Implementation}
+    We can write this exact ODE in Python and use SciPy's Runge-Kutta solver.
+    
+\begin{lstlisting}[language=Python]
+import numpy as np
+from scipy.integrate import solve_ivp
+
+def low_thrust_ode(t, state, mu, thrust, isp, g0):
+    # 1. Unpack state
+    r_vec = state[0:3]
+    v_vec = state[3:6]
+    m = state[6]
+    
+    # 2. Gravity Acceleration
+    r_mag = np.linalg.norm(r_vec)
+    a_grav = (-mu / r_mag**3) * r_vec
+    
+    # 3. Thrust Acceleration (Tangential Steering)
+    v_mag = np.linalg.norm(v_vec)
+    u_v = v_vec / v_mag          # Unit velocity vector
+    a_thrust = (thrust / m) * u_v
+    
+    # 4. Total Acceleration and Mass Depletion
+    a_total = a_grav + a_thrust
+    mdot = -thrust / (isp * g0)
+    
+    # 5. Return derivatives [dx/dt, dy/dt, dz/dt, dvx/dt, dvy/dt, dvz/dt, dm/dt]
+    return np.concatenate((v_vec, a_total, [mdot]))
+
+# --- Execution ---
+# result = solve_ivp(low_thrust_ode, [0, max_t], initial_state, args=(mu, T, Isp, g0))
+\end{lstlisting}
+\end{frame}
+
+% ==========================================
+% SECTION 4: VALIDATION
+% ==========================================
+\section{Validation against GMAT}
+
+\begin{frame}{Validation Exercise}
+    \textbf{Your Assignment:}
+    \begin{enumerate}
+        \item Define a starting LEO orbit and a 0.5 N ion engine in Python.
+        \item Integrate the trajectory for 30 days using \texttt{scipy.integrate.solve\_ivp}.
+        \item Build the exact same spacecraft, \texttt{ElectricThruster}, and \texttt{ElectricTank} in GMAT.
+        \item Propagate a \texttt{FiniteBurn} for 30 days.
+    \end{enumerate}
+    
+    \vspace{0.5cm}
+    Compare the final Semi-Major Axis ($a$) and final Spacecraft Mass ($m$). If your Python ODE is written correctly, it will perfectly match GMAT's numerical output!
+\end{frame}
+
+\end{document}

@@ -1,0 +1,136 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Packages for math and graphics
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+% Title Information
+\title[Trajectory Optimization]{Introduction to Trajectory Optimization}
+\subtitle{From Analytical Maneuvers to Numerical Solutions}
+\author{Astrodynamics Module}
+\date{Week 1}
+
+\begin{document}
+
+% --- Title Slide ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% --- Objective Slide ---
+\begin{frame}{Module Objective}
+    \textbf{The Shift from Analytical to Numerical}
+    \vspace{0.5cm}
+    \begin{itemize}
+        \item Transition from basic analytical maneuvers (e.g., Hohmann transfers) to numerical optimization.
+        \item Learn how modern mission designers calculate complex trajectories.
+        \item \textbf{Goal:} Minimize fuel ($\Delta V$) or time while satisfying complex, non-linear mission constraints.
+    \end{itemize}
+\end{frame}
+
+% --- Day 1 ---
+\begin{frame}{Day 1: The Core Conflict}
+    \framesubtitle{Targeters vs. Optimizers}
+    
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{Targeters (Root-Finding)}
+            \begin{itemize}
+                \item E.g., Differential Correctors.
+                \item Attempt to drive a mathematical error \textit{exactly} to zero.
+                \item If constraints are too tight, they diverge or fail.
+                \item \textit{Analogy:} Walking blindfolded trying to step exactly into a small hole.
+            \end{itemize}
+        \end{column}
+        
+        \begin{column}{0.5\textwidth}
+            \textbf{Optimizers (Gradient-Based)}
+            \begin{itemize}
+                \item E.g., SNOPT, VF13ad.
+                \item Use an \textbf{Objective Function} (minimize $\Delta V$, maximize mass).
+                \item Navigates constraints to find the \textit{best} possible solution, not just \textit{a} solution.
+                \item \textit{Analogy:} Finding the lowest point in a valley bounded by fences.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% --- Day 2 ---
+\begin{frame}{Day 2: Taming Chaos}
+    \framesubtitle{The Multiple Shooting Method}
+    
+    \textbf{The Problem with Single Shooting:}
+    \begin{itemize}
+        \item Propagating a single long trajectory is highly sensitive to the initial guess.
+        \item A tiny $\Delta V$ error at Earth equals a massive miss distance at Mars.
+    \end{itemize}
+    \vspace{0.3cm}
+    
+    \textbf{The Multiple Shooting Architecture:}
+    \begin{itemize}
+        \item \textbf{Divide and Conquer:} Break the trajectory into smaller, less sensitive chunks.
+        \item \textbf{Control Points:} Where the optimizer guesses the spacecraft's state.
+        \item \textbf{Patch Points:} Where the algorithm enforces position and velocity continuity to "stitch" the chunks together seamlessly.
+    \end{itemize}
+    % Tip: Insert a graphic here showing disconnected segments merging into one curve
+\end{frame}
+
+% --- Day 3 ---
+\begin{frame}{Day 3: The Low-Thrust Paradigm}
+    \framesubtitle{Electric Propulsion vs. Chemical Rockets}
+    
+    \begin{itemize}
+        \item \textbf{Breaking the Impulsive Assumption:} Standard $\Delta V$ math fails when burns take days or months instead of seconds.
+        \item \textbf{Complex Orbital Changes:} 
+        \begin{itemize}
+            \item Changing Inclination or RAAN is difficult.
+            \item Continuous burning across nodes cancels out out-of-plane changes.
+            \item Requires careful, "chopped" propagation arcs.
+        \end{itemize}
+        \item \textbf{Why Optimization is Mandatory:} Simple targeters cannot handle the non-linear, cyclical responses of low-thrust regimes.
+    \end{itemize}
+\end{frame}
+
+% --- Day 4 ---
+\begin{frame}{Day 4: Optimal Control Theory}
+    \framesubtitle{A Conceptual Overview}
+    
+    \begin{itemize}
+        \item \textbf{Steering History:} We aren't solving for a single burn vector anymore; we need a continuous history of pitch and yaw over time.
+        \item \textbf{The Mathematics:} Professional software (like GMAT's CSALT plugin) uses Hamiltonians and Lagrange multipliers to find these histories.
+        \item \textbf{Collocation:} The solver discretizes the continuous problem into a grid of nodes to find the optimal continuously changing thrust vector.
+    \end{itemize}
+    \vspace{0.5cm}
+    \textit{Note: The goal is to understand what the math is achieving, not necessarily to solve the differential equations by hand!}
+\end{frame}
+
+% --- Day 5 ---
+\begin{frame}{Day 5: Practical Lab}
+    \framesubtitle{Applying Optimization in GMAT}
+    
+    \textbf{Today's Mission:}
+    \begin{enumerate}
+        \item \textbf{The Baseline:} Set up a simple inclination change using a \textit{Targeter}. Observe how it struggles with poor initial guesses.
+        \item \textbf{The Upgrade:} Swap the Targeter for an \textit{Optimizer} (e.g., VF13ad).
+        \item \textbf{The Configuration:} 
+        \begin{itemize}
+            \item Set Objective Function: \texttt{Minimize BurnDuration}
+            \item Set Constraint: Desired Inclination
+        \end{itemize}
+        \item \textbf{Debrief:} Analyze how the optimizer navigated the parameter space to find a fuel-efficient solution.
+    \end{enumerate}
+\end{frame}
+
+% --- Conclusion ---
+\begin{frame}{Summary \& Best Practices}
+    \begin{itemize}
+        \item \textbf{Start with "Why":} Missions like \textit{Dawn} or the \textit{Artemis Gateway} absolutely require numerical optimization; analytical math isn't enough.
+        \item \textbf{The "Initial Guess" is King:} Optimizers aren't magic. They require a physically reasonable initial guess from the engineer to converge.
+        \item \textbf{Software is the Standard:} Industry relies on tools like GMAT, STK, and FreeFlyer to handle these immense numerical workloads.
+    \end{itemize}
+\end{frame}
+
+\end{document}

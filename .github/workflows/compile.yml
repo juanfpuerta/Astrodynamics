@@ -2,13 +2,23 @@ name: Compile Beamer Slides & Deploy Hub
 on:
   push:
     branches:
-      - main  # Triggers the pipeline every time you push to main
+      - main  # Triggers when you push to your main branch
 
+# Explicitly grant the native deployment privileges required by GitHub
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  build_and_deploy:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source Code
@@ -23,13 +33,19 @@ jobs:
       - name: Stage Deployment Directory
         run: |
           mkdir -p public
-          # Move the freshly compiled PDF to the web directory
+          # Move your compiled presentation to the index target
           mv main.pdf public/index.pdf
-          # Copy your interactive HTML simulation files into the same directory
+          # Safely copy any uploaded HTML interactive tools into the directory
           cp *.html public/ 2>/dev/null || true
 
-      - name: Deploy static assets to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Setup Pages Configuration
+        uses: actions/configure-pages@v5
+
+      - name: Upload Production Assets Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          path: './public'
+
+      - name: Deploy Directly to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

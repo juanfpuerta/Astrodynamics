@@ -32,9 +32,9 @@ jobs:
       - name: Stage Deployment Directory
         run: |
           mkdir -p public
-          # 2. Uses a wildcard (*.pdf) so it captures whatever the presentation is named
-          mv *.pdf public/index.pdf  
-          cp *.html public/ 2>/dev/null || true
+          mv *.pdf public/index.pdf
+          # UPDATE THIS LINE: Now copies both html and png files
+          cp *.{html,png} public/ 2>/dev/null || true
 
       - name: Setup Pages Configuration
         uses: actions/configure-pages@v5

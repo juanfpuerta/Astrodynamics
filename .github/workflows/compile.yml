@@ -2,9 +2,8 @@ name: Compile Beamer Slides & Deploy Hub
 on:
   push:
     branches:
-      - main  # Triggers when you push to your main branch
+      - main
 
-# Explicitly grant the native deployment privileges required by GitHub
 permissions:
   contents: read
   pages: write
@@ -27,15 +26,14 @@ jobs:
       - name: Compile LaTeX Beamer Presentation
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: Astrodynamics_Content.tex
+          root_file: Astrodynamics_Content.tex  # 1. Tells the compiler your new file name
           compiler: pdflatex
 
       - name: Stage Deployment Directory
         run: |
           mkdir -p public
-          # Move your compiled presentation to the index target
-          mv main.pdf public/index.pdf
-          # Safely copy any uploaded HTML interactive tools into the directory
+          # 2. Uses a wildcard (*.pdf) so it captures whatever the presentation is named
+          mv *.pdf public/index.pdf  
           cp *.html public/ 2>/dev/null || true
 
       - name: Setup Pages Configuration

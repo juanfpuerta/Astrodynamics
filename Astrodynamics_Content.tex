@@ -3,6 +3,7 @@
 \usepackage{amsmath, amssymb, bm}
 \usepackage{booktabs}
 \usepackage{listings}
+\usepackage{graphicx}
 
 % --- Universidad de Antioquia (UdeA) Custom Theme Setup ---
 \definecolor{UdeAGreen}{HTML}{006241}
@@ -42,11 +43,19 @@
     frame=single
 }
 
-\title{\textbf{\LARGE Astrodynamics Module Content}}
+% --- ADD THESE TWO LINES FOR THEME AND FONT ---
+\usetheme{Madrid}                % Sets layout (e.g., Madrid, Frankfurt, Boadilla)
+\usefonttheme{professionalfonts} % Ensures equations render accurately
+
+% Positions logo in the upper right corner
+\logo{\vspace{-0.2cm}\hfill\includegraphics[width=1cm]{UdeA+simplificado+Negro_Smaller.png}\hspace{0.1cm}}
+
+\title[Astrodynamics Module]{Astrodynamics Module Content} 
 %\subtitle{\large Module 1: High-Fidelity Orbital Perturbations \& Coupled Loops (Weeks 1--4)}
 \author{Juan Francisco Puerta Ibarra}
 \institute{Department of Mechanical and Aerospace Engineering \\ Universidad de Antioquia (UdeA)}
 \date{Semester 2026-2}
+\titlegraphic{\includegraphics[width=3cm]{UdeA+simplificado+Negro_Smaller.png}}
 
 \begin{document}
 
@@ -68,6 +77,84 @@
         \item \textbf{Week 2:} Non-Spherical Gravitational Fields and Zonal Potential Expansion ($J_2$).
         \item \textbf{Week 3:} Constrained Orbit Optimization: Frozen and Jovian Sun-Synchronous Systems.
         \item \textbf{Week 4:} Coupled Dynamic Force Environments and Atmospheric Decay Lifetime Loops.
+    \end{itemize}
+\end{frame}
+
+% --- Module: Trajectory Optimization ---
+
+\begin{frame}{Side-by-Side Images}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{KF_Explanation.png}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{UdeA+simplificado+Negro_Smaller.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Slide Title with Figure}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.6\textwidth]{Low-Thrust-Info.png}
+        \caption{This is a descriptive caption for my image.}
+        \label{fig:my_image}
+    \end{figure}
+\end{frame}
+
+
+\section{Trajectory Optimization & Control}
+
+\begin{frame}{Trajectory Optimization: Introduction}
+    \begin{block}{From Impulsive to Continuous Thrust}
+        Traditional orbital maneuvers assume instantaneous velocity changes ($\Delta V$). Advanced mission design, however, requires modeling continuous steering histories.
+    \end{block}
+    
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Steering History:} We move beyond a single burn vector; we define a continuous time-history of pitch $\alpha(t)$ and yaw $\beta(t)$.
+        \item \textbf{The Mathematical Engine:} We utilize \textit{Optimal Control Theory}, specifically solving for the state-costate trajectories.
+        \item \textbf{Numerical Discretization:} Since these problems are generally non-linear and non-analytical, we use \textbf{Collocation} to discretize the continuous path into a grid of nodes, allowing solvers to converge on an optimal steering profile.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Mathematical Foundations of Optimization}
+    The goal is to minimize a cost function $J$ (e.g., fuel mass, time) subject to dynamic constraints:
+    
+    \[ J = \Phi(\mathbf{x}(t_f), t_f) + \int_{t_0}^{t_f} L(\mathbf{x}, \mathbf{u}, t) \, dt \]
+    
+    \begin{itemize}
+        \item \textbf{Hamiltonians ($H$):} We incorporate Lagrange multipliers ($\lambda$) to account for mission constraints (boundary values).
+        \item \textbf{Collocation Methods:} We solve the problem by satisfying differential equations at specific "nodes" along the trajectory, turning an infinite-dimensional problem into a large-scale nonlinear programming (NLP) problem.
+    \end{itemize}
+    
+    \textit{Note: The objective is to understand the physics the math is achieving, not to perform Hamiltonian integration by hand.}
+\end{frame}
+
+\begin{frame}{Practical Lab: The Optimizer Transition}
+    \begin{exampleblock}{Today's Mission: The Optimizer Audit}
+        Transitioning from a blind targeter to a gradient-based optimizer (e.g., Yukon, SNOPT).
+    \end{exampleblock}
+    
+    \begin{enumerate}
+        \item \textbf{The Baseline:} Initialize a standard inclination change using a simple Differential Corrector (DC). Observe the convergence sensitivity to the initial guess.
+        \item \textbf{The Upgrade:} Implement a gradient-search algorithm.
+        \item \textbf{Optimization Parameters:}
+        \begin{itemize}
+            \item \textbf{Objective Function:} Minimize Total Burn Duration.
+            \item \textbf{Path Constraint:} Maintain eccentricity $< 0.001$.
+        \end{itemize}
+        \item \textbf{Forensic Debrief:} Map how the optimizer traverses the parameter space compared to the targeter.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Synthesis & Industry Best Practices}
+    \begin{itemize}
+        \item \textbf{Why it Matters:} Missions like \textit{Dawn} (ion propulsion) or \textit{Artemis Gateway} (NRHO transfers) rely entirely on numerical optimization—analytical math alone cannot map the solution space.
+        \item \textbf{The Role of the Engineer:} Optimizers are not "magic." They require a physically sensible initial guess. If the guess is poor, the optimizer will diverge.
+        \item \textbf{Industry Standard:} Engineers do not write their own solvers for deep space; they rely on established suites like GMAT (with CSALT), STK, or Copernicus. Your task is to audit the solution validity.
     \end{itemize}
 \end{frame}
 

@@ -26,6 +26,7 @@ jobs:
       - name: Compile LaTeX Beamer Presentation
         uses: xu-cheng/latex-action@v3
         with:
+          root_file: Astrodynamics_Content.tex
           compiler: latexmk
           args: -pdf -file-line-error -interaction=nonstopmode
 

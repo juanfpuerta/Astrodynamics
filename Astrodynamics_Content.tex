@@ -98,14 +98,14 @@
 \begin{frame}{Slide Title with Figure}
     \begin{figure}
         \centering
-        \includegraphics[width=0.6\textwidth]{Low-Thrust-Info.png}
+        \includegraphics[width=0.85\textwidth]{Low-Thrust-Info.png}
         \caption{This is a descriptive caption for my image.}
         \label{fig:my_image}
     \end{figure}
 \end{frame}
 
 
-\section{Trajectory Optimization & Control}
+\section{Trajectory Optimization \& Control}
 
 \begin{frame}{Trajectory Optimization: Introduction}
     \begin{block}{From Impulsive to Continuous Thrust}
@@ -150,11 +150,11 @@
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Synthesis & Industry Best Practices}
+\begin{frame}{Synthesis \& Industry Best Practices}
     \begin{itemize}
         \item \textbf{Why it Matters:} Missions like \textit{Dawn} (ion propulsion) or \textit{Artemis Gateway} (NRHO transfers) rely entirely on numerical optimization—analytical math alone cannot map the solution space.
         \item \textbf{The Role of the Engineer:} Optimizers are not "magic." They require a physically sensible initial guess. If the guess is poor, the optimizer will diverge.
-        \item \textbf{Industry Standard:} Engineers do not write their own solvers for deep space; they rely on established suites like GMAT (with CSALT), STK, or Copernicus. Your task is to audit the solution validity.
+        \item \textbf{Industry Standard:} Engineers do not write their own solvers for deep space; they rely on established suites like GMAT (with CSALT), STK, or Copernicus. Your task is to audit the solution's validity.
     \end{itemize}
 \end{frame}
 

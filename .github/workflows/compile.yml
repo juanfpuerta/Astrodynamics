@@ -26,8 +26,8 @@ jobs:
       - name: Compile LaTeX Beamer Presentation
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: Astrodynamics_Content.tex  # 1. Tells the compiler your new file name
-          compiler: pdflatex
+          compiler: latexmk
+          args: -pdf -file-line-error -interaction=nonstopmode
 
       - name: Stage Deployment Directory
         run: |

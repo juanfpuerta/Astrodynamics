@@ -25,10 +25,11 @@
 
 % --- Header/Footer Customization ---
 \setbeamertemplate{headline}{}
-\setbeamertemplate{footline}{
-    \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm]{palette primary}
-        \small Universidad de Antioquia -- Faculty of Engineering \hfill Module 1: Perturbations \hfill \insertframenumber/\inserttotalframenumber
-    \end{beamercolorbox}
+\setbeamertemplate{footline}{%
+    \leavevmode%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm]{palette primary}%
+        \small Universidad de Antioquia -- Faculty of Engineering \hfill Module 1: Perturbations \hfill \insertframenumber/\inserttotalframenumber%
+    \end{beamercolorbox}%
 }
 \setbeamertemplate{navigation symbols}{}
 
@@ -43,19 +44,18 @@
     frame=single
 }
 
-% --- ADD THESE TWO LINES FOR THEME AND FONT ---
+% --- THEME AND FONT ---
 \usetheme{Madrid}                % Sets layout (e.g., Madrid, Frankfurt, Boadilla)
 \usefonttheme{professionalfonts} % Ensures equations render accurately
 
 % Positions logo in the upper right corner
-\logo{\vspace{-0.2cm}\hfill\includegraphics[width=1cm]{UdeA+simplificado+Negro_Smaller.png}\hspace{0.1cm}}
+\logo{\vspace{-0.2cm}\hfill\includegraphics[width=1cm]{Images/UdeA+simplificado+Negro_Smaller.png}\hspace{0.1cm}}
 
 \title[Astrodynamics Module]{Astrodynamics Module Content} 
-%\subtitle{\large Module 1: High-Fidelity Orbital Perturbations \& Coupled Loops (Weeks 1--4)}
 \author{Juan Francisco Puerta Ibarra}
-\institute{Department of Mechanical and Aerospace Engineering \\ Universidad de Antioquia (UdeA)}
+\institute{Aerospace Engineering}
 \date{Semester 2026-2}
-\titlegraphic{\includegraphics[width=3cm]{UdeA+simplificado+Negro_Smaller.png}}
+\titlegraphic{\includegraphics[width=3cm]{Images/UdeA+simplificado+Negro_Smaller.png}}
 
 \begin{document}
 
@@ -65,19 +65,444 @@
 \end{frame}
 
 % --- MODULE OVERVIEW ---
+\begin{frame}{Review: Two Body Problem}
+    \begin{block}{Module 1. Orbital Perturbations (The "Real" Solar System)}
+        The \textbf{gravitational two-body problem} concerns the motion of two point particles that interact only with each other, due to gravity. This means that influences from any third body are neglected.
+    \end{block}
+    
+    \vspace{0.2cm}
+    \textbf{Weekly Roadmap and Mathematical Benchmarks:}
+    \begin{itemize}
+        \item{Week 1:} Foundations of Non-Keplerian Acceleration.
+        \item{Week 2:} Zonal Harmonics and the Geopotential Spectrum.
+        \item{Week 3:} Advanced Constrained Orbit Design.
+        \item{Week 4:} Non-Conservative Force Coupling and Lifetime Loops.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \vspace*{-0.3cm}
+    \begin{columns}[T]
+        \begin{column}{0.30\textwidth}
+            \small
+            \begin{exampleblock}{Module 1. Orbital Perturbations (The "Real" Solar System)}
+                A little review from before… Two-Body Problem
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.70\textwidth}
+            \centering
+            \vspace{0.1cm}
+            \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{Images/Earth_sun.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \vspace*{-0.3cm}
+    \begin{columns}[T]
+        \begin{column}{0.30\textwidth}
+            \small
+            \begin{exampleblock}{Module 1. Orbital Perturbations (The "Real" Solar System)}
+                A little review from before… Two-Body Problem
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.70\textwidth}
+            \centering
+            \vspace{0.1cm}
+            \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{Images/Earth to sc.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% --- MODULE OVERVIEW ---
+\begin{frame}{Review: Reference Frames*}
+    \footnotesize
+    \begin{block}{Inertial reference frames}
+        \begin{itemize}
+            \item A coordinate system that is either at rest or moving at a constant velocity.
+            \item Newton's laws are valid only in inertial reference frames.
+        \end{itemize}
+    \end{block}
+    
+    \vspace{0.2cm}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/frames.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/TBP1.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/TBP2.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/TBP3.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/TBP4.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/TBP5.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/TBP6.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/TBP7.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/inertial_frame_1.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/inertial_frame_2.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/inertial_frame_3.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/orbital_energy_1.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/summary_equations.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Review: Two Body Problem}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\textwidth]{Images/orbital_perturbations_1.png}
+    \end{figure}
+\end{frame}
+
+\section{Introduction to Perturbed Orbits}
+
+\begin{frame}{Real World vs. Two-Body Keplerian Motion}
+    \begin{block}{Ideal Two-Body Acceleration}
+        $$\mathbf{a}_{\text{Kepler}} = -\frac{\mu}{r^3}\mathbf{r}$$
+        Assumes point masses, spherical symmetry, and a vacuum environment.
+    \end{block}
+
+    \vspace{0.2cm}
+
+    \begin{block}{Perturbed Equation of Motion}
+        $$\ddot{\mathbf{r}} = -\frac{\mu}{r^3}\mathbf{r} + \mathbf{a}_{\text{perturbation}}$$
+        where the perturbing accelerations are modeled as:
+        $$\mathbf{a}_{\text{perturbation}} = \mathbf{a}_{J_2} + \mathbf{a}_{\text{drag}} + \mathbf{a}_{\text{srp}} + \mathbf{a}_{\text{mag}} + \mathbf{a}_{3\text{rd-body}}$$
+    \end{block}
+
+    \begin{itemize}
+        \item Causes orbital elements $(a, e, i, \Omega, \omega, \nu)$ to deviate from constant Keplerian conics.
+        \item Divided into \textbf{gravitational} (conservative) and \textbf{non-gravitational} (dissipative/external) forces.
+    \end{itemize}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SECTION 2: J2 PERTURBATION
+% ------------------------------------------------------------------------------
+\section{Earth Oblateness ($J_2$ Perturbation)}
+
+\begin{frame}{Earth Oblateness ($J_2$): Physics and Potential Expansion}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{itemize}
+                \item Earth's diurnal rotation produces equatorial bulging ($R_e \approx 6378\text{ km}$, $R_p \approx 6356\text{ km}$).
+                \item Represented via Spherical Harmonics Expansion of geopotential $V(r, \phi)$:
+            \end{itemize}
+            \begin{equation*}
+                V(r,\phi) = -\frac{\mu}{r}\left[ 1 - \sum_{n=2}^{\infty} J_n \left(\frac{R_e}{r}\right)^n P_n(\sin\phi) \right]
+            \end{equation*}
+            \begin{itemize}
+                \item $J_2 \approx 1.08263 \times 10^{-3}$ is $\sim 1000\times$ larger than higher zonal harmonics ($J_3, J_4$).
+            \end{itemize}
+        \end{column}
+
+        \begin{column}{0.42\textwidth}
+            \begin{block}{$J_2$ Acceleration}
+                $$\mathbf{a}_{J_2} = \nabla V_{J_2}$$
+                \begin{itemize}
+                    \item Creates a non-uniform gravitational torque pulling toward the equator.
+                    \item Preserves angular momentum magnitude on average, but rotates the orbital plane in space.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{$J_2$ Secular Effects: Precession Rates}
+    $J_2$ produces secular (long-term drift) changes in two primary classical orbital elements:
+
+    \begin{block}{Nodal Precession Rate ($\dot{\Omega}$)}
+        $$\dot{\Omega} = -\frac{3}{2} J_2 \left(\frac{R_e}{p}\right)^2 n \cos i \quad \text{[rad/s]}$$
+        \begin{itemize}
+            \item Precesses westward (retrograde) for prograde orbits ($i < 90^\circ$).
+            \item Zero drift for polar orbits ($i = 90^\circ$).
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Perigee Precession Rate ($\dot{\omega}$)}
+        $$\dot{\omega} = \frac{3}{4} J_2 \left(\frac{R_e}{p}\right)^2 n \left( 5\cos^2 i - 1 \right) \quad \text{[rad/s]}$$
+        \begin{itemize}
+            \item Drift vanishes at the \textbf{critical inclination}: $i = 63.4^\circ$ or $116.6^\circ$ ($\cos^2 i = 1/5$).
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Engineering Applications of $J_2$}
+    \begin{columns}
+        \begin{column}{0.45\textwidth}
+            \begin{block}{Sun-Synchronous Orbits (SSO)}
+                \begin{itemize}
+                    \item Target: $\dot{\Omega} = +0.9856^\circ/\text{day}$ ($360^\circ / 365.25\text{ days}$).
+                    \item Matches Earth's mean orbital revolution rate around the Sun.
+                    \item Ground track experiences constant local solar time illumination (ideal for optical remote sensing).
+                    \item Typical LEO altitude: $\sim 600-800\text{ km}$, $i \approx 98^\circ$.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        
+        \begin{column}{0.45\textwidth}
+            \begin{block}{Molniya Orbits}
+                \begin{itemize}
+                    \item Highly eccentric 12-hour period orbit ($e \approx 0.74$).
+                    \item Inclination locked to $i = 63.4^\circ$.
+                    \item Freezes argument of perigee ($\dot{\omega} = 0$), preventing perigee from drifting away from the Southern Hemisphere.
+                    \item Maximizes dwell time over high northern latitudes.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SECTION 3: ATMOSPHERIC DRAG
+% ------------------------------------------------------------------------------
+\section{Atmospheric Drag}
+
+\begin{frame}{Atmospheric Drag: Physical Principles}
+    \begin{block}{Drag Acceleration Model}
+        $$\mathbf{a}_{\text{drag}} = -\frac{1}{2} \rho \left(\frac{C_D A}{m}\right) v_{\text{rel}} \mathbf{v}_{\text{rel}}$$
+    \end{block}
+
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{Key Parameters:}
+            \begin{itemize}
+                \item $\rho$: Local atmospheric density (exponential falloff with altitude).
+                \item $C_D$: Drag coefficient ($\sim 2.0 - 2.2$ for complex geometries).
+                \item $A/m$: Cross-sectional area-to-mass ratio [$\text{m}^2/\text{kg}$].
+                \item $\mathbf{v}_{\text{rel}}$: Velocity relative to co-rotating atmosphere ($\mathbf{v} - \boldsymbol{\omega}_e \times \mathbf{r}$).
+            \end{itemize}
+        \end{column}
+
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Ballistic Coefficient ($B^*$)}
+                $$B^* = \frac{C_D A}{m}$$
+                Measures vehicle susceptibility to drag. Spacecraft with large deployable arrays exhibit higher decay rates.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Effects of Drag on Orbital Propagation}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{itemize}
+                \item \textbf{Energy Loss:} Dissipates total orbital mechanical energy ($E = -\mu / 2a$).
+                \item \textbf{Semi-Major Axis Decay:}
+                $$\frac{da}{dt} \approx -2 a^2 \frac{a_{\text{drag}}}{v} < 0$$
+                \item \textbf{Orbital Circularization:} Peak drag acts at perigee (highest atmospheric density), lowering apogee much faster than perigee, driving $e \to 0$.
+                \item \textbf{Paradoxical Effect:} As $a$ drops, orbital speed $v = \sqrt{\mu/a}$ actually increases!
+            \end{itemize}
+        \end{column}
+        
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Density Variability Drivers}
+                Upper thermospheric density $\rho(h)$ varies dynamically due to:
+                \begin{itemize}
+                    \item 11-year Solar Activity Cycle (Extreme UV solar heating).
+                    \item Geomagnetic storms.
+                    \item Day/Night diurnal atmospheric bulge.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SECTION 4: SOLAR RADIATION PRESSURE
+% ------------------------------------------------------------------------------
+\section{Solar Radiation Pressure (SRP)}
+
+\begin{frame}{Solar Radiation Pressure (SRP): Physics}
+    Photons emitted by the Sun exert momentum upon impact with satellite surfaces.
+
+    \begin{block}{SRP Acceleration Model ("Cannonball Model")}
+        $$\mathbf{a}_{\text{srp}} = - P_{\odot} C_r \left(\frac{A}{m}\right) \left(\frac{1 \text{ AU}}{r_{\odot}}\right)^2 \hat{\mathbf{u}}_{\odot}$$
+    \end{block}
+
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{Parameters:}
+            \begin{itemize}
+                \item $P_{\odot}$: Solar radiation constant at $1\text{ AU} \approx 4.56 \times 10^{-6}\text{ N/m}^2$.
+                \item $C_r$: Radiation reflectivity ($1.0$ pure absorption, $2.0$ total specular reflection).
+                \item $\hat{\mathbf{u}}_{\odot}$: Unit vector pointing toward Sun.
+            \end{itemize}
+        \end{column}
+        
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Eclipse / Shadow Function}
+                $$\nu_{\text{shadow}} = \begin{cases} 
+                    1, & \text{Direct Sunlight} \\
+                    (0, 1), & \text{Penumbra} \\
+                    0, & \text{Umbra (Total Shadow)}
+                \end{cases}$$
+                Requires tracking Earth's shadow cone geometries during orbit propagation.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{SRP Effects at High Altitudes and Solar Sailing}
+    \begin{itemize}
+        \item \textbf{Dominance in HEO/GEO:} While Drag dominates low LEO ($< 600\text{ km}$), SRP becomes the leading non-gravitational force in MEO, GEO, and high-altitude orbits.
+        \item \textbf{Long-term Orbital Drift:} Induces periodic long-term variations in eccentricity ($e$) and inclination ($i$).
+        \item \textbf{Space Debris Vulnerability:} Objects with very high $A/m$ ratios (e.g., thermal insulation fragments) experience massive SRP pertubation, leading to rapid eccentricity pumping and premature atmospheric entry.
+    \end{itemize}
+
+    \begin{exampleblock}{Propulsive Solar Sailing}
+        Solar sails intentionally maximize $A/m$ ratios ($> 10\text{ m}^2/\text{kg}$) to harness $\mathbf{a}_{\text{srp}}$ for propellantless interplanetary maneuvering and orbital inclination changes.
+    \end{exampleblock}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SECTION 5: GEOMAGNETIC INTERACTIONS
+% ------------------------------------------------------------------------------
+\section{Geomagnetic Field Interactions}
+
+\begin{frame}{Geomagnetic Field Interaction Mechanisms}
+    Earth's geomagnetic dipole field $\mathbf{B}$ interacts with spacecraft through two primary physical pathways:
+
+    \begin{block}{1. Magnetic Disturbance Torques (Attitude Dynamics)}
+        $$\boldsymbol{\tau}_{\text{mag}} = \mathbf{m}_{\text{sat}} \times \mathbf{B}$$
+        \begin{itemize}
+            \item $\mathbf{m}_{\text{sat}}$: Residual magnetic dipole moment of internal electronics and current loops.
+            \item Primary attitude perturbation torque in LEO.
+            \item Exploited purposefully using **Magnetorquers** ($\mathbf{m}_{\text{cmd}}$) for attitude control and reaction wheel desaturation.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{2. Lorentz Force Acceleration (Translational Dynamics)}
+        $$\mathbf{a}_{\text{Lorentz}} = \frac{q_{\text{sat}}}{m} \left( \mathbf{v}_{\text{rel}} \times \mathbf{B} \right)$$
+        \begin{itemize}
+            \item $q_{\text{sat}}$: Electrostatic charge acquired by spacecraft in ionospheric plasma.
+            \item Utilized by **Electrodynamic Tethers (EDTs)** ($I \mathbf{L} \times \mathbf{B}$) to generate drag or boost forces without propellant consumption.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SECTION 6: COMPARATIVE ANALYSIS
+% ------------------------------------------------------------------------------
+\section{Comparative Hierarchy of Perturbations}
+
+\begin{frame}{Acceleration Order of Magnitude Comparison}
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{lccc}
+            \toprule
+            \textbf{Perturbation Source} & \textbf{LEO (500 km)} & \textbf{MEO (20,000 km)} & \textbf{GEO (35,786 km)} \\
+            \midrule
+            Central Earth Gravity ($\mu/r^2$) & $8.4 \text{ m/s}^2$ & $0.57 \text{ m/s}^2$ & $0.22 \text{ m/s}^2$ \\
+            Earth $J_2$ Oblateness & $10^{-3} \text{ m/s}^2$ & $10^{-6} \text{ m/s}^2$ & $10^{-8} \text{ m/s}^2$ \\
+            Atmospheric Drag & $10^{-4} - 10^{-6} \text{ m/s}^2$ & $\sim 0$ & $0$ \\
+            Solar Radiation Pressure (SRP) & $10^{-7} \text{ m/s}^2$ & $10^{-7} \text{ m/s}^2$ & $10^{-7} \text{ m/s}^2$ \\
+            3rd-Body Gravitational (Sun/Moon) & $10^{-7} \text{ m/s}^2$ & $10^{-5} \text{ m/s}^2$ & $10^{-5} \text{ m/s}^2$ \\
+            Geomagnetic Lorentz Acceleration & $10^{-8} \text{ m/s}^2$ & $< 10^{-10} \text{ m/s}^2$ & $< 10^{-10} \text{ m/s}^2$ \\
+            \bottomrule
+        \end{tabular}
+        \caption{Comparison of typical perturbing accelerations across regimes.}
+    \end{table}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SECTION 7: SUMMARY
+% ------------------------------------------------------------------------------
+\begin{frame}{Summary for Orbit Determination and Estimation}
+    \begin{enumerate}
+        \item \textbf{$J_2$ Oblateness:} Conservative force causing nodal precession ($\dot{\Omega}$) and perigee rotation ($\dot{\omega}$). Basis of SSO and Molniya orbits.
+        \item \textbf{Atmospheric Drag:} Non-conservative force driving semi-major axis decay ($a\downarrow$) and circularization ($e\downarrow$). Dominant perturbation in LEO.
+        \item \textbf{Solar Radiation Pressure:} Non-conservative force dominating in GEO/HEO. Induces long-term eccentricity oscillations.
+        \item \textbf{Geomagnetic Interactions:} Produces primary disturbance torque for attitude control; can be leveraged via magnetorquers or electrodynamic tethers.
+        \item \textbf{Estimation Implications:} Precise Orbit Determination (POD) filters (EKF/Batch) must estimate dynamic atmospheric scaling factors ($B^*$) and solar reflectivity coefficients ($C_r$) alongside spacecraft position and velocity states.
+    \end{enumerate}
+\end{frame}
+
+
+\section{Orbital Perturbations}
+
+% --- MODULE OVERVIEW ---
 \begin{frame}{Section 1 Architecture and Operational Focus}
     \begin{block}{The Core Shift: Descriptive $\rightarrow$ Forensic Numerical Analysis}
         In foundational coursework, orbits exist in a pristine, analytical 2-body universe. In this module, we transition to high-fidelity environments. Fourth-year engineers will study the non-linear coupling mechanics of gravity fields and dynamic atmospheres.
     \end{block}
     
     \vspace{0.2cm}
-    \textbf{Weekly Roadmap and Mathematical Benchmarks:}
-    \begin{itemize}
-        \item \textbf{Week 1:} Non-Keplerian State Spaces, LPE, and Gauss's Variational Equations.
-        \item \textbf{Week 2:} Non-Spherical Gravitational Fields and Zonal Potential Expansion ($J_2$).
-        \item \textbf{Week 3:} Constrained Orbit Optimization: Frozen and Jovian Sun-Synchronous Systems.
-        \item \textbf{Week 4:} Coupled Dynamic Force Environments and Atmospheric Decay Lifetime Loops.
-    \end{itemize}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.85\textwidth]{Images/Low-Thrust-Info.png}
+        \caption{This is a descriptive caption for my image.}
+        \label{fig:low_thrust_arch} % Fixed duplicate label
+    \end{figure}
 \end{frame}
 
 % --- Module: Trajectory Optimization ---
@@ -86,11 +511,11 @@
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \centering
-            \includegraphics[width=\textwidth]{KF_Explanation.png}
+            \includegraphics[width=\textwidth]{Images/KF_Explanation.png}
         \end{column}
         \begin{column}{0.5\textwidth}
             \centering
-            \includegraphics[width=\textwidth]{UdeA+simplificado+Negro_Smaller.png}
+            \includegraphics[width=\textwidth]{Images/UdeA+simplificado+Negro_Smaller.png}
         \end{column}
     \end{columns}
 \end{frame}
@@ -98,14 +523,14 @@
 \begin{frame}{Slide Title with Figure}
     \begin{figure}
         \centering
-        \includegraphics[width=0.85\textwidth]{Low-Thrust-Info.png}
+        \includegraphics[width=0.85\textwidth]{Images/Low-Thrust-Info.png}
         \caption{This is a descriptive caption for my image.}
-        \label{fig:my_image}
+        \label{fig:low_thrust_overview} % Fixed duplicate label
     \end{figure}
 \end{frame}
 
 
-\section{Trajectory Optimization \& Control}
+\section{Trajectory Optimization and Control}
 
 \begin{frame}{Trajectory Optimization: Introduction}
     \begin{block}{From Impulsive to Continuous Thrust}
@@ -150,7 +575,7 @@
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Synthesis \& Industry Best Practices}
+\begin{frame}{Synthesis and Industry Best Practices}
     \begin{itemize}
         \item \textbf{Why it Matters:} Missions like \textit{Dawn} (ion propulsion) or \textit{Artemis Gateway} (NRHO transfers) rely entirely on numerical optimization—analytical math alone cannot map the solution space.
         \item \textbf{The Role of the Engineer:} Optimizers are not "magic." They require a physically sensible initial guess. If the guess is poor, the optimizer will diverge.
@@ -158,7 +583,7 @@
     \end{itemize}
 \end{frame}
 
-\section{Week 1: Non-Keplerian Spaces \& Variational Systems}
+\section{Week 1: Non-Keplerian Spaces and Variational Systems}
 
 % --- WEEK 1: SLIDE 1 ---
 \begin{frame}{Week 1: Moving Beyond the Two-Body Idealization}
@@ -219,7 +644,14 @@
 \begin{frame}{Week 2: The Spherical Harmonics Gravitational Potential}
     To model a non-spherical planet, the gravitational potential function $U$ is expanded via an infinite series of spherical harmonics:
     
-    \[ U(r, \phi, \lambda) = \frac{\mu}{r} \left[ 1 - \sum_{n=2}^{\infty} J_n \left(\frac{R_{\text{eq}}}{r}\right)^n P_n(\sin\phi) + \sum_{n=2}^{\infty}\sum_{m=1}^{n}\left(\frac{R_{\text{eq}}}{r}\right)^n P_{nm}(\sin\phi)\left(C_{nm}\cos m\lambda + S_{nm}\sin m\lambda\right) \right] \]
+    % Multi-line aligned equation to resolve the ~170pt overfull \hbox error
+    \begin{equation*}
+        \small
+        \begin{aligned}
+            U(r, \phi, \lambda) = \frac{\mu}{r} \left[ 1 \right. &- \sum_{n=2}^{\infty} J_n \left(\frac{R_{\text{eq}}}{r}\right)^n P_n(\sin\phi) \\
+            &+ \left. \sum_{n=2}^{\infty}\sum_{m=1}^{n}\left(\frac{R_{\text{eq}}}{r}\right)^n P_{nm}(\sin\phi)\left(C_{nm}\cos m\lambda + S_{nm}\sin m\lambda\right) \right]
+        \end{aligned}
+    \end{equation*}
     
     \begin{block}{Classification of Geopotential Asymmetries}
         \begin{itemize}
@@ -238,9 +670,9 @@
     Evaluating the gradient of the $J_2$ scalar potential yields the precise non-spherical perturbing acceleration vector in the Earth-Centered Inertial (ECI) frame:
     
     \begin{equation}
-        \mathbf{a}_{J_2} = -\frac{3 J_2 \mu R_{\text{eq}}^2}{2 r = 5} \begin{bmatrix}
-            x \left(1 - \frac{5z^2}{r^2}\right) \\
-            y \left(1 - \frac{5z^2}{r^2}\right) \\
+        \mathbf{a}_{J_2} = -\frac{3 J_2 \mu R_{\text{eq}}^2}{2 r^5} \begin{bmatrix}
+            x \left(1 - \frac{5z^2}{r^2}\right) \\[4pt]
+            y \left(1 - \frac{5z^2}{r^2}\right) \\[4pt]
             z \left(3 - \frac{5z^2}{r^2}\right)
         \end{bmatrix}
     \end{equation}
@@ -372,7 +804,7 @@ def state_derivative_engine(t, state, B_coeff):
 \end{lstlisting}
 \end{frame}
 
-% --- FORENSIC Bug SHEET ---
+% --- FORENSIC BUG SHEET ---
 \begin{frame}{Forensic Assessment Framework: The Decay Bug Hunt}
     \begin{block}{Adversarial Verification Protocol}
         Your grading profile for Computational Lab 1 is based on a forensic script audit. You will be handed a pre-coded $J_2$-Drag decay simulation that produces anomalous energy trends.
@@ -393,21 +825,19 @@ def state_derivative_engine(t, state, B_coeff):
     
     \vspace{0.3cm}
     \begin{center}
-        % Using "run:" instead of "https://" forces the PDF player to open the local file
         \href{run:Target_Optimizer.html}{
             \beamerbutton{\color{white}\textbf{Launch Live Kalman Simulation Widget}}
         }
     \end{center}
 \end{frame}
 
-\begin{frame}{Week 12: Libration Points \& Symplectic Interventions}
+\begin{frame}{Week 12: Libration Points and Symplectic Interventions}
     \begin{block}{Numerical Integrator Audit}
         Standard non-symplectic integration methods systematically destroy the system's energy conservation profile across extended timescales.
     \end{block}
     
     \vspace{0.4cm}
     \begin{center}
-        % Wraps a standard URL inside a native aesthetic Beamer button
         \href{https://www.youtube.com/watch?v=2XhzTzIHJxw}{
             \beamerbutton{\large Click Here to Watch: GMAT vs. Symplectic Integrators}
         }

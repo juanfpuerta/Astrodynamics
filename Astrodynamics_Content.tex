@@ -1,6 +1,6 @@
 \documentclass[aspectratio=169,11pt]{beamer}
 \usepackage[utf8]{inputenc}
-\usepackage{amsmath, amssymb, bm}
+\usepackage{amsmath, amssymb, bm, amsfonts}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{graphicx}
@@ -321,6 +321,223 @@
     \end{columns}
 \end{frame}
 
+%--Slide 1 Expansion
+
+\begin{frame}{The Geopotential Spectrum: Spherical Harmonics}
+    The non-spherical mass distribution of Earth is modeled by expanding the gravitational potential $V(r, \phi, \lambda)$ in spherical harmonics:
+
+    \begin{equation*}
+        V(r,\phi,\lambda) = -\frac{\mu}{r} \left[ 1 + \sum_{n=2}^{\infty} \left( \frac{R_e}{r} \right)^n \left( -J_n P_n(\sin\phi) + \sum_{m=1}^{n} P_{nm}(\sin\phi) \left( C_{nm}\cos m\lambda + S_{nm}\sin m\lambda \right) \right) \right]
+    \end{equation*}
+
+    \begin{columns}[T]
+        \begin{column}{0.32\textwidth}
+            \begin{block}{Zonal Harmonics ($J_n$)}
+                \begin{itemize}
+                    \item Latitude dependent ($m = 0$).
+                    \item Bands parallel to Equator.
+                    \item Dominant term: $J_2$.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.32\textwidth}
+            \begin{block}{Tesseral Harmonics}
+                \begin{itemize}
+                    \item Lat. \& Long. dependent ($n \neq m \neq 0$).
+                    \item Checkerboard grid pattern.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.32\textwidth}
+            \begin{block}{Sectoral Harmonics}
+                \begin{itemize}
+                    \item Longitude dependent ($n = m$).
+                    \item Orange-slice pie wedges.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Slide 3: Legendre Polynomials and J2 Potential
+% ------------------------------------------------------------------------------
+\begin{frame}{The $J_2$ Term: Legendre Polynomial Expansion}
+    \begin{itemize}
+        \item The $n=2$ zonal harmonic represents Earth's **equatorial bulge** ($R_e \approx 6378\text{ km}$, $R_p \approx 6356\text{ km}$).
+        \item The $2^{\text{nd}}$-degree **Legendre Polynomial** is given by:
+        $$P_2(\sin\phi) = \frac{1}{2}\left( 3\sin^2\phi - 1 \right)$$
+        where $\phi$ is the geocentric latitude ($\sin\phi = z/r$).
+    \end{itemize}
+
+    \begin{block}{$J_2$ Perturbing Potential Function ($R_{J_2}$)}
+        $$V_{J_2}(r, \phi) = \frac{\mu R_e^2 J_2}{2 r^3} \left( 3\sin^2\phi - 1 \right)$$
+        where $J_2 \approx 1.08263 \times 10^{-3}$ is dimensionless.
+    \end{block}
+
+    \begin{alertblock}{Key Observation}
+        Notice $J_2 \sim 10^{-3}$, while $J_3, J_4 \sim 10^{-6}$. Therefore, $J_2$ accounts for over \textit{$99.9\%$} of all non-spherical gravitational perturbations!
+    \end{alertblock}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Slide 4: Deriving Perturbing Acceleration Vector
+% ------------------------------------------------------------------------------
+\begin{frame}{Deriving the $J_2$ Perturbing Acceleration Vector}
+    Taking the gradient of the potential ($\mathbf{a}_{J_2} = \nabla V_{J_2}$) in Geocentric Equatorial frame ($x, y, z$):
+
+    \begin{equation*}
+        \mathbf{a}_{J_2} = -\frac{3 J_2 \mu R_e^2}{2 r^5} 
+        \begin{bmatrix}
+            x \left( 1 - 5\frac{z^2}{r^2} \right) \\
+            y \left( 1 - 5\frac{z^2}{r^2} \right) \\
+            z \left( 3 - 5\frac{z^2}{r^2} \right)
+        \end{bmatrix}
+    \end{equation*}
+
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Physical Mechanism}
+                \begin{itemize}
+                    \item $\mathbf{a}_{J_2}$ creates a non-central force directed toward the equatorial plane.
+                    \item Exerts an out-of-plane torque on tilted orbits ($i \neq 0^\circ, 90^\circ$).
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Conservation Laws}
+                \begin{itemize}
+                    \item Axisymmetric about Z-axis $\implies$ $h_z$ is conserved!
+                    \item Conservative force $\implies$ Specific mechanical energy $E$ is conserved on average.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Slide 5: The Period-Averaging Process
+% ------------------------------------------------------------------------------
+\begin{frame}{The Orbit-Averaging Process (Lagrange Planetary Equations)}
+    To separate slow, cumulative long-term trends (**secular variations**) from fast intra-orbit oscillations (**short-period variations**), we integrate Lagrange's Planetary Equations over one full orbital period $T$:
+
+    \begin{equation*}
+        \bar{\dot{\Omega}} = \frac{1}{2\pi} \int_{0}^{2\pi} \dot{\Omega}(\nu) \, d\nu, \qquad 
+        \bar{\dot{\omega}} = \frac{1}{2\pi} \int_{0}^{2\pi} \dot{\omega}(\nu) \, d\nu
+    \end{equation*}
+
+    \begin{block}{First-Order Secular Drift Formulas}
+        \begin{align*}
+            \dot{\Omega} &= -\frac{3}{2} J_2 \left(\frac{R_e}{p}\right)^2 n \cos i \quad \text{[rad/s]} \\
+            \dot{\omega} &= \frac{3}{4} J_2 \left(\frac{R_e}{p}\right)^2 n \left( 5\cos^2 i - 1 \right) \quad \text{[rad/s]}
+        \end{align*}
+        where $p = a(1-e^2)$ is the semi-latus rectum, and $n = \sqrt{\mu/a^3}$ is the mean motion.
+    \end{block}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Slide 6: Worked Example 1 (SSO Design)
+% ------------------------------------------------------------------------------
+\begin{frame}{Worked Example 1: Sun-Synchronous Orbit (SSO) Design}
+    \begin{exampleblock}{Problem Statement}
+        A remote-sensing satellite is launched into a circular orbit at an altitude of $h = 800\text{ km}$. Calculate the required orbital inclination $i$ so that the orbit is Sun-Synchronous ($\dot{\Omega}_{\text{SSO}} = +0.9856^\circ/\text{day}$).
+    \end{exampleblock}
+
+    \textbf{Given Constants:}
+    \begin{itemize}
+        \item $R_e = 6378.137\text{ km}$, $\mu = 398600.44\text{ km}^3/\text{s}^2$, $J_2 = 1.08263 \times 10^{-3}$
+        \item Solar precession rate: $\dot{\Omega} = 0.9856^\circ/\text{day} = 1.99106 \times 10^{-7}\text{ rad/s}$
+    \end{itemize}
+
+    \textbf{Step 1: Compute Orbital Geometry \& Mean Motion}
+    \begin{align*}
+        a &= R_e + h = 6378.137 + 800 = 7178.137\text{ km} \quad (\text{and } p = a \text{ since } e=0) \\
+        n &= \sqrt{\frac{\mu}{a^3}} = \sqrt{\frac{398600.44}{(7178.137)^3}} = 1.0390 \times 10^{-3}\text{ rad/s}
+    \end{align*}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Slide 7: Worked Example 1 (Solution Continued)
+% ------------------------------------------------------------------------------
+\begin{frame}{Worked Example 1: Solution Continued}
+    \textbf{Step 2: Substitute into the Nodal Precession Rate Formula}
+    $$\dot{\Omega} = -\frac{3}{2} J_2 \left(\frac{R_e}{a}\right)^2 n \cos i$$
+
+    Substitute numerical values:
+    $$1.99106 \times 10^{-7} = -\frac{3}{2} (1.08263 \times 10^{-3}) \left(\frac{6378.137}{7178.137}\right)^2 (1.0390 \times 10^{-3}) \cos i$$
+
+    $$1.99106 \times 10^{-7} = -1.33235 \times 10^{-6} \cos i$$
+
+    \textbf{Step 3: Solve for Inclination $i$}
+    $$\cos i = \frac{1.99106 \times 10^{-7}}{-1.33235 \times 10^{-6}} = -0.14944$$
+
+    $$i = \arccos(-0.14944) = \mathbf{98.59^\circ}$$
+
+    \begin{block}{Result Analysis}
+        The orbit must be **retrograde** ($i > 90^\circ$) so that $\cos i < 0$, yielding a positive (eastward) nodal precession that matches the Earth's orbit around the Sun!
+    \end{block}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Slide 8: Worked Example 2 (Molniya & Critical Inclination)
+% ------------------------------------------------------------------------------
+\begin{frame}{Worked Example 2: Molniya Orbit Drift Rates}
+    \begin{exampleblock}{Problem Statement}
+        A communications satellite flies in a 12-hour Molniya orbit with $a = 26561\text{ km}$ and $e = 0.74$. 
+        \begin{enumerate}
+            \item Show why setting $i = 63.435^\circ$ freezes the argument of perigee ($\dot{\omega} = 0$).
+            \item Calculate the secular nodal precession rate $\dot{\Omega}$ (in deg/day) at this inclination.
+        \end{enumerate}
+    \end{exampleblock}
+
+    \textbf{Solution Part 1: Critical Inclination Condition}
+    $$\dot{\omega} = \frac{3}{4} J_2 \left(\frac{R_e}{p}\right)^2 n \left( 5\cos^2 i - 1 \right) = 0 \implies 5\cos^2 i - 1 = 0$$
+    $$\cos i = \frac{1}{\sqrt{5}} \implies i = \arccos(0.44721) = \mathbf{63.435^\circ}$$
+    This prevents the perigee from moving away from the Southern Hemisphere!
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Slide 9: Worked Example 2 (Solution Part 2)
+% ------------------------------------------------------------------------------
+\begin{frame}{Worked Example 2: Solution Part 2}
+    \textbf{Solution Part 2: Nodal Precession Calculation}
+    \begin{align*}
+        p &= a(1 - e^2) = 26561 \times (1 - 0.74^2) = 12016.3\text{ km} \\
+        n &= \sqrt{\frac{398600.44}{(26561)^3}} = 1.4584 \times 10^{-4}\text{ rad/s}
+    \end{align*}
+
+    Substitute into $\dot{\Omega}$:
+    $$\dot{\Omega} = -\frac{3}{2} (1.08263 \times 10^{-3}) \left(\frac{6378.137}{12016.3}\right)^2 (1.4584 \times 10^{-4}) \cos(63.435^\circ)$$
+    $$\dot{\Omega} = -3.003 \times 10^{-8}\text{ rad/s}$$
+
+    Convert to degrees per day:
+    $$\dot{\Omega}_{\text{daily}} = (-3.003 \times 10^{-8}\text{ rad/s}) \times \left(\frac{180}{\pi}\right) \times 86400\text{ s/day} = \mathbf{-0.148^\circ/\text{day}}$$
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Slide 10: In-Class Practice Exercise
+% ------------------------------------------------------------------------------
+\begin{frame}{In-Class Practice Problem (For Students)}
+    \begin{block}{Practice Exercise: LEO Space Debris Drift}
+        A piece of space debris is tracked in a circular orbit at an altitude of $h = 500\text{ km}$ with an inclination of $i = 45^\circ$.
+        \begin{enumerate}
+            \item Calculate the secular nodal precession rate $\dot{\Omega}$ in degrees per day.
+            \item Calculate the rate of perigee rotation $\dot{\omega}$ in degrees per day.
+            \item Determine if the line of nodes precesses Eastward or Westward.
+        \end{enumerate}
+    \end{block}
+
+    \vspace{0.3cm}
+
+    \begin{exampleblock}{Answer Key (For Self-Verification)}
+        \begin{itemize}
+            \item $a = 6878.14\text{ km} \implies n = 1.1077 \times 10^{-3}\text{ rad/s}$
+            \item $\dot{\Omega} \approx -5.32^\circ/\text{day}$ (Westward)
+            \item $\dot{\omega} \approx +11.29^\circ/\text{day}$ (Direct)
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
 % ------------------------------------------------------------------------------
 % SECTION 3: ATMOSPHERIC DRAG
 % ------------------------------------------------------------------------------
@@ -374,6 +591,262 @@
             \end{block}
         \end{column}
     \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SECTION: ATMOSPHERIC DENSITY & ROTATION
+% ------------------------------------------------------------------------------
+\section{Upper Atmospheric Modeling}
+
+\begin{frame}{Exponential Atmosphere \& Atmospheric Rotation}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{1. Exponential Density Model}
+                Upper thermospheric density falls off exponentially with geometric altitude $h$:
+                \begin{equation*}
+                    \rho(h) = \rho_0 \exp\left(-\frac{h - h_0}{H}\right)
+                \end{equation*}
+                where $H$ is the \textbf{atmospheric scale height}:
+                \begin{equation*}
+                    H = \frac{k_B T_{\text{atm}}}{\bar{M} g}
+                \end{equation*}
+                ($H \approx 50\text{--}80\text{ km}$ in LEO, varying dynamically with solar EUV heating).
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{2. Co-Rotating Atmosphere Velocity}
+                The atmosphere rotates alongside Earth's spin $\boldsymbol{\omega}_e = [0, 0, \omega_e]^T$. Relative velocity vector $\mathbf{v}_{\text{rel}}$ is:
+                \begin{equation*}
+                    \mathbf{v}_{\text{rel}} = \mathbf{v} - \boldsymbol{\omega}_e \times \mathbf{r} = \begin{bmatrix} v_x + \omega_e y \\ v_y - \omega_e x \\ v_z \end{bmatrix}
+                \end{equation*}
+                Atmospheric rotation reduces relative drag velocity for prograde orbits ($i < 90^\circ$).
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SECTION: VARIATIONAL EQUATIONS DERIVATION
+% ------------------------------------------------------------------------------
+\section{Analytical Derivations of Orbital Decay}
+
+\begin{frame}{Derivation: Semi-Major Axis Decay Rate ($\frac{da}{dt}$)}
+    \begin{columns}[t]
+        \begin{column}{0.52\textwidth}
+            Specific orbital energy: $E = -\frac{\mu}{2a}$.
+            
+            \smallskip
+            \textbf{Step 1: Energy Rate Derivative}
+            \begin{equation*}
+                \frac{dE}{dt} = \frac{\mu}{2a^2} \frac{da}{dt}
+            \end{equation*}
+
+            \textbf{Step 2: Work Done by Drag}
+            \begin{equation*}
+                \frac{dE}{dt} = \mathbf{a}_{\text{drag}} \cdot \mathbf{v} = -a_{\text{drag}} v
+            \end{equation*}
+
+            \textbf{Step 3: Equating Rates ($v = \sqrt{\mu/a}$)}
+            \begin{equation*}
+                \frac{\mu}{2a^2} \frac{da}{dt} = -a_{\text{drag}} \sqrt{\frac{\mu}{a}} \implies \frac{da}{dt} = -\frac{2 a_{\text{drag}}}{n}
+            \end{equation*}
+        \end{column}
+
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Fundamental Decay Formula}
+                For circular orbits ($n = \sqrt{\mu/a^3}$):
+                \begin{equation*}
+                    \frac{da}{dt} = -\frac{2 a_{\text{drag}}}{n}
+                \end{equation*}
+                Substituting $a_{\text{drag}} = \frac{1}{2}\rho v^2 \left(\frac{C_D A}{m}\right)$:
+                \begin{equation*}
+                    \frac{da}{dt} = -\rho \left(\frac{C_D A}{m}\right) \sqrt{\mu a} \quad \text{[m/s]}
+                \end{equation*}
+            \end{block}
+
+            \begin{itemize}
+                \item \small Rate is strictly negative ($\frac{da}{dt} < 0$).
+                \item \small Scales linearly with density $\rho$ and area-to-mass ratio $A/m$.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Derivation: Orbital Period Decay Rate ($\frac{dT}{dt}$)}
+    Using Kepler's $3^{\text{rd}}$ Law relating Period $T$ and Semi-Major Axis $a$:
+    \begin{equation*}
+        T = 2\pi \sqrt{\frac{a^3}{\mu}} \implies \frac{dT}{dt} = \frac{3\pi}{v} \frac{da}{dt}
+    \end{equation*}
+
+    Substitute $\frac{da}{dt} = -\rho \left(\frac{C_D A}{m}\right) v^2 a$:
+    \begin{equation*}
+        \frac{dT}{dt} = \frac{3\pi}{v} \left[ -\rho \left(\frac{C_D A}{m}\right) v^2 a \right] = -3\pi a \rho \left(\frac{C_D A}{m}\right) v
+    \end{equation*}
+
+    \begin{alertblock}{King-Hele's Orbital Period Change Relation}
+        \begin{equation*}
+            \frac{dT}{dt} = -3\pi a \rho \left(\frac{C_D A}{m}\right) \quad \text{[dimensionless, s/s]}
+        \end{equation*}
+        Directly links orbital period drop per orbit to the ballistic parameter $B^* = \frac{C_D A}{m}$.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Asymmetric Drag in Elliptical Orbits \& Circularization}
+    In an elliptical orbit ($e > 0$), density varies exponentially between periapsis ($r_p$) and apoapsis ($r_a$):
+    \begin{equation*}
+        \frac{\rho_{\text{periapsis}}}{\rho_{\text{apoapsis}}} = \exp\left( \frac{r_a - r_p}{H} \right) = \exp\left( \frac{2 a e}{H} \right)
+    \end{equation*}
+
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Physical Behavior}
+                \begin{itemize}
+                    \item Peak drag impulses occur localized around \textbf{periapsis}.
+                    \item Drag at periapsis removes kinetic energy, selectively \textbf{lowering apoapsis altitude} ($r_a \downarrow$).
+                    \item Periapsis altitude remains nearly constant ($r_p \approx \text{const}$).
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Secular Eccentricity Decay}
+                \begin{equation*}
+                    \frac{de}{dt} \approx -\rho_p \left(\frac{C_D A}{m}\right) \sqrt{\frac{\mu}{a}} I_1\left(\frac{ae}{H}\right) e^{-\frac{ae}{H}}
+                \end{equation*}
+                \begin{itemize}
+                    \item Forces $e \to 0$ (orbital circularization) prior to final atmospheric plunge.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Orbital Lifetime Estimation in Circular Orbit}
+    Assuming constant scale height $H$, the remaining lifetime $L_{\text{lifetime}}$ of a satellite decaying from initial altitude $h_0$ can be approximated analytically by integrating the scale height:
+
+    \begin{block}{Linearized Lifetime Formula}
+        \begin{equation*}
+            L_{\text{lifetime}} \approx \frac{H}{|\dot{a}_0|} = \frac{H}{\rho_0 \left(\frac{C_D A}{m}\right) \sqrt{\mu a_0}}
+        \end{equation*}
+        where $|\dot{a}_0|$ is the initial daily altitude loss rate at $h_0$.
+    \end{block}
+
+    \medskip
+
+    \begin{exampleblock}{Key Engineering Insights}
+        \begin{itemize}
+            \item \textbf{The "Plunge" Effect:} Because density increases exponentially as altitude drops, $80\%$ of a satellite's total operational lifetime is spent in the first $100\text{ km}$ of decay!
+            \item Once altitude drops below $\sim 180\text{--}200\text{ km}$, final re-entry occurs within hours.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SECTION: WORKED EXAMPLES
+% ------------------------------------------------------------------------------
+\section{Step-by-Step Worked Examples}
+
+\begin{frame}{Worked Example 1: Space Station Altitude \& Period Loss}
+    \begin{exampleblock}{Problem Statement}
+        A small space station module ($m = 2000\text{ kg}$) with an effective cross-sectional area $A = 15\text{ m}^2$ flies in a circular LEO at $h = 350\text{ km}$. Given $C_D = 2.2$ and thermospheric density $\rho = 3.8 \times 10^{-12}\text{ kg/m}^3$:
+        \begin{enumerate}
+            \item Calculate the drag acceleration $a_{\text{drag}}$.
+            \item Calculate the daily altitude decay rate $\Delta a_{\text{daily}}$ (in km/day).
+            \item Calculate the period drop per day $\Delta T_{\text{daily}}$ (in seconds/day).
+        \end{enumerate}
+    \end{exampleblock}
+
+    \textbf{Given Constants:}
+    \begin{itemize}
+        \item $R_e = 6378.137\text{ km}$, $\mu = 398600.44\text{ km}^3/\text{s}^2$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Worked Example 1: Detailed Analytical Solution}
+    \textbf{Step 1: Compute Orbit Geometry \& Velocity}
+    \begin{align*}
+        a &= R_e + h = 6378.137 + 350 = 6728.137\text{ km} = 6.728137 \times 10^6\text{ m} \\
+        v &= \sqrt{\frac{\mu}{a}} = \sqrt{\frac{3.9860044 \times 10^{14}}{6.728137 \times 10^6}} = 7697.16\text{ m/s}
+    \end{align*}
+
+    \textbf{Step 2: Calculate Drag Acceleration $a_{\text{drag}}$}
+    \begin{align*}
+        a_{\text{drag}} &= \frac{1}{2} \rho \left(\frac{C_D A}{m}\right) v^2 = \frac{1}{2} (3.8 \times 10^{-12}) \left(\frac{2.2 \times 15}{2000}\right) (7697.16)^2 \\
+        &= \mathbf{1.857 \times 10^{-6}\text{ m/s}^2}
+    \end{align*}
+
+    \textbf{Step 3: Daily Altitude Decay Rate $\Delta a_{\text{daily}}$}
+    \begin{align*}
+        n &= \sqrt{\frac{\mu}{a^3}} = 1.1438 \times 10^{-3}\text{ rad/s} \implies \frac{da}{dt} = -\frac{2 a_{\text{drag}}}{n} = -3.247 \times 10^{-3}\text{ m/s} \\
+        \Delta a_{\text{daily}} &= (-3.247 \times 10^{-3}\text{ m/s}) \times 86400\text{ s/day} = \mathbf{-0.2805\text{ km/day}}
+    \end{align*}
+\end{frame}
+
+\begin{frame}{Worked Example 1: Solution Continued}
+    \textbf{Step 4: Daily Orbital Period Drop $\Delta T_{\text{daily}}$}
+    \par\smallskip
+    Using the King-Hele period drop formula:
+    \begin{align*}
+        \frac{dT}{dt} &= -3\pi a \rho \left(\frac{C_D A}{m}\right) \\
+        &= -3\pi (6.728137 \times 10^6) (3.8 \times 10^{-12}) (0.0165) = -3.974 \times 10^{-6}\text{ s/s}
+    \end{align*}
+
+    Convert rate into total period change per 24-hour day:
+    \begin{equation*}
+        \Delta T_{\text{daily}} = \left( \frac{dT}{dt} \right) \times 86400 = (-3.974 \times 10^{-6}) \times 86400 = \mathbf{-0.343\text{ seconds/day}}
+    \end{equation*}
+
+    \begin{block}{Operational Significance}
+        Loss of $0.343\text{ seconds/day}$ in period accumulates a \textbf{downrange along-track position error} of $\Delta x = v \cdot \Delta T \approx 2.6\text{ km}$ every single day if drag is unmodeled!
+    \end{block}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SECTION: IN-CLASS PRACTICE EXERCISES
+% ------------------------------------------------------------------------------
+\section{In-Class Student Practice Problem}
+
+\begin{frame}{In-Class Practice Exercise (For Students)}
+    \begin{block}{Practice Exercise: Starlink Constellation Deorbit Lifetime}
+        A defunct Starlink-type satellite ($m = 260\text{ kg}$, $A = 3.0\text{ m}^2$, $C_D = 2.1$) is trapped in a low circular disposal orbit at $h = 250\text{ km}$.
+        Assume thermospheric atmospheric conditions:
+        \begin{itemize}
+            \item Atmospheric Density at 250 km: $\rho_0 = 7.2 \times 10^{-11}\text{ kg/m}^3$
+            \item Atmospheric Scale Height: $H = 45\text{ km}$
+        \end{itemize}
+
+        \textbf{Tasks for Students:}
+        \begin{enumerate}
+            \item Calculate the satellite's ballistic coefficient $B = \frac{m}{C_D A}$.
+            \item Determine the initial daily altitude decay rate $\dot{a}_0$ (in km/day).
+            \item Estimate the remaining orbital lifetime $L_{\text{lifetime}}$ (in days) using the scale height formula.
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\begin{frame}{In-Class Practice Exercise: Answer Key}
+    \begin{exampleblock}{Solution Key (For Instructor Verification)}
+        \begin{enumerate}
+            \item \textbf{Ballistic Coefficient:}
+            \begin{equation*}
+                B = \frac{m}{C_D A} = \frac{260}{2.1 \times 3.0} = \mathbf{41.27\text{ kg/m}^2} \implies B^* = \frac{1}{B} = 0.02423\text{ m}^2/\text{kg}
+            \end{equation*}
+
+            \item \textbf{Initial Decay Rate $\dot{a}_0$:}
+            \begin{equation*}
+                a = 6628.137\text{ km} \implies v = 7754.8\text{ m/s}, \quad n = 1.1699 \times 10^{-3}\text{ rad/s}
+            \end{equation*}
+            \begin{equation*}
+                a_{\text{drag}} = 5.242 \times 10^{-5}\text{ m/s}^2 \implies \dot{a}_0 = -\frac{2 a_{\text{drag}}}{n} = \mathbf{-7.742\text{ km/day}}
+            \end{equation*}
+
+            \item \textbf{Remaining Orbital Lifetime Estimate:}
+            \begin{equation*}
+                L_{\text{lifetime}} \approx \frac{H}{|\dot{a}_0|} = \frac{45\text{ km}}{7.742\text{ km/day}} \approx \mathbf{5.81\text{ days}}
+            \end{equation*}
+        \end{enumerate}
+    \end{exampleblock}
 \end{frame}
 
 % ------------------------------------------------------------------------------
@@ -487,59 +960,6 @@
     \end{enumerate}
 \end{frame}
 
-\section{Trajectory Optimization and Control}
-
-\begin{frame}{Trajectory Optimization: Introduction}
-    \begin{block}{From Impulsive to Continuous Thrust}
-        Traditional orbital maneuvers assume instantaneous velocity changes ($\Delta V$). Advanced mission design, however, requires modeling continuous steering histories.
-    \end{block}
-    
-    \vspace{0.3cm}
-    \begin{itemize}
-        \item \textbf{Steering History:} We move beyond a single burn vector; we define a continuous time-history of pitch $\alpha(t)$ and yaw $\beta(t)$.
-        \item \textbf{The Mathematical Engine:} We utilize \textit{Optimal Control Theory}, specifically solving for the state-costate trajectories.
-        \item \textbf{Numerical Discretization:} Since these problems are generally non-linear and non-analytical, we use \textbf{Collocation} to discretize the continuous path into a grid of nodes, allowing solvers to converge on an optimal steering profile.
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{Mathematical Foundations of Optimization}
-    The goal is to minimize a cost function $J$ (e.g., fuel mass, time) subject to dynamic constraints:
-    
-    \[ J = \Phi(\mathbf{x}(t_f), t_f) + \int_{t_0}^{t_f} L(\mathbf{x}, \mathbf{u}, t) \, dt \]
-    
-    \begin{itemize}
-        \item \textbf{Hamiltonians ($H$):} We incorporate Lagrange multipliers ($\lambda$) to account for mission constraints (boundary values).
-        \item \textbf{Collocation Methods:} We solve the problem by satisfying differential equations at specific "nodes" along the trajectory, turning an infinite-dimensional problem into a large-scale nonlinear programming (NLP) problem.
-    \end{itemize}
-    
-    \textit{Note: The objective is to understand the physics the math is achieving, not to perform Hamiltonian integration by hand.}
-\end{frame}
-
-\begin{frame}{Practical Lab: The Optimizer Transition}
-    \begin{exampleblock}{Today's Mission: The Optimizer Audit}
-        Transitioning from a blind targeter to a gradient-based optimizer (e.g., Yukon, SNOPT).
-    \end{exampleblock}
-    
-    \begin{enumerate}
-        \item \textbf{The Baseline:} Initialize a standard inclination change using a simple Differential Corrector (DC). Observe the convergence sensitivity to the initial guess.
-        \item \textbf{The Upgrade:} Implement a gradient-search algorithm.
-        \item \textbf{Optimization Parameters:}
-        \begin{itemize}
-            \item \textbf{Objective Function:} Minimize Total Burn Duration.
-            \item \textbf{Path Constraint:} Maintain eccentricity $< 0.001$.
-        \end{itemize}
-        \item \textbf{Forensic Debrief:} Map how the optimizer traverses the parameter space compared to the targeter.
-    \end{enumerate}
-\end{frame}
-
-\begin{frame}{Synthesis and Industry Best Practices}
-    \begin{itemize}
-        \item \textbf{Why it Matters:} Missions like \textit{Dawn} (ion propulsion) or \textit{Artemis Gateway} (NRHO transfers) rely entirely on numerical optimization—analytical math alone cannot map the solution space.
-        \item \textbf{The Role of the Engineer:} Optimizers are not "magic." They require a physically sensible initial guess. If the guess is poor, the optimizer will diverge.
-        \item \textbf{Industry Standard:} Engineers do not write their own solvers for deep space; they rely on established suites like GMAT (with CSALT), STK, or Copernicus. Your task is to audit the solution's validity.
-    \end{itemize}
-\end{frame}
-
 \section{Week 1: Non-Keplerian Spaces and Variational Systems}
 
 % --- WEEK 1: SLIDE 1 ---
@@ -553,252 +973,6 @@
     \begin{exampleblock}{Rigor Check for 4th-Year Engineers}
         Because $\mathbf{a}_d \neq \mathbf{0}$, the orbital angular momentum vector $\mathbf{h} = \mathbf{r} \times \mathbf{v}$ and the eccentricity vector $\mathbf{e} = \frac{1}{\mu}\left[(\mathbf{v}\cdot\mathbf{v} - \frac{\mu}{r})\mathbf{r} - (\mathbf{r}\cdot\mathbf{v})\mathbf{v}\right]$ are no longer constants of integration. They become time-varying parameters.
     \end{exampleblock}
-\end{frame}
-
-% --- WEEK 1: SLIDE 2 ---
-\begin{frame}{Week 1: Analytical Formulations -- GVE vs. LPE}
-    To propagate variations in the classical orbital elements $\bm{\text{\oe}} = [a, e, i, \Omega, \omega, M]^T$, two distinct analytical frameworks are utilized:
-    
-    \vspace{0.2cm}
-    \begin{columns}[T]
-        \begin{column}{0.48\textwidth}
-            \textbf{Lagrange's Planetary Equations (LPE)}
-            \begin{itemize}
-                \item \textbf{Core Assumption:} Requires the perturbation to be derived from a scalar potential function $\mathcal{R}$ ($\mathbf{a}_d = \nabla\mathcal{R}$).
-                \item \textbf{Application:} Ideal for long-term analytical tracking of gravitational anomalies ($J_2, J_3$).
-            \end{itemize}
-        \end{column}
-        \begin{column}{0.48\textwidth}
-            \textbf{Gauss's Variational Equations (GVE)}
-            \begin{itemize}
-                \item \textbf{Core Assumption:} Project the acceleration vector directly onto a local coordinate system ($R, S, W$ or $V, N, B$).
-                \item \textbf{Application:} Mandatory for non-conservative thrust vectors, aerodynamic drag, and low-thrust steering.
-            \end{itemize}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% --- WEEK 1: SLIDE 3 ---
-\begin{frame}{Week 1: Mechanics of Gauss's Variational Framework}
-    Decomposing the perturbing acceleration vector into the Radial ($R$), In-track/Transverse ($S$), and Cross-track/Normal ($W$) inertial frame, Gauss's equation for the rate of change of the semi-major axis ($a$) and inclination ($i$) is derived as:
-    
-    \begin{equation}
-        \frac{da}{dt} = \frac{2 a^2}{h} \left( e \sin \nu \cdot R + \frac{p}{r} \cdot S \right)
-    \end{equation}
-    
-    \begin{equation}
-        \frac{di}{dt} = \frac{r \cos(\omega + \nu)}{h} \cdot W
-    \end{equation}
-    
-    \begin{exampleblock}{Forensic Engineering Insights}
-        Observe that out-of-plane forces ($W$) decouple entirely from the semi-major axis rate ($\frac{da}{dt}$). Plane changes ($di/dt$) are geometrically optimized when the spacecraft crosses the argument of latitude boundaries $\omega + \nu = 0^\circ$ or $180^\circ$ (equatorial crossings).
-    \end{exampleblock}
-\end{frame}
-
-\section{Week 2: Zonal Harmonics and Geopotential Spectrum}
-
-% --- WEEK 2: SLIDE 1 ---
-\begin{frame}{Week 2: The Spherical Harmonics Gravitational Potential}
-    To model a non-spherical planet, the gravitational potential function $U$ is expanded via an infinite series of spherical harmonics:
-    
-    % Multi-line aligned equation to resolve the ~170pt overfull \hbox error
-    \begin{equation*}
-        \small
-        \begin{aligned}
-            U(r, \phi, \lambda) = \frac{\mu}{r} \left[ 1 \right. &- \sum_{n=2}^{\infty} J_n \left(\frac{R_{\text{eq}}}{r}\right)^n P_n(\sin\phi) \\
-            &+ \left. \sum_{n=2}^{\infty}\sum_{m=1}^{n}\left(\frac{R_{\text{eq}}}{r}\right)^n P_{nm}(\sin\phi)\left(C_{nm}\cos m\lambda + S_{nm}\sin m\lambda\right) \right]
-        \end{aligned}
-    \end{equation*}
-    
-    \begin{block}{Classification of Geopotential Asymmetries}
-        \begin{itemize}
-            \item \textbf{Zonal Harmonics ($J_n$):} Depend strictly on latitude ($\phi$). Symmetric about the spin axis.
-            \item \textbf{Sectoral Harmonics ($m=n$):} Depend strictly on longitude ($\lambda$). Slice the planet into orange-like wedges.
-            \item \textbf{Tesseral Harmonics ($m \neq n$):} Depend on both latitude and longitude, forming checkerboard boundary patterns.
-        \end{itemize}
-    \end{block}
-\end{frame}
-
-% --- WEEK 2: SLIDE 2 ---
-\begin{frame}{Week 2: The Oblateness Anomaly ($J_2$)}
-    The dominant term in the geopotential expansion is $J_2$, representing the equatorial bulge due to rotation. For Earth, $J_2 \approx 1.08263 \times 10^{-3}$, which is three orders of magnitude larger than any subsequent harmonic coefficient.
-    
-    \vspace{0.2cm}
-    Evaluating the gradient of the $J_2$ scalar potential yields the precise non-spherical perturbing acceleration vector in the Earth-Centered Inertial (ECI) frame:
-    
-    \begin{equation}
-        \mathbf{a}_{J_2} = -\frac{3 J_2 \mu R_{\text{eq}}^2}{2 r^5} \begin{bmatrix}
-            x \left(1 - \frac{5z^2}{r^2}\right) \\[4pt]
-            y \left(1 - \frac{5z^2}{r^2}\right) \\[4pt]
-            z \left(3 - \frac{5z^2}{r^2}\right)
-        \end{bmatrix}
-    \end{equation}
-    
-    This acceleration breaks the symmetry of the gravity well, causing long-term deviations from Keplerian orbits.
-\end{frame}
-
-% --- WEEK 2: SLIDE 3 ---
-\begin{frame}{Week 2: Derivation of $J_2$ Secular Drift Rates}
-    By integrating Lagrange’s Planetary Equations over a full orbital period ($T$), we isolate the long-term, monotonic secular drift rates. The elements $a$, $e$, and $i$ experience zero net secular drift under $J_2$. The lines of nodes and apsides experience continuous linear precession:
-    
-    \begin{block}{Secular Precession Equations}
-        \begin{equation}
-            \dot{\Omega}_{\text{sec}} = -\frac{3\sqrt{\mu}\,J_2 R_{\text{eq}}^2}{2(1-e^2)^2 a^{7/2}} \cos i
-        \end{equation}
-        \begin{equation}
-            \dot{\omega}_{\text{sec}} = \frac{3\sqrt{\mu}\,J_2 R_{\text{eq}}^2}{4(1-e^2)^2 a^{7/2}} \left( 4 - 5\sin^2 i \right)
-        \end{equation}
-    \end{block}
-    
-    \textbf{Engineering Takeaway:} The sign of nodal drift ($\dot{\Omega}$) is dictated entirely by inclination: prograde orbits ($i < 90^\circ$) precess westward ($\dot{\Omega} < 0$), while retrograde orbits ($i > 90^\circ$) precess eastward ($\dot{\Omega} > 0$).
-\end{frame}
-
-\section{Week 3: Advanced Constrained Orbit Design}
-
-% --- WEEK 3: SLIDE 1 ---
-\begin{frame}{Week 3: Sun-Synchronous Orbit (SSO) Geometry}
-    An SSO forces the line of nodes to precess at a rate exactly matching the Earth's mean heliocentric orbital motion around the Sun, ensuring identical solar illumination angles across successive ground tracks.
-    
-    \[ \dot{\Omega}_{\text{sec}} = \dot{\theta}_{\text{Earth}} = \frac{360^\circ}{365.2422 \text{ days}} \approx 0.9856^\circ/\text{day} \approx 1.99106 \times 10^{-7} \text{ rad/s} \]
-    
-    Setting $\dot{\Omega}_{\text{sec}}$ equal to $\dot{\theta}_{\text{Earth}}$ defines the precise multi-variable constraint boundary:
-    
-    \begin{equation}
-        \cos i = -\frac{2}{3} \left( \frac{\dot{\theta}_{\text{Earth}}}{\sqrt{\mu}\,J_2 R_{\text{eq}}^2} \right) a^{7/2} (1-e^2)^2
-    \end{equation}
-    
-    \begin{alertblock}{Geometric Boundary Limit}
-        Because $\cos i < 0$, all true Sun-Synchronous orbits must be \textbf{retrograde} ($i > 90^\circ$).
-    \end{alertblock}
-\end{frame}
-
-% --- WEEK 3: SLIDE 2 ---
-\begin{frame}{Week 3: Nodal Precession and The Critical Inclination Boundary}
-    To eliminate apsidal rotation ($\dot{\omega}_{\text{sec}} = 0$) and lock the argument of perigee over long timelines (creating frozen orbits), engineers manipulate the mathematical roots of the bracketed expression:
-    
-    \[ 4 - 5\sin^2 i = 0 \implies \sin i = \sqrt{\frac{4}{5}} \]
-    
-    This yields two distinct critical inclination solutions:
-    \begin{equation}
-        i_{\text{crit}} = 63.435^\circ \quad (\text{Prograde Trajectories})
-    \end{equation}
-    \begin{equation}
-        i_{\text{crit}} = 116.565^\circ \quad (\text{Retrograde Trajectories})
-    \end{equation}
-    
-    \begin{exampleblock}{Planetary Scaling Case Study: Designing a Jovian SSO}
-        Jupiter's intense rotation generates a high gravitational oblateness coefficient: $J_{2,J} \approx 1.4736 \times 10^{-2}$ (nearly 14 times greater than Earth's). Students must resolve how to safely transition a Jovian science collector into an SSO configuration without entering the planet's atmospheric drag envelope or radiation belts.
-    \end{exampleblock}
-\end{frame}
-
-\section{Week 4: Non-Conservative Dynamics and Lifetime Loops}
-
-% --- WEEK 4: SLIDE 1 ---
-\begin{frame}{Week 4: Hypersonic Aerodynamic Drag Modeling}
-    In the Low Earth Orbit (LEO) regime, the thin upper atmosphere acts as a non-conservative energy sink. The drag acceleration vector acts in opposition to the velocity vector relative to the atmosphere:
-    
-    \[ \mathbf{a}_{\text{drag}} = -\frac{1}{2} \rho \left(\frac{C_D A}{m}\right) v_{\text{rel}} \mathbf{v}_{\text{rel}} = -\frac{1}{2} \rho \, B \, v_{\text{rel}} \mathbf{v}_{\text{rel}} \]
-    
-    Where $B = \frac{C_D A}{m}$ is defined as the spacecraft's \textbf{Ballistic Coefficient}.
-    
-    \begin{block}{Atmospheric Density Stagnation Realities}
-        Density ($\rho$) is modeled via highly non-linear profiles:
-        \begin{itemize}
-            \item \textbf{Analytical Model:} $\rho = \rho_0 \exp\left(-\frac{h - h_0}{H}\right)$, where $h$ is altitude and $H$ is the scale height.
-            \item \textbf{High-Fidelity Realities:} Dynamic atmospheric models (MSISE-90, JB2008) update density arrays in real time based on active solar flux indexes ($F_{10.7}$) and geomagnetic indicators ($Ap$).
-        \end{itemize}
-    \end{block}
-\end{frame}
-
-% --- WEEK 4: SLIDE 2 ---
-\begin{frame}{Week 4: Coupled $J_2$-Drag Lifetime Evolution}
-    When combining non-spherical gravity with atmospheric drag, the orbital elements experience coupled decay loops. Drag drains mechanical energy ($E$), lowering the semi-major axis ($a$), while $J_2$ continuously shifts the spatial orientation of the line of nodes.
-    
-    \vspace{0.2cm}
-    Applying Gauss's Variational Equations for a circular orbit reveals the long-term coupled decay signature:
-    
-    \begin{equation}
-        \left\langle\frac{da}{dt}\right\rangle_{\text{drag}} = -\rho \, B \, a \cdot v
-    \end{equation}
-    
-    As $a$ drops, velocity ($v = \sqrt{\mu/a}$) increases, while local atmospheric density ($\rho$) grows exponentially. This sets up a non-linear feedback loop that accelerates orbital decay.
-    
-    \begin{alertblock}{The Core Computational Challenge}
-        Because $\rho(h)$ varies non-linearly, this coupled differential equation system lacks a closed-form analytical solution. It requires step-by-step numerical integration via vectorized ODE engines.
-    \end{alertblock}
-\end{frame}
-
-% --- LAB AUDIT BLUEPRINT ---
-\begin{frame}[fragile]{Forensic Lab 1: Python $J_2$-Drag Audit Sandbox}
-    \begin{block}{Operational Requirements and Anti-AI Protections}
-        The use of black-box integration packages (\texttt{scipy.integrate.solve\_ivp}) is strictly restricted for this exercise. Students must code a vectorized Runge-Kutta numerical integration loop from scratch.
-    \end{block}
-    
-\begin{lstlisting}[language=Python]
-import numpy as np
-
-def geopotential_j2_gradient(r_vec):
-    # TODO: Implement the 3D J2 vector equations derived in Slide 8
-    pass
-
-def atmospheric_density(alt):
-    # TODO: Implement an exponential density model using scale height variations
-    pass
-
-def state_derivative_engine(t, state, B_coeff):
-    r = state[0:3]
-    v = state[3:6]
-    r_mag = np.linalg.norm(r)
-    
-    # 2-Body Base Physics
-    a_2body = -(398600.4418 / (r_mag**3)) * r
-    
-    # TODO: Code out and inject custom high-fidelity coupling strings
-    # a_j2 = geopotential_j2_gradient(r)
-    # a_drag = -0.5 * atmospheric_density(r_mag - 6378.137) * B_coeff * ...
-    
-    return np.hstack((v, a_2body))
-\end{lstlisting}
-\end{frame}
-
-% --- FORENSIC BUG SHEET ---
-\begin{frame}{Forensic Assessment Framework: The Decay Bug Hunt}
-    \begin{block}{Adversarial Verification Protocol}
-        Your grading profile for Computational Lab 1 is based on a forensic script audit. You will be handed a pre-coded $J_2$-Drag decay simulation that produces anomalous energy trends.
-    \end{block}
-    
-    \vspace{0.3cm}
-    \textbf{Common Pitfalls and Audit Benchmarks:}
-    \begin{enumerate}
-        \item \textbf{Inertial vs. Co-Rotating Frame Errors:} Drag forces must account for the rotation of the upper atmosphere with the Earth ($\mathbf{v}_{\text{rel}} = \mathbf{v} - \boldsymbol{\omega}_{\oplus} \times \mathbf{r}$). Neglecting this vector triangle introduces systematic velocity mapping errors.
-        \item \textbf{Coordinate Frame Instabilities:} Truncation errors from low-order solvers can mimic drag energy losses. Students must execute a conservation check in a perturbation-free environment ($\mathbf{a}_d = \mathbf{0}$) to prove their solver maintains the Jacobi energy constant.
-    \end{enumerate}
-\end{frame}
-
-\begin{frame}{Week 15: Stochastic Estimation Lab Overview}
-    \begin{exampleblock}{The Mathematical Referee Concept}
-        Let's perform a live sensitivity sweep to observe how updating the Process Noise ($Q$) and Measurement Noise ($R$) alters state estimation.
-    \end{exampleblock}
-    
-    \vspace{0.3cm}
-    \begin{center}
-        \href{run:Target_Optimizer.html}{
-            \beamerbutton{\color{white}\textbf{Launch Live Kalman Simulation Widget}}
-        }
-    \end{center}
-\end{frame}
-
-\begin{frame}{Week 12: Libration Points and Symplectic Interventions}
-    \begin{block}{Numerical Integrator Audit}
-        Standard non-symplectic integration methods systematically destroy the system's energy conservation profile across extended timescales.
-    \end{block}
-    
-    \vspace{0.4cm}
-    \begin{center}
-        \href{https://www.youtube.com/watch?v=2XhzTzIHJxw}{
-            \beamerbutton{\large Click Here to Watch: GMAT vs. Symplectic Integrators}
-        }
-    \end{center}
 \end{frame}
 
 \end{document}

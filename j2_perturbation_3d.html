@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J2 Oblateness & Orbital Precession Simulator (Option B - Fixed Perigee)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0b0f19;
+            color: #e0e6ed;
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+        }
+        #canvas-container {
+            flex: 1;
+            height: 100%;
+            position: relative;
+        }
+        #sidebar {
+            width: 380px;
+            background-color: #121824;
+            border-left: 1px solid #232d3f;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        h2 {
+            color: #00aa55;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #005927;
+            padding-bottom: 6px;
+            margin-bottom: 5px;
+        }
+        .control-group {
+            background-color: #1a2232;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #2a364f;
+        }
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.88rem;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            accent-color: #00aa55;
+            cursor: pointer;
+        }
+        .val-display {
+            color: #4da6ff;
+            font-weight: bold;
+        }
+        .dashboard {
+            background-color: #0d131e;
+            border-left: 4px solid #00aa55;
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.83rem;
+            line-height: 1.5;
+        }
+        .dashboard div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .dash-label { color: #8a9ba8; }
+        .dash-val { color: #00ffcc; font-weight: bold; }
+        .legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.8rem;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .color-box {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+        .btn {
+            background-color: #005927;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+        .btn:hover { background-color: #008037; }
+        #overlay-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(18, 24, 36, 0.85);
+            border: 1px solid #232d3f;
+            padding: 15px;
+            border-radius: 8px;
+            pointer-events: none;
+            max-width: 420px;
+        }
+        #overlay-info h1 {
+            font-size: 1.1rem;
+            color: #00aa55;
+            margin-bottom: 5px;
+        }
+        #overlay-info p {
+            font-size: 0.82rem;
+            color: #a0aec0;
+            line-height: 1.35;
+        }
+        .info-tag {
+            background-color: #005927;
+            color: #ffffff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.72rem;
+            font-weight: bold;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+    <div id="canvas-container">
+        <div id="overlay-info">
+            <h1>J₂ Perturbation Sandbox <span class="info-tag">Option B: Safe Perigee</span></h1>
+            <p>Observing non-spherical Earth oblateness torques causing secular Nodal Precession (&Omega;&#775;) and Argument of Perigee Drift (&omega;&#775;). <i>Perigee altitude is explicitly clamped to prevent subsurface collisions.</i></p>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <h2>Orbital Elements</h2>
+
+        <div class="control-group">
+            <label>Inclination (<i>i</i>): <span class="val-display" id="inc-val">63.4°</span></label>
+            <input type="range" id="inc-slider" min="0" max="180" step="0.1" value="63.4">
+        </div>
+
+        <div class="control-group">
+            <label>Eccentricity (<i>e</i>): <span class="val-display" id="ecc-val">0.40</span></label>
+            <input type="range" id="ecc-slider" min="0" max="0.75" step="0.01" value="0.40">
+        </div>
+
+        <div class="control-group">
+            <label>Perigee Alt. (<i>h<sub>p</sub></i>): <span class="val-display" id="alt-val">800 km</span></label>
+            <input type="range" id="alt-slider" min="150" max="5000" step="50" value="800">
+        </div>
+
+        <h2>Simulation Speed</h2>
+
+        <div class="control-group">
+            <label>J₂ Visual Speed: <span class="val-display" id="j2-val">50,000x</span></label>
+            <input type="range" id="j2-slider" min="1000" max="200000" step="1000" value="50000">
+        </div>
+
+        <h2>Calculated Parameters</h2>
+
+        <div class="dashboard">
+            <div>
+                <span class="dash-label">Perigee Altitude (h_p):</span>
+                <span class="dash-val" id="hp-val">800.0 km</span>
+            </div>
+            <div>
+                <span class="dash-label">Apogee Altitude (h_a):</span>
+                <span class="dash-val" id="ha-val">5585.4 km</span>
+            </div>
+            <div>
+                <span class="dash-label">Semi-Major Axis (a):</span>
+                <span class="dash-val" id="sma-val">9570.9 km</span>
+            </div>
+            <div>
+                <span class="dash-label">Nodal Drift (d&Omega;/dt):</span>
+                <span class="dash-val" id="dOmega-val">0.00 °/day</span>
+            </div>
+            <div>
+                <span class="dash-label">Perigee Drift (d&omega;/dt):</span>
+                <span class="dash-val" id="domega-val">0.00 °/day</span>
+            </div>
+            <div>
+                <span class="dash-label">Orbital Period (T):</span>
+                <span class="dash-val" id="period-val">0.0 min</span>
+            </div>
+        </div>
+
+        <h2>Visual Guides</h2>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="color-box" style="background:#00ff88;"></div>
+                <span>Spacecraft Path</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background:#ff3366;"></div>
+                <span>Line of Nodes (&Omega;)</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background:#ffcc00;"></div>
+                <span>Line of Apsides (&omega;)</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background:#00aaff;"></div>
+                <span>Equatorial Bulge</span>
+            </div>
+        </div>
+
+        <button class="btn" id="reset-btn">Reset Precession Angles</button>
+    </div>
+
+    <script>
+        // Physical Constants
+        const Re = 6378.137; // Earth Equatorial Radius (km)
+        const mu = 398600.4418; // Earth Gravitational Parameter (km^3/s^2)
+        const J2_real = 1.08263e-3;
+
+        // Scene Setup
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0b0f19);
+
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 2000);
+        camera.position.set(22, 16, 30);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        dirLight.position.set(30, 20, 30);
+        scene.add(dirLight);
+
+        // 3D Objects Scale
+        const earthScale = 1.0 / 1000.0; // 1 unit = 1000 km
+        const earthRadiusUnits = Re * earthScale;
+
+        // Oblate Earth Mesh
+        const earthGroup = new THREE.Group();
+        scene.add(earthGroup);
+
+        // Base Sphere
+        const earthGeo = new THREE.SphereGeometry(earthRadiusUnits, 64, 64);
+        const earthMat = new THREE.MeshPhongMaterial({
+            color: 0x1d4ed8,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.65
+        });
+        const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+
+        // Exaggerated Equatorial Bulge Ring
+        const bulgeGeo = new THREE.RingGeometry(earthRadiusUnits * 0.99, earthRadiusUnits * 1.25, 64);
+        const bulgeMat = new THREE.MeshBasicMaterial({
+            color: 0x00aaff,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.35
+        });
+        const bulgeMesh = new THREE.Mesh(bulgeGeo, bulgeMat);
+        bulgeMesh.rotation.x = Math.PI / 2;
+
+        earthGroup.add(earthMesh);
+        earthGroup.add(bulgeMesh);
+
+        // Earth Spin Axis
+        const axisGeo = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(0, -earthRadiusUnits * 1.8, 0),
+            new THREE.Vector3(0, earthRadiusUnits * 1.8, 0)
+        ]);
+        const axisMat = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.5, transparent: true });
+        const axisLine = new THREE.Line(axisGeo, axisMat);
+        scene.add(axisLine);
+
+        // Orbit Transformation Hierarchy
+        const raanGroup = new THREE.Group();
+        scene.add(raanGroup);
+
+        const incGroup = new THREE.Group();
+        raanGroup.add(incGroup);
+
+        const perigeeGroup = new THREE.Group();
+        incGroup.add(perigeeGroup);
+
+        let orbitLine, satMesh, nodeLine, apsidesLine;
+
+        function createOrbitObjects() {
+            // Spacecraft
+            const satGeo = new THREE.SphereGeometry(0.25, 16, 16);
+            const satMat = new THREE.MeshBasicMaterial({ color: 0x00ff88 });
+            satMesh = new THREE.Mesh(satGeo, satMat);
+            perigeeGroup.add(satMesh);
+
+            // Orbit Path Line
+            const pointsCount = 300;
+            const points = [];
+            for (let i = 0; i <= pointsCount; i++) {
+                points.push(new THREE.Vector3());
+            }
+            const orbitGeo = new THREE.BufferGeometry().setFromPoints(points);
+            const orbitMat = new THREE.LineBasicMaterial({ color: 0x00ff88, linewidth: 2 });
+            orbitLine = new THREE.Line(orbitGeo, orbitMat);
+            perigeeGroup.add(orbitLine);
+
+            // Line of Nodes (Red Dashed Line)
+            const nodeGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(-25, 0, 0),
+                new THREE.Vector3(25, 0, 0)
+            ]);
+            const nodeMat = new THREE.LineDashedMaterial({ color: 0xff3366, dashSize: 0.5, gapSize: 0.25 });
+            nodeLine = new THREE.Line(nodeGeo, nodeMat);
+            nodeLine.computeLineDistances();
+            raanGroup.add(nodeLine);
+
+            // Line of Apsides (Yellow Solid Line)
+            const apsidesGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(-25, 0, 0),
+                new THREE.Vector3(25, 0, 0)
+            ]);
+            const apsidesMat = new THREE.LineBasicMaterial({ color: 0xffcc00 });
+            apsidesLine = new THREE.Line(apsidesGeo, apsidesMat);
+            perigeeGroup.add(apsidesLine);
+        }
+
+        createOrbitObjects();
+
+        // UI Slider Elements
+        const incSlider = document.getElementById('inc-slider');
+        const eccSlider = document.getElementById('ecc-slider');
+        const altSlider = document.getElementById('alt-slider');
+        const j2Slider = document.getElementById('j2-slider');
+
+        let currentRAAN = 0;   // \Omega (rad)
+        let currentArgPer = 0; // \omega (rad)
+        let trueAnomaly = 0;   // \nu (rad)
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            currentRAAN = 0;
+            currentArgPer = 0;
+        });
+
+        // OPTION B: Update Math with Clamped/Fixed Perigee Altitude
+        function updateOrbitGeometry() {
+            const incDeg = parseFloat(incSlider.value);
+            const ecc = parseFloat(eccSlider.value);
+            const hp = parseFloat(altSlider.value); // Perigee Altitude
+            const j2Factor = parseFloat(j2Slider.value);
+
+            // UI Display updates
+            document.getElementById('inc-val').textContent = incDeg.toFixed(1) + '°';
+            document.getElementById('ecc-val').textContent = ecc.toFixed(2);
+            document.getElementById('alt-val').textContent = hp + ' km';
+            document.getElementById('j2-val').textContent = j2Factor.toLocaleString() + 'x';
+
+            const incRad = incDeg * Math.PI / 180.0;
+
+            // --- OPTION B CORE FORMULAS ---
+            const rp = Re + hp;                   // Periapsis Radius (Guaranteed > Re)
+            const a = rp / (1.0 - ecc);            // Semi-major Axis expands with eccentricity
+            const ra = a * (1.0 + ecc);            // Apoapsis Radius
+            const ha = ra - Re;                    // Apogee Altitude
+            const p = rp * (1.0 + ecc);            // Semi-latus rectum: p = a(1-e^2) = rp(1+e)
+            const n = Math.sqrt(mu / (a * a * a)); // Mean motion
+
+            // Analytical J2 Secular Rates (rad/s)
+            const dOmega_dt = -1.5 * J2_real * Math.pow(Re / p, 2) * n * Math.cos(incRad);
+            const domega_dt = 0.75 * J2_real * Math.pow(Re / p, 2) * n * (5.0 * Math.pow(Math.cos(incRad), 2) - 1.0);
+
+            // Dashboard Metrics Update
+            document.getElementById('hp-val').textContent = hp.toFixed(1) + ' km';
+            document.getElementById('ha-val').textContent = ha.toFixed(1) + ' km';
+            document.getElementById('sma-val').textContent = a.toFixed(1) + ' km';
+
+            const radSecToDegDay = (180.0 / Math.PI) * 86400.0;
+            document.getElementById('dOmega-val').textContent = (dOmega_dt * radSecToDegDay).toFixed(3) + ' °/day';
+            document.getElementById('domega-val').textContent = (domega_dt * radSecToDegDay).toFixed(3) + ' °/day';
+
+            const periodMin = (2.0 * Math.PI / n) / 60.0;
+            document.getElementById('period-val').textContent = periodMin.toFixed(1) + ' min';
+
+            // Apply Inclination Angle to IncGroup
+            incGroup.rotation.x = incRad;
+
+            // Recompute Orbit Ellipse Points
+            const pointsCount = 300;
+            const positions = orbitLine.geometry.attributes.position.array;
+
+            for (let i = 0; i <= pointsCount; i++) {
+                const nu = (i / pointsCount) * 2.0 * Math.PI;
+                const r = p / (1.0 + ecc * Math.cos(nu));
+                const rUnits = r * earthScale;
+
+                // Perigee along +X axis
+                const x = rUnits * Math.cos(nu);
+                const z = rUnits * Math.sin(nu);
+
+                positions[i * 3] = x;
+                positions[i * 3 + 1] = 0;
+                positions[i * 3 + 2] = z;
+            }
+            orbitLine.geometry.attributes.position.needsUpdate = true;
+
+            // Resize Line of Apsides to match orbit length
+            const apsidesPoints = [
+                new THREE.Vector3(-ra * earthScale * 1.1, 0, 0),
+                new THREE.Vector3(rp * earthScale * 1.1, 0, 0)
+            ];
+            apsidesLine.geometry.setFromPoints(apsidesPoints);
+
+            return { dOmega_dt, domega_dt, n, p, ecc, rp };
+        }
+
+        // Animation Loop
+        let lastTime = performance.now();
+
+        function animate(currentTime) {
+            requestAnimationFrame(animate);
+
+            const dt = (currentTime - lastTime) / 1000.0;
+            lastTime = currentTime;
+
+            if (dt < 0.2) {
+                const j2Factor = parseFloat(j2Slider.value);
+                const { dOmega_dt, domega_dt, n, p, ecc } = updateOrbitGeometry();
+
+                // Advance Secular Precession Angles
+                currentRAAN += dOmega_dt * j2Factor * dt;
+                currentArgPer += domega_dt * j2Factor * dt;
+
+                // Advance True Anomaly
+                trueAnomaly += n * dt * 2.5; // Orbit motion visualization speed
+                if (trueAnomaly > 2 * Math.PI) trueAnomaly -= 2 * Math.PI;
+
+                // Apply Rotations
+                raanGroup.rotation.y = currentRAAN;
+                perigeeGroup.rotation.y = currentArgPer;
+
+                // Position Spacecraft along Ellipse
+                const r = p / (1.0 + ecc * Math.cos(trueAnomaly));
+                const rUnits = r * earthScale;
+                satMesh.position.set(
+                    rUnits * Math.cos(trueAnomaly),
+                    0,
+                    rUnits * Math.sin(trueAnomaly)
+                );
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Window Resize Handler
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        // Start Animation
+        animate(performance.now());
+    </script>
+</body>
+</html>

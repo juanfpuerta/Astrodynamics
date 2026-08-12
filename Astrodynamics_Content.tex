@@ -322,37 +322,47 @@
 \end{frame}
 
 %--Slide 1 Expansion
-
 \begin{frame}{The Geopotential Spectrum: Spherical Harmonics}
-    The non-spherical mass distribution of Earth is modeled by expanding the gravitational potential $V(r, \phi, \lambda)$ in spherical harmonics:
+    The non-spherical mass distribution of Earth is modeled by expanding $V(r, \phi, \lambda)$ in spherical harmonics:
 
+    {\small
     \begin{equation*}
         V(r,\phi,\lambda) = -\frac{\mu}{r} \left[ 1 + \sum_{n=2}^{\infty} \left( \frac{R_e}{r} \right)^n \left( -J_n P_n(\sin\phi) + \sum_{m=1}^{n} P_{nm}(\sin\phi) \left( C_{nm}\cos m\lambda + S_{nm}\sin m\lambda \right) \right) \right]
     \end{equation*}
+    }
 
-    \begin{columns}[T]
+    \vspace{-0.2cm}
+
+    \begin{columns}[t]
         \begin{column}{0.32\textwidth}
-            \begin{block}{Zonal Harmonics ($J_n$)}
+            \begin{block}{\small Zonal Harmonics ($J_n$)}
+                \small
                 \begin{itemize}
-                    \item Latitude dependent ($m = 0$).
-                    \item Bands parallel to Equator.
+                    \item Order $m = 0$.
+                    \item Parallel latitudinal bands.
                     \item Dominant term: $J_2$.
                 \end{itemize}
             \end{block}
         \end{column}
+
         \begin{column}{0.32\textwidth}
-            \begin{block}{Tesseral Harmonics}
+            \begin{block}{\small Tesseral Harmonics}
+                \small
                 \begin{itemize}
-                    \item Lat. \& Long. dependent ($n \neq m \neq 0$).
-                    \item Checkerboard grid pattern.
+                    \item $n \neq m \neq 0$.
+                    \item Lat. \& Long. dependent.
+                    \item 2D checkerboard grid.
                 \end{itemize}
             \end{block}
         \end{column}
+
         \begin{column}{0.32\textwidth}
-            \begin{block}{Sectoral Harmonics}
+            \begin{block}{\small Sectoral Harmonics}
+                \small
                 \begin{itemize}
-                    \item Longitude dependent ($n = m$).
-                    \item Orange-slice pie wedges.
+                    \item Order $m = n$.
+                    \item Longitude-dependent.
+                    \item "Orange-slice" wedges.
                 \end{itemize}
             \end{block}
         \end{column}
@@ -363,21 +373,33 @@
 % Slide 3: Legendre Polynomials and J2 Potential
 % ------------------------------------------------------------------------------
 \begin{frame}{The $J_2$ Term: Legendre Polynomial Expansion}
-    \begin{itemize}
-        \item The $n=2$ zonal harmonic represents Earth's **equatorial bulge** ($R_e \approx 6378\text{ km}$, $R_p \approx 6356\text{ km}$).
-        \item The $2^{\text{nd}}$-degree **Legendre Polynomial** is given by:
-        $$P_2(\sin\phi) = \frac{1}{2}\left( 3\sin^2\phi - 1 \right)$$
-        where $\phi$ is the geocentric latitude ($\sin\phi = z/r$).
-    \end{itemize}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Equatorial Bulge \& $P_2$}
+                \begin{itemize}
+                    \item $n=2$ zonal harmonic models Earth's \textbf{equatorial bulge} ($R_e \approx 6378\text{ km}$, $R_p \approx 6356\text{ km}$).
+                    \item $2^{\text{nd}}$-degree \textbf{Legendre Polynomial}:
+                    \begin{equation*}
+                        P_2(\sin\phi) = \frac{1}{2}\left( 3\sin^2\phi - 1 \right)
+                    \end{equation*}
+                    where $\phi$ is geocentric latitude ($\sin\phi = z/r$).
+                \end{itemize}
+            \end{block}
+        \end{column}
 
-    \begin{block}{$J_2$ Perturbing Potential Function ($R_{J_2}$)}
-        $$V_{J_2}(r, \phi) = \frac{\mu R_e^2 J_2}{2 r^3} \left( 3\sin^2\phi - 1 \right)$$
-        where $J_2 \approx 1.08263 \times 10^{-3}$ is dimensionless.
-    \end{block}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{$J_2$ Perturbing Potential ($V_{J_2}$)}
+                \begin{equation*}
+                    V_{J_2}(r, \phi) = \frac{\mu R_e^2 J_2}{2 r^3} \left( 3\sin^2\phi - 1 \right)
+                \end{equation*}
+                where $J_2 \approx 1.08263 \times 10^{-3}$ (dimensionless).
+            \end{block}
 
-    \begin{alertblock}{Key Observation}
-        Notice $J_2 \sim 10^{-3}$, while $J_3, J_4 \sim 10^{-6}$. Therefore, $J_2$ accounts for over \textit{$99.9\%$} of all non-spherical gravitational perturbations!
-    \end{alertblock}
+            \begin{alertblock}{Key Observation}
+                Since $J_2 \sim 10^{-3}$ while $J_3, J_4 \sim 10^{-6}$, $J_2$ accounts for over \textbf{99.9\%} of all non-spherical gravitational perturbations!
+            \end{alertblock}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 % ------------------------------------------------------------------------------
@@ -419,7 +441,7 @@
 % Slide 5: The Period-Averaging Process
 % ------------------------------------------------------------------------------
 \begin{frame}{The Orbit-Averaging Process (Lagrange Planetary Equations)}
-    To separate slow, cumulative long-term trends (**secular variations**) from fast intra-orbit oscillations (**short-period variations**), we integrate Lagrange's Planetary Equations over one full orbital period $T$:
+    To separate slow, cumulative long-term trends (secular variations) from fast intra-orbit oscillations (short-period variations), we integrate Lagrange's Planetary Equations over one full orbital period $T$:
 
     \begin{equation*}
         \bar{\dot{\Omega}} = \frac{1}{2\pi} \int_{0}^{2\pi} \dot{\Omega}(\nu) \, d\nu, \qquad 
@@ -460,22 +482,38 @@
 % Slide 7: Worked Example 1 (Solution Continued)
 % ------------------------------------------------------------------------------
 \begin{frame}{Worked Example 1: Solution Continued}
-    \textbf{Step 2: Substitute into the Nodal Precession Rate Formula}
-    $$\dot{\Omega} = -\frac{3}{2} J_2 \left(\frac{R_e}{a}\right)^2 n \cos i$$
+    \begin{columns}[t]
+        \begin{column}{0.55\textwidth}
+            \textbf{Step 2: Substitute into Nodal Drift Formula}
+            {\small
+            \begin{align*}
+                \dot{\Omega} &= -\frac{3}{2} J_2 \left(\frac{R_e}{a}\right)^2 n \cos i \\[3pt]
+                1.99106 \times 10^{-7} &= -\frac{3}{2} (1.08263 \times 10^{-3}) \left(\frac{6378.137}{7178.137}\right)^2 \\
+                &\quad \times (1.0390 \times 10^{-3}) \cos i \\[3pt]
+                1.99106 \times 10^{-7} &= -1.33235 \times 10^{-6} \cos i
+            \end{align*}
+            }
 
-    Substitute numerical values:
-    $$1.99106 \times 10^{-7} = -\frac{3}{2} (1.08263 \times 10^{-3}) \left(\frac{6378.137}{7178.137}\right)^2 (1.0390 \times 10^{-3}) \cos i$$
+            \textbf{Step 3: Solve for Inclination $i$}
+            {\small
+            \begin{align*}
+                \cos i &= \frac{1.99106 \times 10^{-7}}{-1.33235 \times 10^{-6}} = -0.14944 \\[3pt]
+                i &= \arccos(-0.14944) = \mathbf{98.59^\circ}
+            \end{align*}
+            }
+        \end{column}
 
-    $$1.99106 \times 10^{-7} = -1.33235 \times 10^{-6} \cos i$$
+        \begin{column}{0.41\textwidth}
+            \begin{block}{Result Analysis}
+                The orbit must be \textbf{retrograde} ($i > 90^\circ$) so that $\cos i < 0$, yielding a positive (eastward) nodal precession rate ($\dot{\Omega} > 0$).
+            \end{block}
 
-    \textbf{Step 3: Solve for Inclination $i$}
-    $$\cos i = \frac{1.99106 \times 10^{-7}}{-1.33235 \times 10^{-6}} = -0.14944$$
-
-    $$i = \arccos(-0.14944) = \mathbf{98.59^\circ}$$
-
-    \begin{block}{Result Analysis}
-        The orbit must be **retrograde** ($i > 90^\circ$) so that $\cos i < 0$, yielding a positive (eastward) nodal precession that matches the Earth's orbit around the Sun!
-    \end{block}
+            \begin{itemize}
+                \item \small Precession matches Earth's mean revolution around the Sun ($0.9856^\circ/\text{day}$).
+                \item \small Guarantees identical solar illumination on every pass.
+            \end{itemize}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 % ------------------------------------------------------------------------------
@@ -825,30 +863,6 @@
     \end{block}
 \end{frame}
 
-\begin{frame}{In-Class Practice Exercise: Answer Key}
-    \begin{exampleblock}{Solution Key (For Instructor Verification)}
-        \begin{enumerate}
-            \item \textbf{Ballistic Coefficient:}
-            \begin{equation*}
-                B = \frac{m}{C_D A} = \frac{260}{2.1 \times 3.0} = \mathbf{41.27\text{ kg/m}^2} \implies B^* = \frac{1}{B} = 0.02423\text{ m}^2/\text{kg}
-            \end{equation*}
-
-            \item \textbf{Initial Decay Rate $\dot{a}_0$:}
-            \begin{equation*}
-                a = 6628.137\text{ km} \implies v = 7754.8\text{ m/s}, \quad n = 1.1699 \times 10^{-3}\text{ rad/s}
-            \end{equation*}
-            \begin{equation*}
-                a_{\text{drag}} = 5.242 \times 10^{-5}\text{ m/s}^2 \implies \dot{a}_0 = -\frac{2 a_{\text{drag}}}{n} = \mathbf{-7.742\text{ km/day}}
-            \end{equation*}
-
-            \item \textbf{Remaining Orbital Lifetime Estimate:}
-            \begin{equation*}
-                L_{\text{lifetime}} \approx \frac{H}{|\dot{a}_0|} = \frac{45\text{ km}}{7.742\text{ km/day}} \approx \mathbf{5.81\text{ days}}
-            \end{equation*}
-        \end{enumerate}
-    \end{exampleblock}
-\end{frame}
-
 % ------------------------------------------------------------------------------
 % SECTION 4: SOLAR RADIATION PRESSURE
 % ------------------------------------------------------------------------------
@@ -958,21 +972,6 @@
         \item \textbf{Geomagnetic Interactions:} Produces primary disturbance torque for attitude control; can be leveraged via magnetorquers or electrodynamic tethers.
         \item \textbf{Estimation Implications:} Precise Orbit Determination (POD) filters (EKF/Batch) must estimate dynamic atmospheric scaling factors ($B^*$) and solar reflectivity coefficients ($C_r$) alongside spacecraft position and velocity states.
     \end{enumerate}
-\end{frame}
-
-\section{Week 1: Non-Keplerian Spaces and Variational Systems}
-
-% --- WEEK 1: SLIDE 1 ---
-\begin{frame}{Week 1: Moving Beyond the Two-Body Idealization}
-    The exact differential vector equation of motion for a point mass under conservative, non-spherical, and non-conservative forces is given by:
-    \[ \ddot{\mathbf{r}} = -\frac{\mu}{r^3}\mathbf{r} + \mathbf{a}_d \]
-    
-    Where $\mathbf{a}_d$ represents the sum of all perturbing accelerations:
-    \[ \mathbf{a}_d = \mathbf{a}_{\text{geopotential}} + \mathbf{a}_{\text{3rd-body}} + \mathbf{a}_{\text{drag}} + \mathbf{a}_{\text{SRP}} \]
-    
-    \begin{exampleblock}{Rigor Check for 4th-Year Engineers}
-        Because $\mathbf{a}_d \neq \mathbf{0}$, the orbital angular momentum vector $\mathbf{h} = \mathbf{r} \times \mathbf{v}$ and the eccentricity vector $\mathbf{e} = \frac{1}{\mu}\left[(\mathbf{v}\cdot\mathbf{v} - \frac{\mu}{r})\mathbf{r} - (\mathbf{r}\cdot\mathbf{v})\mathbf{v}\right]$ are no longer constants of integration. They become time-varying parameters.
-    \end{exampleblock}
 \end{frame}
 
 \end{document}

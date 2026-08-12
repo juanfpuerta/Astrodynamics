@@ -555,6 +555,18 @@
 % ------------------------------------------------------------------------------
 % Slide 10: In-Class Practice Exercise
 % ------------------------------------------------------------------------------
+
+\begin{frame}{In-Class Practice Problem (For Students)}
+    \begin{block}{Practice Exercise: LEO Space Debris Drift}
+        A piece of space debris is tracked in a circular orbit at an altitude of $h = 500\text{ km}$ with an inclination of $i = 45^\circ$.
+        \begin{enumerate}
+            \item Calculate the secular nodal precession rate $\dot{\Omega}$ in degrees per day.
+            \item Calculate the rate of perigee rotation $\dot{\omega}$ in degrees per day.
+            \item Determine if the line of nodes precesses Eastward or Westward.
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
 \begin{frame}{In-Class Practice Problem (For Students)}
     \begin{block}{Practice Exercise: LEO Space Debris Drift}
         A piece of space debris is tracked in a circular orbit at an altitude of $h = 500\text{ km}$ with an inclination of $i = 45^\circ$.
@@ -910,6 +922,251 @@
     \end{exampleblock}
 \end{frame}
 
+% ==============================================================================
+% SECTION: SOLAR RADIATION PRESSURE (SRP)
+% ==============================================================================
+\section{Solar Radiation Pressure (SRP)}
+
+% Slide 1: Basic Cannonball Model (Refined)
+\begin{frame}{Solar Radiation Pressure (SRP): Fundamental Physics}
+    Photons emitted by the Sun carry momentum ($p = E/c$) and exert a continuous radiation force upon impact with spacecraft surfaces.
+
+    \begin{block}{SRP Acceleration Model ("Cannonball Model")}
+        \begin{equation*}
+            \mathbf{a}_{\text{srp}} = - P_{\odot} C_r \left(\frac{A}{m}\right) \left(\frac{1\text{ AU}}{r_{\odot}}\right)^2 \hat{\mathbf{u}}_{\odot}
+        \end{equation*}
+    \end{block}
+
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \textbf{Key Parameters:}
+            \begin{itemize}
+                \item $P_{\odot}$: Solar flux constant at $1\text{ AU} \approx 4.56 \times 10^{-6}\text{ N/m}^2$.
+                \item $C_r$: Reflectivity coefficient ($1.0 \le C_r \le 2.0$).
+                \item $A/m$: Area-to-mass ratio [$\text{m}^2/\text{kg}$].
+                \item $\hat{\mathbf{u}}_{\odot}$: Unit vector pointing from satellite to Sun.
+            \end{itemize}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Physical Boundary Limits}
+                \begin{itemize}
+                    \item $C_r = 1.0$: Pure Absorption (black body).
+                    \item $C_r = 2.0$: Pure Specular Reflection (flat mirror).
+                    \item Typical spacecraft arrays: $C_r \approx 1.2\text{--}1.5$.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Slide 2: Advanced Flat-Plate Surface Model
+\begin{frame}{Advanced SRP Modeling: Flat-Plate vs. Cannonball}
+    The Cannonball model assumes a spherical spacecraft. Complex geometries require a **Flat-Plate Component Model** accounting for surface orientation ($\hat{\mathbf{n}}$) and material optical properties:
+
+    \begin{columns}[t]
+        \begin{column}{0.52\textwidth}
+            \begin{block}{Flat-Plate Force Model}
+                \begin{equation*}
+                    \mathbf{F}_{\text{plate}} = -P_{\odot} A (\hat{\mathbf{n}} \cdot \hat{\mathbf{u}}_{\odot}) \left[ (1 - \rho_s) \hat{\mathbf{u}}_{\odot} + \left( 2\rho_s (\hat{\mathbf{n}} \cdot \hat{\mathbf{u}}_{\odot}) + \frac{2}{3}\rho_d \right) \hat{\mathbf{n}} \right]
+                \end{equation*}
+            \end{block}
+            \small
+            where $\alpha$ is absorption, $\rho_s$ is specular reflectivity, and $\rho_d$ is diffuse reflectivity ($\alpha + \rho_s + \rho_d = 1$).
+        \end{column}
+
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Force Component Decomposition}
+                \begin{itemize}
+                    \item \textbf{Normal Force Component:} Pushes perpendicular to the surface ($\hat{\mathbf{n}}$).
+                    \item \textbf{Shear Force Component:} Acts along the surface tangent plane.
+                    \item Crucial for high-fidelity Orbit Determination (POD) and ADCS torque modeling.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Slide 3: Eclipse & Shadow Geometry
+\begin{frame}{Eclipse Geometry \& Shadow Boundaries}
+    When a satellite enters Earth's shadow cone, SRP drops to zero ($\mathbf{a}_{\text{srp}}$ is scaled by $\nu_{\text{shadow}} \in [0, 1]$):
+
+    \vspace{-0.1cm}
+
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Shadow Function ($\nu_{\text{shadow}}$)}
+                {\small
+                \begin{equation*}
+                    \nu_{\text{shadow}} = \begin{cases} 
+                        1.0, & \text{Direct Sunlight} \\
+                        (0, 1), & \text{Penumbra (Partial)} \\
+                        0.0, & \text{Umbra (Total)}
+                    \end{cases}
+                \end{equation*}
+                }
+            \end{block}
+
+            \small
+            \begin{itemize}
+                \item \textbf{Cylindrical Model:} Fast, assumes parallel solar rays (good for GEO).
+                \item \textbf{Conical Model:} Exact, accounts for Sun's angular radius (LEO/MEO).
+            \end{itemize}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Numerical Integration Challenge}
+                \small
+                Sharp transitions entering/exiting the Umbra cause step discontinuities in numerical integrators (e.g., RK4/RK8). Smooth boundary functions prevent integrator step-size collapse!
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Slide 4: Orbital Element Drift & GEO Eccentricity Pumping
+\begin{frame}{Orbital Effects: Long-Term Eccentricity Pumping}
+    Applying Gauss Variational Equations (GVE) reveals that SRP acts as a continuous directional force vector that perturbs eccentricity ($e$) and argument of perigee ($\omega$):
+
+    \begin{columns}[t]
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Annual GEO Eccentricity Loop}
+                In Geostationary Orbit (GEO), the Sun vector rotates $360^\circ$ relative to the inertial frame over 1 year.
+                \begin{itemize}
+                    \item SRP causes $e$ to trace out a closed circular locus in the $e_x = e\cos\omega$, $e_y = e\sin\omega$ eccentricity vector space!
+                    \item Maximum annual eccentricity drift:
+                    \begin{equation*}
+                        \Delta e_{\text{annual}} \approx \frac{3\pi P_{\odot} C_r}{v_c} \left(\frac{A}{m}\right)
+                    \end{equation*}
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Operational Consequences}
+                \begin{itemize}
+                    \item Uncontrolled GEO satellites drift into eccentric orbits, inducing latitude/longitude libration.
+                    \item Requires periodic **East-West / North-South stationkeeping** maneuvers to dump SRP energy.
+                    \item High Area-to-Mass Debris ($A/m > 1\text{ m}^2/\text{kg}$) experience rapid eccentricity pumping ($e \uparrow$), driving perigee into LEO!
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Slide 5: Real-World Engineering Applications
+\begin{frame}{Engineering Applications of SRP}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{1. Propulsive Solar Sailing}
+                \begin{itemize}
+                    \item Maximizes $A/m > 10\text{ m}^2/\text{kg}$ using ultralight aluminized Mylar sails.
+                    \item Angling sail normal $\hat{\mathbf{n}}$ relative to Sun vector $\hat{\mathbf{u}}_{\odot}$ generates propellantless continuous thrust.
+                    \item Examples: **IKAROS** (JAXA), **LightSail 2** (Planetary Society).
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{2. Attitude Control \& Kepler Telescope}
+                \begin{itemize}
+                    \item Solar photon pressure produces disturbance torques when center of pressure (CP) is offset from center of mass (CM).
+                    \item **Kepler Mission (K2):** After 2 reaction wheels failed, NASA used balanced SRP solar pressure on the spacecraft body as a "3rd virtual reaction wheel" to maintain ultra-precise pointing!
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Slide 6: Worked Example
+\begin{frame}{Worked Example: SRP Acceleration \& GEO Stationkeeping}
+    \begin{exampleblock}{Problem Statement}
+        A large geostationary communications satellite ($m = 3200\text{ kg}$) features deployed solar arrays with an effective cross-sectional area of $A = 85\text{ m}^2$ and reflectivity $C_r = 1.35$. At GEO radius ($r = 42164\text{ km}$), calculate:
+        \begin{enumerate}
+            \item The magnitude of the SRP acceleration $a_{\text{srp}}$.
+            \item The annual eccentricity buildup $\Delta e_{\text{annual}}$ induced by SRP.
+        \end{enumerate}
+    \end{exampleblock}
+
+    \textbf{Step 1: Compute SRP Acceleration ($a_{\text{srp}}$)}
+    \begin{equation*}
+        a_{\text{srp}} = P_{\odot} C_r \left(\frac{A}{m}\right) = (4.56 \times 10^{-6}\text{ N/m}^2) \times 1.35 \times \left(\frac{85\text{ m}^2}{3200\text{ kg}}\right)
+    \end{equation*}
+    \begin{equation*}
+        a_{\text{srp}} = (4.56 \times 10^{-6}) \times 1.35 \times (0.02656) = \mathbf{1.635 \times 10^{-7}\text{ m/s}^2}
+    \end{equation*}
+\end{frame}
+
+% Slide 7: Worked Example Continued
+\begin{frame}{Worked Example: Solution Continued}
+    \begin{columns}[t]
+        \begin{column}{0.54\textwidth}
+            \textbf{Step 2: GEO Velocity \& Eccentricity}
+            
+            \smallskip
+            \small
+            Circular orbital velocity $v_c$:
+            \begin{equation*}
+                v_c = \sqrt{\frac{\mu}{r}} = \sqrt{\frac{398600.44}{42164}} = 3074.7\text{ m/s}
+            \end{equation*}
+
+            Annual eccentricity growth relation:
+            \begin{align*}
+                \Delta e_{\text{annual}} &\approx \frac{3\pi P_{\odot} C_r}{v_c} \left(\frac{A}{m}\right) = \frac{3\pi a_{\text{srp}}}{v_c} T_{\text{year}} \\[3pt]
+                &= \frac{3\pi (1.635 \times 10^{-7})}{3074.7} (3.1557 \times 10^7) \\[3pt]
+                &= (5.011 \times 10^{-10}) (3.1557 \times 10^7) \\[3pt]
+                &= \mathbf{0.0158\text{ per year}}
+            \end{align*}
+        \end{column}
+
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Result Interpretation}
+                \small
+                Without active thruster stationkeeping, SRP increases orbit eccentricity by $\Delta e = 0.0158$ per year.
+            \end{block}
+
+            \small
+            \begin{itemize}
+                \item Alters perigee/apogee altitude by $\Delta r \approx \pm a e = \pm 666\text{ km}$.
+                \item Induces radial oscillation, driving the satellite out of its assigned geostationary slot.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Slide 8: In-Class Student Exercise
+
+\begin{frame}{In-Class Practice Exercise (For Students)}
+    \begin{block}{Practice Exercise: Solar Sail Interplanetary Acceleration}
+        An experimental solar sail CubeSat ($m = 12\text{ kg}$) deploys a square aluminized sail measuring $10\text{ m} \times 10\text{ m}$ ($A = 100\text{ m}^2$) with reflectivity $C_r = 1.85$.
+        \begin{enumerate}
+            \item Calculate the Area-to-Mass ratio $A/m$ of the solar sail.
+            \item Calculate the SRP acceleration $a_{\text{srp}}$ at $1\text{ AU}$ distance from the Sun.
+            \item Calculate the total cumulative velocity change $\Delta V_{\text{srp}}$ generated by SRP over 30 days of continuous thrust pointing directly away from the Sun.
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\begin{frame}{In-Class Practice Exercise (For Students)}
+    \begin{block}{Practice Exercise: Solar Sail Interplanetary Acceleration}
+        An experimental solar sail CubeSat ($m = 12\text{ kg}$) deploys a square aluminized sail measuring $10\text{ m} \times 10\text{ m}$ ($A = 100\text{ m}^2$) with reflectivity $C_r = 1.85$.
+        \begin{enumerate}
+            \item Calculate the Area-to-Mass ratio $A/m$ of the solar sail.
+            \item Calculate the SRP acceleration $a_{\text{srp}}$ at $1\text{ AU}$ distance from the Sun.
+            \item Calculate the total cumulative velocity change $\Delta V_{\text{srp}}$ generated by SRP over 30 days of continuous thrust pointing directly away from the Sun.
+        \end{enumerate}
+    \end{block}
+
+    \medskip
+
+    \begin{exampleblock}{Answer Key (For Self-Verification)}
+        \begin{itemize}
+            \item $A/m = \frac{100}{12} = \mathbf{8.333\text{ m}^2/\text{kg}}$
+            \item $a_{\text{srp}} = (4.56 \times 10^{-6}) \times 1.85 \times 8.333 = \mathbf{7.029 \times 10^{-5}\text{ m/s}^2}$
+            \item $\Delta V_{\text{30-days}} = a_{\text{srp}} \times (30 \times 86400\text{ s}) = (7.029 \times 10^{-5}) \times 2.592 \times 10^6 = \mathbf{182.2\text{ m/s}}$
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
 % ------------------------------------------------------------------------------
 % SECTION 5: GEOMAGNETIC INTERACTIONS
 % ------------------------------------------------------------------------------
@@ -918,22 +1175,40 @@
 \begin{frame}{Geomagnetic Field Interaction Mechanisms}
     Earth's geomagnetic dipole field $\mathbf{B}$ interacts with spacecraft through two primary physical pathways:
 
-    \begin{block}{1. Magnetic Disturbance Torques (Attitude Dynamics)}
-        $$\boldsymbol{\tau}_{\text{mag}} = \mathbf{m}_{\text{sat}} \times \mathbf{B}$$
-        \begin{itemize}
-            \item $\mathbf{m}_{\text{sat}}$: Residual magnetic dipole moment of internal electronics and current loops.
-            \item Primary attitude perturbation torque in LEO.
-            \item Exploited purposefully using **Magnetorquers** ($\mathbf{m}_{\text{cmd}}$) for attitude control and reaction wheel desaturation.
-        \end{itemize}
-    \end{block}
+    \vspace{-0.1cm}
 
-    \begin{block}{2. Lorentz Force Acceleration (Translational Dynamics)}
-        $$\mathbf{a}_{\text{Lorentz}} = \frac{q_{\text{sat}}}{m} \left( \mathbf{v}_{\text{rel}} \times \mathbf{B} \right)$$
-        \begin{itemize}
-            \item $q_{\text{sat}}$: Electrostatic charge acquired by spacecraft in ionospheric plasma.
-            \item Utilized by **Electrodynamic Tethers (EDTs)** ($I \mathbf{L} \times \mathbf{B}$) to generate drag or boost forces without propellant consumption.
-        \end{itemize}
-    \end{block}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{1. Magnetic Torques (Attitude)}
+                {\small
+                \begin{equation*}
+                    \boldsymbol{\tau}_{\text{mag}} = \mathbf{m}_{\text{sat}} \times \mathbf{B}
+                \end{equation*}
+                }
+                \small
+                \begin{itemize}
+                    \item $\mathbf{m}_{\text{sat}}$: Residual dipole moment of internal electronics.
+                    \item Primary attitude disturbance in LEO.
+                    \item Exploited via \textbf{Magnetorquers} ($\mathbf{m}_{\text{cmd}}$) for momentum desaturation.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{2. Lorentz Force (Translational)}
+                {\small
+                \begin{equation*}
+                    \mathbf{a}_{\text{Lorentz}} = \frac{q_{\text{sat}}}{m} \left( \mathbf{v}_{\text{rel}} \times \mathbf{B} \right)
+                \end{equation*}
+                }
+                \small
+                \begin{itemize}
+                    \item $q_{\text{sat}}$: Charge acquired from ionospheric plasma.
+                    \item Utilized by \textbf{Electrodynamic Tethers} ($I \mathbf{L} \times \mathbf{B}$) for propellantless thrust/drag.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 % ------------------------------------------------------------------------------

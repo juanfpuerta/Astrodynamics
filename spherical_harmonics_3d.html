@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spherical Harmonics & Legendre Polynomials Visualizer - UdeA Astrodynamics</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0b0f19;
+            color: #e0e6ed;
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+        }
+        #canvas-container {
+            flex: 1;
+            height: 100%;
+            position: relative;
+        }
+        #sidebar {
+            width: 380px;
+            background-color: #121824;
+            border-left: 1px solid #232d3f;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        h2 {
+            color: #00aa55;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #005927;
+            padding-bottom: 6px;
+            margin-bottom: 5px;
+        }
+        .control-group {
+            background-color: #1a2232;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #2a364f;
+        }
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.88rem;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            accent-color: #00aa55;
+            cursor: pointer;
+        }
+        .val-display {
+            color: #4da6ff;
+            font-weight: bold;
+        }
+        .type-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            text-align: center;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+        .bg-zonal { background-color: #9333ea; color: white; }
+        .bg-sectoral { background-color: #d97706; color: white; }
+        .bg-tesseral { background-color: #2563eb; color: white; }
+
+        .dashboard {
+            background-color: #0d131e;
+            border-left: 4px solid #00aa55;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.83rem;
+            line-height: 1.5;
+        }
+        .dashboard div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .dash-label { color: #8a9ba8; }
+        .dash-val { color: #00ffcc; font-weight: bold; }
+
+        #overlay-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(18, 24, 36, 0.88);
+            border: 1px solid #232d3f;
+            padding: 15px 18px;
+            border-radius: 8px;
+            pointer-events: none;
+            max-width: 440px;
+        }
+        #overlay-info h1 {
+            font-size: 1.15rem;
+            color: #00aa55;
+            margin-bottom: 6px;
+        }
+        #overlay-info p {
+            font-size: 0.82rem;
+            color: #a0aec0;
+            line-height: 1.4;
+        }
+        .math-block {
+            background: #141c2b;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+            color: #00ffcc;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+        .preset-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+        .btn {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            padding: 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:hover { background-color: #005927; color: white; border-color: #00aa55; }
+        .btn-active { background-color: #005927; color: white; border-color: #00aa55; }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+    <div id="canvas-container">
+        <div id="overlay-info">
+            <h1>Geopotential Spherical Harmonics</h1>
+            <p>Visualizing non-spherical gravitational potential potential functions $V(r,\phi,\lambda)$ using Associated Legendre Functions $P_{nm}(\sin\phi)$.</p>
+            <div class="math-block" id="math-formula">
+                V_{n,m} \propto P_{n,m}(\sin\phi) \cdot \cos(m\lambda)
+            </div>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <h2>Harmonic Classification</h2>
+        <div id="type-badge" class="type-badge bg-zonal">Zonal Harmonic (J₂)</div>
+
+        <h2>Harmonic Indices</h2>
+
+        <div class="control-group">
+            <label>Degree (<i>n</i>): <span class="val-display" id="deg-val">2</span></label>
+            <input type="range" id="deg-slider" min="0" max="8" step="1" value="2">
+        </div>
+
+        <div class="control-group">
+            <label>Order (<i>m</i>): <span class="val-display" id="ord-val">0</span></label>
+            <input type="range" id="ord-slider" min="0" max="2" step="1" value="0">
+        </div>
+
+        <h2>Visualization Options</h2>
+
+        <div class="control-group">
+            <label>Deformation Exaggeration: <span class="val-display" id="amp-val">0.25</span></label>
+            <input type="range" id="amp-slider" min="0.0" max="0.6" step="0.01" value="0.25">
+        </div>
+
+        <div class="control-group">
+            <label>Longitude Phase ($\lambda_0$): <span class="val-display" id="phase-val">0°</span></label>
+            <input type="range" id="phase-slider" min="0" max="360" step="5" value="0">
+        </div>
+
+        <h2>Astrodynamics Presets</h2>
+        <div class="preset-grid">
+            <button class="btn" onclick="applyPreset(2,0, 'J₂ Oblateness')">J₂ Bulge (2,0)</button>
+            <button class="btn" onclick="applyPreset(3,0, 'J₃ Pear Shape')">J₃ Pear (3,0)</button>
+            <button class="btn" onclick="applyPreset(2,2, 'C₂₂ Ellipticity')">C₂₂ Elliptic (2,2)</button>
+            <button class="btn" onclick="applyPreset(4,4, 'Sectoral 4,4')">Sectoral (4,4)</button>
+            <button class="btn" onclick="applyPreset(5,2, 'Tesseral 5,2')">Tesseral (5,2)</button>
+            <button class="btn" onclick="applyPreset(0,0, 'Pure Sphere')">Monopole (0,0)</button>
+        </div>
+
+        <h2>Real-Time Surface Metrics</h2>
+
+        <div class="dashboard">
+            <div>
+                <span class="dash-label">Legendre Degree (n):</span>
+                <span class="dash-val" id="dash-n">2</span>
+            </div>
+            <div>
+                <span class="dash-label">Legendre Order (m):</span>
+                <span class="dash-val" id="dash-m">0</span>
+            </div>
+            <div>
+                <span class="dash-label">Latitude Nodal Lines:</span>
+                <span class="dash-val" id="dash-lat-nodes">2</span>
+            </div>
+            <div>
+                <span class="dash-label">Longitude Nodal Lines:</span>
+                <span class="dash-val" id="dash-lon-nodes">0</span>
+            </div>
+            <div>
+                <span class="dash-label">Max Anomaly Magnitude:</span>
+                <span class="dash-val" id="dash-max-val">1.000</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==============================================================================
+        // Associated Legendre Polynomial Recurrence Numerical Solver
+        // ==============================================================================
+        function legendreP(n, m, x) {
+            // Clamp x = sin(phi) to [-1, 1]
+            x = Math.max(-1.0, Math.min(1.0, x));
+            
+            let pmm = 1.0;
+            if (m > 0) {
+                let somx2 = Math.sqrt((1.0 - x) * (1.0 + x));
+                let fact = 1.0;
+                for (let i = 1; i <= m; i++) {
+                    pmm *= fact * somx2;
+                    fact += 2.0;
+                }
+            }
+            if (n === m) return pmm;
+
+            let pmp1 = x * (2 * m + 1) * pmm;
+            if (n === m + 1) return pmp1;
+
+            let pll = 0.0;
+            for (let ll = m + 2; ll <= n; ll++) {
+                pll = ((2 * ll - 1) * x * pmp1 - (ll + m - 1) * pmm) / (ll - m);
+                pmm = pmp1;
+                pmp1 = pll;
+            }
+            return pll;
+        }
+
+        // ==============================================================================
+        // Scene, Camera, Renderer Setup
+        // ==============================================================================
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0b0f19);
+
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(0, 8, 18);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+
+        const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight1.position.set(20, 20, 20);
+        scene.add(dirLight1);
+
+        const dirLight2 = new THREE.DirectionalLight(0x005927, 0.5);
+        dirLight2.position.set(-20, -10, -20);
+        scene.add(dirLight2);
+
+        // ==============================================================================
+        // Deformed Earth Mesh & Coordinate Axes
+        // ==============================================================================
+        const baseRadius = 5.0;
+        const widthSegments = 128;
+        const heightSegments = 128;
+
+        const sphereGeo = new THREE.SphereGeometry(baseRadius, widthSegments, heightSegments);
+        
+        // Add Vertex Colors
+        const count = sphereGeo.attributes.position.count;
+        const colors = new Float32Array(count * 3);
+        sphereGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const sphereMat = new THREE.MeshStandardMaterial({
+            vertexColors: true,
+            roughness: 0.3,
+            metalness: 0.1,
+            wireframe: false
+        });
+
+        const harmonicMesh = new THREE.Mesh(sphereGeo, sphereMat);
+        scene.add(harmonicMesh);
+
+        // Reference Equatorial Ring
+        const ringGeo = new THREE.RingGeometry(baseRadius * 1.01, baseRadius * 1.05, 64);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0x00ffcc, side: THREE.DoubleSide, transparent: true, opacity: 0.3 });
+        const eqRing = new THREE.Mesh(ringGeo, ringMat);
+        eqRing.rotation.x = Math.PI / 2;
+        scene.add(eqRing);
+
+        // Polar Spin Axis
+        const axisGeo = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(0, -baseRadius * 1.5, 0),
+            new THREE.Vector3(0, baseRadius * 1.5, 0)
+        ]);
+        const axisMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+        const axisLine = new THREE.Line(axisGeo, axisMat);
+        scene.add(axisLine);
+
+        // Orbiting Satellite Test Particle
+        const satGeo = new THREE.SphereGeometry(0.2, 16, 16);
+        const satMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
+        const satMesh = new THREE.Mesh(satGeo, satMat);
+        scene.add(satMesh);
+
+        // Satellite Orbit Path
+        const orbitRadius = baseRadius * 1.6;
+        const orbitPoints = [];
+        for (let i = 0; i <= 100; i++) {
+            const theta = (i / 100) * Math.PI * 2;
+            orbitPoints.push(new THREE.Vector3(orbitRadius * Math.cos(theta), orbitRadius * Math.sin(theta) * 0.3, orbitRadius * Math.sin(theta)));
+        }
+        const orbitGeo = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+        const orbitMat = new THREE.LineBasicMaterial({ color: 0xffcc00, transparent: true, opacity: 0.4 });
+        const orbitLine = new THREE.Line(orbitGeo, orbitMat);
+        scene.add(orbitLine);
+
+        // ==============================================================================
+        // UI Sliders & Controls Setup
+        // ==============================================================================
+        const degSlider = document.getElementById('deg-slider');
+        const ordSlider = document.getElementById('ord-slider');
+        const ampSlider = document.getElementById('amp-slider');
+        const phaseSlider = document.getElementById('phase-slider');
+
+        degSlider.addEventListener('input', () => {
+            if (parseInt(ordSlider.value) > parseInt(degSlider.value)) {
+                ordSlider.value = degSlider.value;
+            }
+            ordSlider.max = degSlider.value;
+            updateMesh();
+        });
+
+        ordSlider.addEventListener('input', updateMesh);
+        ampSlider.addEventListener('input', updateMesh);
+        phaseSlider.addEventListener('input', updateMesh);
+
+        function applyPreset(n, m, label) {
+            degSlider.value = n;
+            ordSlider.max = n;
+            ordSlider.value = m;
+            ampSlider.value = n === 0 ? 0.0 : 0.25;
+            updateMesh();
+        }
+
+        // Color interpolation helper (Blue -> White -> Red)
+        function getDivergingColor(val) { // val in [-1, 1]
+            const color = new THREE.Color();
+            if (val >= 0) {
+                // White (1,1,1) to Red (1, 0.1, 0.2)
+                color.setRGB(1.0, 1.0 - val * 0.9, 1.0 - val * 0.8);
+            } else {
+                const absV = Math.abs(val);
+                // White (1,1,1) to Blue (0.1, 0.4, 1.0)
+                color.setRGB(1.0 - absV * 0.9, 1.0 - absV * 0.6, 1.0);
+            }
+            return color;
+        }
+
+        // ==============================================================================
+        // Mesh Deformation & Color Update Logic
+        // ==============================================================================
+        function updateMesh() {
+            const n = parseInt(degSlider.value);
+            const m = parseInt(ordSlider.value);
+            const amp = parseFloat(ampSlider.value);
+            const phaseRad = (parseFloat(phaseSlider.value) * Math.PI) / 180.0;
+
+            document.getElementById('deg-val').textContent = n;
+            document.getElementById('ord-val').textContent = m;
+            document.getElementById('amp-val').textContent = amp.toFixed(2);
+            document.getElementById('phase-val').textContent = phaseSlider.value + '°';
+
+            document.getElementById('dash-n').textContent = n;
+            document.getElementById('dash-m').textContent = m;
+
+            // Classification & Badges
+            const badge = document.getElementById('type-badge');
+            if (n === 0 && m === 0) {
+                badge.textContent = "Monopole Potential (0,0)";
+                badge.className = "type-badge bg-zonal";
+            } else if (m === 0) {
+                badge.textContent = `Zonal Harmonic (J_${n})`;
+                badge.className = "type-badge bg-zonal";
+            } else if (n === m) {
+                badge.textContent = `Sectoral Harmonic (${n},${m})`;
+                badge.className = "type-badge bg-sectoral";
+            } else {
+                badge.textContent = `Tesseral Harmonic (${n},${m})`;
+                badge.className = "type-badge bg-tesseral";
+            }
+
+            document.getElementById('dash-lat-nodes').textContent = (n - m);
+            document.getElementById('dash-lon-nodes').textContent = (2 * m);
+
+            // Update Math Formula Overlay Text
+            const mathEl = document.getElementById('math-formula');
+            if (m === 0) {
+                mathEl.textContent = `V_${n},0 ∝ P_${n}(\\sin\\phi)  [Zonal Latitudinal Bands]`;
+            } else {
+                mathEl.textContent = `V_${n},${m} ∝ P_${n},${m}(\\sin\\phi) · \\cos(${m}\\lambda + \\lambda_0)`;
+            }
+
+            // Deform Geometry Vertices
+            const posAttr = sphereGeo.attributes.position;
+            const colorAttr = sphereGeo.attributes.color;
+
+            let maxValFound = 0.0001;
+
+            // First Pass: Compute Spherical Harmonic Anomaly Values
+            const harmonicVals = new Float32Array(count);
+
+            for (let i = 0; i < count; i++) {
+                const x = posAttr.getX(i);
+                const y = posAttr.getY(i); // Y is polar axis in Three.js
+                const z = posAttr.getZ(i);
+
+                const r = Math.sqrt(x * x + y * y + z * z);
+                const sinPhi = y / r; // geocentric latitude sin(\phi)
+                const lambda = Math.atan2(z, x); // longitude \lambda
+
+                // Legendre Polynomial evaluation
+                const pnm = legendreP(n, m, sinPhi);
+                const lonTerm = (m === 0) ? 1.0 : Math.cos(m * lambda + phaseRad);
+                const val = pnm * lonTerm;
+
+                harmonicVals[i] = val;
+                if (Math.abs(val) > maxValFound) maxValFound = Math.abs(val);
+            }
+
+            document.getElementById('dash-max-val').textContent = maxValFound.toFixed(3);
+
+            // Second Pass: Apply Scaled Displacement & Diverging Colors
+            for (let i = 0; i < count; i++) {
+                const x0 = posAttr.getX(i);
+                const y0 = posAttr.getY(i);
+                const z0 = posAttr.getZ(i);
+
+                const origR = Math.sqrt(x0 * x0 + y0 * y0 + z0 * z0);
+                const normalizedVal = harmonicVals[i] / maxValFound; // Scaled to [-1, 1]
+
+                // Radial Deformation Formula
+                const dr = 1.0 + amp * normalizedVal;
+                const scale = (baseRadius / origR) * dr;
+
+                posAttr.setXYZ(i, x0 * scale, y0 * scale, z0 * scale);
+
+                // Diverging Color Map
+                const c = getDivergingColor(normalizedVal);
+                colorAttr.setXYZ(i, c.r, c.g, c.b);
+            }
+
+            posAttr.needsUpdate = true;
+            colorAttr.needsUpdate = true;
+            sphereGeo.computeVertexNormals();
+        }
+
+        // ==============================================================================
+        // Animation Loop (Satellite Orbit & Earth Rotation)
+        // ==============================================================================
+        let satTime = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotate Earth Mesh slowly
+            harmonicMesh.rotation.y += 0.002;
+
+            // Satellite Trajectory
+            satTime += 0.015;
+            satMesh.position.x = orbitRadius * Math.cos(satTime);
+            satMesh.position.y = orbitRadius * Math.sin(satTime) * 0.3;
+            satMesh.position.z = orbitRadius * Math.sin(satTime);
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Initial Geometry Setup
+        updateMesh();
+        animate();
+
+        // Responsive Window Handler
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atmospheric Drag Decay & Circularization - UdeA Astrodynamics</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: #0b0f19;
+            color: #e0e6ed;
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+        }
+        #canvas-container { flex: 1; height: 100%; position: relative; }
+        #sidebar {
+            width: 410px;
+            background-color: #121824;
+            border-left: 1px solid #232d3f;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        h2 {
+            color: #00aa55;
+            font-size: 1.05rem;
+            border-bottom: 2px solid #005927;
+            padding-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .control-group {
+            background-color: #1a2232;
+            padding: 9px 12px;
+            border-radius: 6px;
+            border: 1px solid #2a364f;
+        }
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            accent-color: #00aa55;
+            cursor: pointer;
+        }
+        .val-display { color: #4da6ff; font-weight: bold; }
+        .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .btn {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            padding: 7px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.76rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:hover { background-color: #005927; color: white; border-color: #00aa55; }
+        .btn-active { background-color: #005927; color: white; }
+        .dashboard {
+            background-color: #0d131e;
+            border-left: 4px solid #00aa55;
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.78rem;
+            line-height: 1.45;
+        }
+        .dashboard div { display: flex; justify-content: space-between; margin-bottom: 2px; }
+        .dash-label { color: #8a9ba8; }
+        .dash-val { color: #00ffcc; font-weight: bold; }
+        #decay-canvas {
+            background-color: #080c14;
+            border: 1px solid #2a364f;
+            border-radius: 6px;
+            width: 100%;
+            height: 135px;
+        }
+        #overlay-info {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(18, 24, 36, 0.9);
+            border: 1px solid #232d3f;
+            padding: 12px 16px;
+            border-radius: 8px;
+            pointer-events: none;
+            max-width: 430px;
+        }
+        #overlay-info h1 { font-size: 1.05rem; color: #00aa55; margin-bottom: 4px; }
+        #overlay-info p { font-size: 0.78rem; color: #a0aec0; line-height: 1.35; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+    <div id="canvas-container">
+        <div id="overlay-info">
+            <h1>Thermospheric Drag & Circularization</h1>
+            <p>Demonstrating localized aerodynamic braking at perigee ($h_p$), asymmetric apogee reduction ($h_a \downarrow$), and the exponential circularization phase.</p>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <h2>Mission Presets</h2>
+        <div class="preset-grid">
+            <button class="btn" onclick="applyPreset(350, 0.00, 0.0165, 55, 'Space Station (Ex. 1)')">Space Station (350km)</button>
+            <button class="btn" onclick="applyPreset(250, 0.00, 0.0242, 45, 'Starlink Decay (Ex. 2)')">Starlink (250km Circular)</button>
+            <button class="btn" onclick="applyPreset(220, 0.28, 0.0200, 48, 'GTO Perigee Drag')">Elliptical GTO Decay</button>
+            <button class="btn" onclick="applyPreset(190, 0.05, 0.0350, 40, 'Critical Re-entry Plunge')">Sub-200km Plunge</button>
+        </div>
+
+        <h2>Orbital & Atmospheric Inputs</h2>
+        <div class="control-group">
+            <label>Perigee Altitude ($h_p$): <span class="val-display" id="hp-val">350 km</span></label>
+            <input type="range" id="hp-slider" min="150" max="600" step="5" value="350">
+        </div>
+
+        <div class="control-group">
+            <label>Eccentricity ($e$): <span class="val-display" id="ecc-val">0.20</span></label>
+            <input type="range" id="ecc-slider" min="0.00" max="0.50" step="0.01" value="0.20">
+        </div>
+
+        <div class="control-group">
+            <label>Ballistic Parameter ($B^* = \frac{C_D A}{m}$): <span class="val-display" id="bstar-val">0.0165 m²/kg</span></label>
+            <input type="range" id="bstar-slider" min="0.005" max="0.08" step="0.001" value="0.0165">
+        </div>
+
+        <div class="control-group">
+            <label>Atmospheric Scale Height ($H$): <span class="val-display" id="hscale-val">55 km</span></label>
+            <input type="range" id="hscale-slider" min="30" max="80" step="1" value="55">
+        </div>
+
+        <h2>Altitude Decay Profile ($h_a \text{ vs } h_p$)</h2>
+        <canvas id="decay-canvas" width="370" height="135"></canvas>
+
+        <h2>Real-Time Dynamic Metrics</h2>
+        <div class="dashboard">
+            <div><span class="dash-label">Apogee Altitude ($h_a$):</span><span class="dash-val" id="dash-ha">820.0 km</span></div>
+            <div><span class="dash-label">Density @ Perigee ($\rho_p$):</span><span class="dash-val" id="dash-rho">3.80e-12 kg/m³</span></div>
+            <div><span class="dash-label">Drag Accel @ Perigee ($a_{\text{drag}}$):</span><span class="dash-val" id="dash-adrag">1.857e-6 m/s²</span></div>
+            <div><span class="dash-label">Daily Altitude Loss ($\Delta a_{\text{daily}}$):</span><span class="dash-val" id="dash-da">-0.281 km/day</span></div>
+            <div><span class="dash-label">King-Hele Period Drop ($\Delta T_{\text{day}}$):</span><span class="dash-val" id="dash-dt">-0.343 s/day</span></div>
+            <div><span class="dash-label">Linearized Lifetime ($L_{\text{life}}$):</span><span class="dash-val" id="dash-life">196.1 days</span></div>
+        </div>
+    </div>
+
+    <script>
+        const R_EARTH = 6378.137; // km
+        const MU = 398600.44;    // km^3/s^2
+        const RHO_0 = 3.8e-12;   // Reference density at 350 km
+        const H_0 = 350;
+
+        // Three.js Setup
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0b0f19);
+
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(0, 22, 36);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        dirLight.position.set(20, 20, 20);
+        scene.add(dirLight);
+
+        // Earth Sphere
+        const earthScale = 10.0;
+        const earthGeo = new THREE.SphereGeometry(earthScale, 64, 64);
+        const earthMat = new THREE.MeshStandardMaterial({ color: 0x0f2b46, roughness: 0.7 });
+        const earth = new THREE.Mesh(earthGeo, earthMat);
+        scene.add(earth);
+
+        // Upper Thermosphere Glowing Shell
+        const atmoGeo = new THREE.SphereGeometry(earthScale * 1.08, 32, 32);
+        const atmoMat = new THREE.MeshBasicMaterial({
+            color: 0x00aa55,
+            transparent: true,
+            opacity: 0.15,
+            side: THREE.BackSide
+        });
+        const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
+        scene.add(atmoMesh);
+
+        // Dynamic Elliptical Orbit Line
+        const orbitGeo = new THREE.BufferGeometry();
+        const orbitMat = new THREE.LineBasicMaterial({ color: 0x00ffcc, linewidth: 2 });
+        const orbitLine = new THREE.Line(orbitGeo, orbitMat);
+        scene.add(orbitLine);
+
+        // Satellite Model
+        const satMesh = new THREE.Mesh(
+            new THREE.SphereGeometry(0.25, 16, 16),
+            new THREE.MeshBasicMaterial({ color: 0xffcc00 })
+        );
+        scene.add(satMesh);
+
+        // Drag Vector Indicator (Visible at Periapsis)
+        const dragArrow = new THREE.ArrowHelper(new THREE.Vector3(0, 0, -1), satMesh.position, 2.5, 0xef4444, 0.8, 0.4);
+        scene.add(dragArrow);
+
+        // Chart Canvas
+        const dCanvas = document.getElementById('decay-canvas');
+        const dCtx = dCanvas.getContext('2d');
+
+        function applyPreset(hp, e, bstar, H, name) {
+            document.getElementById('hp-slider').value = hp;
+            document.getElementById('ecc-slider').value = e;
+            document.getElementById('bstar-slider').value = bstar;
+            document.getElementById('hscale-slider').value = H;
+            updateDynamics();
+        }
+
+        function updateDynamics() {
+            const hp = parseFloat(document.getElementById('hp-slider').value);
+            const e = parseFloat(document.getElementById('ecc-slider').value);
+            const bstar = parseFloat(document.getElementById('bstar-slider').value);
+            const H = parseFloat(document.getElementById('hscale-slider').value);
+
+            document.getElementById('hp-val').textContent = `${hp} km`;
+            document.getElementById('ecc-val').textContent = e.toFixed(2);
+            document.getElementById('bstar-val').textContent = `${bstar.toFixed(4)} m²/kg`;
+            document.getElementById('hscale-val').textContent = `${H} km`;
+
+            // Geometry & Orbital Mechanics
+            const rp = R_EARTH + hp;
+            const a = rp / (1 - e);
+            const ha = a * (1 + e) - R_EARTH;
+            const vp = Math.sqrt(MU * (2 / rp - 1 / a)) * 1000; // m/s
+            const n = Math.sqrt(MU / Math.pow(a, 3));          // rad/s
+
+            // Density calculation (Exponential model)
+            const rho_p = RHO_0 * Math.exp(-(hp - H_0) / H);
+            const a_drag = 0.5 * rho_p * bstar * (vp * vp);
+
+            // Secular Decay Rates
+            const da_dt_sec = - (2 * a_drag) / (n * 1000); // km/s
+            const da_daily = da_dt_sec * 86400;             // km/day
+            const dt_daily = (-3 * Math.PI * (a * 1000) * rho_p * bstar) * 86400; // s/day
+            const lifetime = H / Math.max(0.0001, Math.abs(da_daily));             // days
+
+            document.getElementById('dash-ha').textContent = `${ha.toFixed(1)} km`;
+            document.getElementById('dash-rho').textContent = `${rho_p.toExponential(2)} kg/m³`;
+            document.getElementById('dash-adrag').textContent = `${a_drag.toExponential(3)} m/s²`;
+            document.getElementById('dash-da').textContent = `${da_daily.toFixed(3)} km/day`;
+            document.getElementById('dash-dt').textContent = `${dt_daily.toFixed(3)} s/day`;
+            document.getElementById('dash-life').textContent = lifetime > 1000 ? '> 1000 days' : `${lifetime.toFixed(1)} days`;
+
+            // Update 3D Orbit Mesh
+            const pts = [];
+            const r_scale = earthScale / R_EARTH;
+            for (let i = 0; i <= 120; i++) {
+                const nu = (i / 120) * 2 * Math.PI;
+                const r_km = (a * (1 - e * e)) / (1 + e * Math.cos(nu));
+                const r_scene = r_km * r_scale;
+                pts.push(new THREE.Vector3(r_scene * Math.cos(nu), 0, r_scene * Math.sin(nu)));
+            }
+            orbitGeo.setFromPoints(pts);
+
+            drawDecayChart(hp, ha, H, lifetime);
+        }
+
+        function drawDecayChart(hp, ha, H, lifetime) {
+            dCtx.clearRect(0, 0, dCanvas.width, dCanvas.height);
+            const w = dCanvas.width;
+            const h = dCanvas.height;
+
+            // Grid
+            dCtx.strokeStyle = '#232d3f';
+            dCtx.lineWidth = 1;
+            dCtx.beginPath();
+            dCtx.moveTo(40, 10); dCtx.lineTo(40, h - 20);
+            dCtx.lineTo(w - 10, h - 20);
+            dCtx.stroke();
+
+            // Labels
+            dCtx.fillStyle = '#64748b';
+            dCtx.font = '9px monospace';
+            dCtx.fillText('Alt (km)', 2, 12);
+            dCtx.fillText('Time -> Re-entry', w - 90, h - 6);
+
+            // Simulate and Plot Circularization Curve
+            dCtx.strokeStyle = '#c5a059'; // Apoapsis line
+            dCtx.lineWidth = 2;
+            dCtx.beginPath();
+            let cur_ha = ha;
+            let cur_hp = hp;
+            const steps = 40;
+            const dx = (w - 55) / steps;
+
+            for (let i = 0; i <= steps; i++) {
+                const frac = i / steps;
+                // Apoapsis decays exponentially faster than perigee
+                const sim_ha = hp + (ha - hp) * Math.pow(1 - frac, 3) - frac * 120;
+                const y_ha = Math.max(10, Math.min(h - 22, (h - 20) - (sim_ha / 900) * (h - 30)));
+                const x = 40 + i * dx;
+                if (i === 0) dCtx.moveTo(x, y_ha);
+                else dCtx.lineTo(x, y_ha);
+            }
+            dCtx.stroke();
+
+            // Perigee line (nearly horizontal, then plunges at the end)
+            dCtx.strokeStyle = '#00ffcc';
+            dCtx.beginPath();
+            for (let i = 0; i <= steps; i++) {
+                const frac = i / steps;
+                const sim_hp = hp - Math.pow(frac, 4) * (hp - 100);
+                const y_hp = Math.max(10, Math.min(h - 22, (h - 20) - (sim_hp / 900) * (h - 30)));
+                const x = 40 + i * dx;
+                if (i === 0) dCtx.moveTo(x, y_hp);
+                else dCtx.lineTo(x, y_hp);
+            }
+            dCtx.stroke();
+
+            // Legend
+            dCtx.fillStyle = '#c5a059'; dCtx.fillText('Apogee (ha)', 50, 22);
+            dCtx.fillStyle = '#00ffcc'; dCtx.fillText('Perigee (hp)', 130, 22);
+        }
+
+        ['hp-slider', 'ecc-slider', 'bstar-slider', 'hscale-slider'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateDynamics);
+        });
+
+        // Orbital Motion Animation
+        let nu_sat = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+
+            const hp = parseFloat(document.getElementById('hp-slider').value);
+            const e = parseFloat(document.getElementById('ecc-slider').value);
+            const rp = R_EARTH + hp;
+            const a = rp / (1 - e);
+
+            // Keplerian speed varying with True Anomaly
+            const r_km = (a * (1 - e * e)) / (1 + e * Math.cos(nu_sat));
+            const v_rel = Math.sqrt(MU * (2 / r_km - 1 / a));
+            nu_sat += (v_rel / r_km) * 0.08;
+
+            const r_scale = (earthScale / R_EARTH) * r_km;
+            const satX = r_scale * Math.cos(nu_sat);
+            const satZ = r_scale * Math.sin(nu_sat);
+            satMesh.position.set(satX, 0, satZ);
+
+            // Position & Scale Drag Vector (Intensity highest at perigee: nu = 0)
+            const dragIntensity = Math.exp(-(r_km - R_EARTH - hp) / 30);
+            dragArrow.position.copy(satMesh.position);
+            dragArrow.setLength(dragIntensity * 3.5);
+            dragArrow.setDirection(new THREE.Vector3(Math.sin(nu_sat), 0, -Math.cos(nu_sat)));
+
+            renderer.render(scene, camera);
+        }
+
+        updateDynamics();
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+    </script>
+</body>
+</html>

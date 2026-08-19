@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRP Dynamics & GEO Eccentricity Pumping - UdeA Astrodynamics</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: #0b0f19;
+            color: #e0e6ed;
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+        }
+        #canvas-container {
+            flex: 1;
+            height: 100%;
+            position: relative;
+        }
+        #sidebar {
+            width: 400px;
+            background-color: #121824;
+            border-left: 1px solid #232d3f;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        h2 {
+            color: #00aa55;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #005927;
+            padding-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .control-group {
+            background-color: #1a2232;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #2a364f;
+        }
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            accent-color: #00aa55;
+            cursor: pointer;
+        }
+        .val-display { color: #4da6ff; font-weight: bold; }
+        .preset-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+        .btn {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            padding: 7px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.76rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:hover { background-color: #005927; color: white; border-color: #00aa55; }
+        .dashboard {
+            background-color: #0d131e;
+            border-left: 4px solid #c5a059;
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.8rem;
+            line-height: 1.45;
+        }
+        .dashboard div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+        .dash-label { color: #8a9ba8; }
+        .dash-val { color: #00ffcc; font-weight: bold; }
+        #phase-canvas {
+            background-color: #080c14;
+            border: 1px solid #2a364f;
+            border-radius: 6px;
+            width: 100%;
+            height: 150px;
+        }
+        #overlay-info {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(18, 24, 36, 0.9);
+            border: 1px solid #232d3f;
+            padding: 12px 16px;
+            border-radius: 8px;
+            pointer-events: none;
+            max-width: 420px;
+        }
+        #overlay-info h1 { font-size: 1.05rem; color: #00aa55; margin-bottom: 4px; }
+        #overlay-info p { font-size: 0.78rem; color: #a0aec0; line-height: 1.35; }
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        .badge-sun { background: #d97706; color: #fff; }
+        .badge-shadow { background: #475569; color: #cbd5e1; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+    <div id="canvas-container">
+        <div id="overlay-info">
+            <h1>Solar Radiation Pressure (SRP) Dynamics</h1>
+            <p>Visualizing direct photon force vectors, Earth's cylindrical shadow cone, and long-term GEO eccentricity vector pumping ($\Delta e_{\text{annual}}$).</p>
+            <div style="margin-top: 6px;">
+                State: <span id="illum-badge" class="badge badge-sun">DIRECT SUNLIGHT (100%)</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <h2>Mission Presets</h2>
+        <div class="preset-grid">
+            <button class="btn" onclick="setPreset(85, 3200, 1.35, 'GEO Comms Sat (Ex. 1)')">GEO Sat (85m², 3.2t)</button>
+            <button class="btn" onclick="setPreset(100, 12, 1.85, 'Solar Sail CubeSat (Ex. 2)')">Solar Sail (100m², 12kg)</button>
+            <button class="btn" onclick="setPreset(5.0, 1.0, 1.6, 'High AMR Debris (Mylar)')">High AMR Debris (5m²/kg)</button>
+            <button class="btn" onclick="setPreset(12, 1500, 1.2, 'Standard GEO Bus')">Compact Bus (12m², 1.5t)</button>
+        </div>
+
+        <h2>Physical Parameters</h2>
+        <div class="control-group">
+            <label>Surface Area ($A$): <span class="val-display" id="area-val">85 m²</span></label>
+            <input type="range" id="area-slider" min="1" max="150" step="1" value="85">
+        </div>
+
+        <div class="control-group">
+            <label>Spacecraft Mass ($m$): <span class="val-display" id="mass-val">3200 kg</span></label>
+            <input type="range" id="mass-slider" min="5" max="5000" step="5" value="3200">
+        </div>
+
+        <div class="control-group">
+            <label>Reflectivity Coefficient ($C_r$): <span class="val-display" id="cr-val">1.35</span></label>
+            <input type="range" id="cr-slider" min="1.0" max="2.0" step="0.05" value="1.35">
+        </div>
+
+        <div class="control-group">
+            <label>Simulation Time Progression: <span class="val-display" id="day-val">Day 0 / 365</span></label>
+            <input type="range" id="day-slider" min="0" max="365" step="1" value="0">
+        </div>
+
+        <h2>Eccentricity Vector Phase Space ($e_x, e_y$)</h2>
+        <canvas id="phase-canvas" width="360" height="150"></canvas>
+
+        <h2>Analytical Metrics (UdeA Model)</h2>
+        <div class="dashboard">
+            <div><span class="dash-label">Area-to-Mass ($A/m$):</span><span class="dash-val" id="dash-am">0.0266 m²/kg</span></div>
+            <div><span class="dash-label">SRP Acceleration ($a_{\text{srp}}$):</span><span class="dash-val" id="dash-asrp">1.635e-7 m/s²</span></div>
+            <div><span class="dash-label">Annual Eccentricity ($\Delta e_{\text{year}}$):</span><span class="dash-val" id="dash-de">0.0158</span></div>
+            <div><span class="dash-label">Apogee/Perigee Drift ($\pm \Delta r$):</span><span class="dash-val" id="dash-dr">±666.2 km</span></div>
+            <div><span class="dash-label">Stationkeeping $\Delta V$ / Year:</span><span class="dash-val" id="dash-dv">43.8 m/s/yr</span></div>
+        </div>
+    </div>
+
+    <script>
+        const P_SUN = 4.56e-6; // N/m^2 at 1 AU
+        const R_GEO = 42164;   // km
+        const V_GEO = 3074.7;  // m/s
+        const SECS_IN_YEAR = 365.25 * 86400;
+
+        // Three.js Scene Setup
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0b0f19);
+
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(0, 35, 60);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        // Lighting
+        scene.add(new THREE.AmbientLight(0x404b60, 1.2));
+        const sunLight = new THREE.DirectionalLight(0xfffaed, 2.0);
+        sunLight.position.set(100, 0, 0);
+        scene.add(sunLight);
+
+        // Earth (Center)
+        const earthGeo = new THREE.SphereGeometry(3.5, 32, 32);
+        const earthMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.6 });
+        const earth = new THREE.Mesh(earthGeo, earthMat);
+        scene.add(earth);
+
+        // Equatorial Grid
+        const eqGrid = new THREE.GridHelper(50, 20, 0x005927, 0x1f2937);
+        scene.add(eqGrid);
+
+        // Earth Cylindrical Shadow Cone
+        const shadowGeo = new THREE.CylinderGeometry(3.5, 3.5, 60, 32, 1, true);
+        const shadowMat = new THREE.MeshBasicMaterial({
+            color: 0x000000,
+            transparent: true,
+            opacity: 0.35,
+            side: THREE.DoubleSide
+        });
+        const shadowCone = new THREE.Mesh(shadowGeo, shadowMat);
+        shadowCone.rotation.z = Math.PI / 2;
+        shadowCone.position.set(-30, 0, 0);
+        scene.add(shadowCone);
+
+        // Sun Direction Rays Indicator
+        const sunArrow = new THREE.ArrowHelper(new THREE.Vector3(-1, 0, 0), new THREE.Vector3(30, 0, 0), 12, 0xffcc00, 2, 1.5);
+        scene.add(sunArrow);
+
+        // Nominal GEO Orbit Path (Unperturbed Circle)
+        const geoNominalRadius = 22;
+        const nomGeoCurve = new THREE.EllipseCurve(0, 0, geoNominalRadius, geoNominalRadius, 0, 2 * Math.PI, false, 0);
+        const nomPoints = nomGeoCurve.getPoints(120);
+        const nomGeoGeo = new THREE.BufferGeometry().setFromPoints(nomPoints.map(p => new THREE.Vector3(p.x, 0, p.y)));
+        const nomGeoMat = new THREE.LineDashedMaterial({ color: 0x475569, dashSize: 1, gapSize: 0.5 });
+        const nominalOrbitLine = new THREE.Line(nomGeoGeo, nomGeoMat);
+        nominalOrbitLine.computeLineDistances();
+        scene.add(nominalOrbitLine);
+
+        // Actual Perturbed Orbit Path (Gold Dynamic Spline)
+        const perturbedOrbitGeo = new THREE.BufferGeometry();
+        const perturbedOrbitMat = new THREE.LineBasicMaterial({ color: 0xc5a059, linewidth: 2 });
+        const perturbedOrbitLine = new THREE.Line(perturbedOrbitGeo, perturbedOrbitMat);
+        scene.add(perturbedOrbitLine);
+
+        // Spacecraft Mesh
+        const satMesh = new THREE.Group();
+        const satBody = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.8 }));
+        const solarPanel = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.05, 0.9), new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.5 }));
+        satMesh.add(satBody);
+        satMesh.add(solarPanel);
+        scene.add(satMesh);
+
+        // SRP Force Vector Arrow on Satellite
+        const srpForceArrow = new THREE.ArrowHelper(new THREE.Vector3(-1, 0, 0), satMesh.position, 4, 0xef4444, 1.0, 0.6);
+        scene.add(srpForceArrow);
+
+        // Phase Space 2D Canvas Setup
+        const phaseCanvas = document.getElementById('phase-canvas');
+        const pCtx = phaseCanvas.getContext('2d');
+
+        function setPreset(A, m, Cr, name) {
+            document.getElementById('area-slider').value = A;
+            document.getElementById('mass-slider').value = m;
+            document.getElementById('cr-slider').value = Cr;
+            updatePhysics();
+        }
+
+        function updatePhysics() {
+            const A = parseFloat(document.getElementById('area-slider').value);
+            const m = parseFloat(document.getElementById('mass-slider').value);
+            const Cr = parseFloat(document.getElementById('cr-slider').value);
+            const day = parseFloat(document.getElementById('day-slider').value);
+
+            document.getElementById('area-val').textContent = `${A} m²`;
+            document.getElementById('mass-val').textContent = `${m} kg`;
+            document.getElementById('cr-val').textContent = Cr.toFixed(2);
+            document.getElementById('day-val').textContent = `Day ${day} / 365`;
+
+            const AMR = A / m;
+            const a_srp = P_SUN * Cr * AMR;
+            const delta_e_annual = (3 * Math.PI * a_srp / V_GEO) * SECS_IN_YEAR;
+            const delta_r = R_GEO * delta_e_annual;
+            const delta_v_annual = delta_e_annual * V_GEO;
+
+            document.getElementById('dash-am').textContent = `${AMR.toFixed(4)} m²/kg`;
+            document.getElementById('dash-asrp').textContent = `${a_srp.toExponential(3)} m/s²`;
+            document.getElementById('dash-de').textContent = delta_e_annual.toFixed(4);
+            document.getElementById('dash-dr').textContent = `±${delta_r.toFixed(1)} km`;
+            document.getElementById('dash-dv').textContent = `${delta_v_annual.toFixed(1)} m/s/yr`;
+
+            // Update Dynamic Perturbed Orbit Geometry
+            // Current annual phase angle
+            const thetaSun = (day / 365.25) * 2 * Math.PI;
+            const e_current = delta_e_annual * Math.sin(thetaSun / 2); // Progresses along circular locus
+            const omega_perigee = thetaSun + Math.PI / 2;
+
+            const pts = [];
+            for (let i = 0; i <= 100; i++) {
+                const nu = (i / 100) * 2 * Math.PI;
+                const r = geoNominalRadius * (1 - e_current * e_current) / (1 + e_current * Math.cos(nu - omega_perigee));
+                pts.push(new THREE.Vector3(r * Math.cos(nu), 0, r * Math.sin(nu)));
+            }
+            perturbedOrbitGeo.setFromPoints(pts);
+
+            // Draw Phase Space Canvas
+            drawPhaseSpace(delta_e_annual, day);
+        }
+
+        function drawPhaseSpace(max_e, currentDay) {
+            pCtx.clearRect(0, 0, phaseCanvas.width, phaseCanvas.height);
+            const cx = phaseCanvas.width / 2;
+            const cy = phaseCanvas.height / 2;
+            const scale = (phaseCanvas.height / 2 - 15) / Math.max(0.02, max_e);
+
+            // Axes
+            pCtx.strokeStyle = '#2a364f';
+            pCtx.lineWidth = 1;
+            pCtx.beginPath();
+            pCtx.moveTo(0, cy); pCtx.lineTo(phaseCanvas.width, cy);
+            pCtx.moveTo(cx, 0); pCtx.lineTo(cx, phaseCanvas.height);
+            pCtx.stroke();
+
+            // Labels
+            pCtx.fillStyle = '#64748b';
+            pCtx.font = '10px monospace';
+            pCtx.fillText('e_x (Sun Vector)', phaseCanvas.width - 95, cy - 4);
+            pCtx.fillText('e_y', cx + 4, 12);
+
+            // Annual Theoretical Locus Circle
+            const circleRadius = (max_e / 2) * scale;
+            const circleCenterY = cy - circleRadius;
+
+            pCtx.strokeStyle = '#00aa55';
+            pCtx.setLineDash([3, 3]);
+            pCtx.beginPath();
+            pCtx.arc(cx, circleCenterY, circleRadius, 0, 2 * Math.PI);
+            pCtx.stroke();
+            pCtx.setLineDash([]);
+
+            // Current Eccentricity Vector Point
+            const theta = (currentDay / 365.25) * 2 * Math.PI;
+            const currentEx = (max_e / 2) * Math.sin(theta);
+            const currentEy = -(max_e / 2) * (1 - Math.cos(theta));
+
+            const px = cx + currentEx * scale;
+            const py = cy + currentEy * scale;
+
+            pCtx.strokeStyle = '#c5a059';
+            pCtx.lineWidth = 2;
+            pCtx.beginPath();
+            pCtx.moveTo(cx, cy);
+            pCtx.lineTo(px, py);
+            pCtx.stroke();
+
+            pCtx.fillStyle = '#ffcc00';
+            pCtx.beginPath();
+            pCtx.arc(px, py, 4, 0, 2 * Math.PI);
+            pCtx.fill();
+        }
+
+        // Attach UI Listeners
+        ['area-slider', 'mass-slider', 'cr-slider', 'day-slider'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updatePhysics);
+        });
+
+        // Animation Loop
+        let satAngle = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+
+            // Rotate satellite along GEO
+            satAngle += 0.02;
+            const x = geoNominalRadius * Math.cos(satAngle);
+            const z = geoNominalRadius * Math.sin(satAngle);
+            satMesh.position.set(x, 0, z);
+
+            // Check if inside cylindrical shadow (x < 0 and |z| < 3.5)
+            const inShadow = (x < 0 && Math.abs(z) < 3.5);
+            const badge = document.getElementById('illum-badge');
+            if (inShadow) {
+                badge.className = 'badge badge-shadow';
+                badge.textContent = 'UMBRA (0% SOLAR FORCE)';
+                srpForceArrow.visible = false;
+            } else {
+                badge.className = 'badge badge-sun';
+                badge.textContent = 'DIRECT SUNLIGHT (100%)';
+                srpForceArrow.visible = true;
+                srpForceArrow.position.copy(satMesh.position);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        updatePhysics();
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+    </script>
+</body>
+</html>

@@ -69,7 +69,25 @@
         .btn:hover { background-color: #004d2c; }
         .btn-alt { background-color: transparent; color: var(--udea-green); border: 2px solid var(--udea-green); }
         .btn-alt:hover { background-color: var(--udea-green); color: white; }
-        footer { margin-top: auto; padding: 2rem; font-size: 0.85rem; color: #888; text-align: center; }
+        footer { 
+            margin-top: auto; 
+            padding: 2rem; 
+            font-size: 0.85rem; 
+            color: #888; 
+            text-align: center; 
+            line-height: 1.6;
+        }
+        footer p {
+            margin: 0.2rem 0;
+        }
+        footer a {
+            color: var(--udea-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -134,7 +152,8 @@
     </main>
 
     <footer>
-        Department of Mechanical and Aerospace Engineering • Semester 2026-2
+        <p><strong>Instructor:</strong> Juan F. Puerta | <a href="mailto:juan.puerta@udea.edu.co">juan.puerta@udea.edu.co</a></p>
+        <p>Department of Mechanical and Aerospace Engineering &bull; Semester 2026-2</p>
     </footer>
 
 </body>

@@ -1,0 +1,592 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, bm, amsfonts}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, calc, angles, quotes, shapes.geometric}
+
+% ==============================================================================
+% UNIVERSIDAD DE ANTIOQUIA (UdeA) BRANDING & THEME SETUP
+% ==============================================================================
+\definecolor{UdeAGreen}{HTML}{006241}
+\definecolor{UdeAGold}{HTML}{D4AF37}
+\definecolor{Charcoal}{HTML}{2B2B2B}
+\definecolor{LightBg}{HTML}{F8F9FA}
+\definecolor{DarkSlate}{RGB}{15, 23, 42}
+\definecolor{AlertRed}{RGB}{220, 38, 38}
+
+\setbeamercolor{palette primary}{bg=UdeAGreen, fg=white}
+\setbeamercolor{palette secondary}{bg=UdeAGreen, fg=white}
+\setbeamercolor{structure}{fg=UdeAGreen}
+\setbeamercolor{background canvas}{bg=LightBg}
+\setbeamercolor{text}{fg=Charcoal}
+
+% --- Block Style Customization ---
+\setbeamercolor{block title}{bg=UdeAGreen, fg=white}
+\setbeamercolor{block body}{bg=white, fg=Charcoal}
+\setbeamercolor{block title example}{bg=UdeAGold, fg=Charcoal}
+\setbeamercolor{block body example}{bg=white, fg=Charcoal}
+\setbeamercolor{block title alerted}{bg=AlertRed, fg=white}
+\setbeamercolor{block body alerted}{bg=white, fg=Charcoal}
+
+% --- Header/Footer Customization ---
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}{%
+    \leavevmode%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm]{palette primary}%
+        \small Universidad de Antioquia -- Faculty of Engineering \hfill Module 2: Interplanetary Navigation \hfill \insertframenumber/\inserttotalframenumber%
+    \end{beamercolorbox}%
+}
+\setbeamertemplate{navigation symbols}{}
+
+% --- Code Presentation Configuration ---
+\lstdefinestyle{gmatstyle}{
+    backgroundcolor=\color{LightBg},
+    basicstyle=\ttfamily\fontsize{5.5pt}{6.5pt}\selectfont\color{Charcoal},
+    keywordstyle=\bfseries\color{UdeAGreen},
+    commentstyle=\itshape\color{gray},
+    stringstyle=\color{UdeAGold},
+    frame=single,
+    rulecolor=\color{UdeAGreen},
+    breaklines=true,
+    showstringspaces=false,
+    captionpos=b,
+    xleftmargin=1pt,
+    xrightmargin=1pt
+}
+
+% --- Theme and Typography ---
+\usetheme{Madrid}
+\usefonttheme{professionalfonts}
+
+% Upper Right Corner Logo
+\logo{\vspace{-0.2cm}\hfill\includegraphics[width=0.9cm]{Images/UdeA+simplificado+Negro_Smaller.png}\hspace{0.1cm}}
+
+\title[Astrodynamics Module 2]{\textbf{Module 2: 3D Interplanetary Trajectories and B-Plane Navigation}}
+\subtitle{Forensic Numerical Engineering \& Constrained Interplanetary Flight Mechanics}
+\author{Prof. Juan Francisco Puerta Ibarra}
+\institute{Department of Aerospace Engineering --- Faculty of Engineering \\ Universidad de Antioquia (UdeA)}
+\date{Semester 2026-2}
+\titlegraphic{\includegraphics[width=2.5cm]{Images/UdeA+simplificado+Negro_Smaller.png}}
+
+\begin{document}
+
+% ==============================================================================
+% TITLE SLIDE
+% ==============================================================================
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ==============================================================================
+% SLIDE 1: ROADMAP (RESIZED & BALANCED)
+% ==============================================================================
+\begin{frame}{Module 2: Architecture \& Operational Roadmap}
+    \begin{columns}[t]
+        \begin{column}{0.60\textwidth}
+            \begin{block}{From Planar Transfers to Constrained 3D Navigation}
+                \footnotesize
+                \begin{itemize}
+                    \item \textbf{Week 5: 3D Patched Conics \& Hyperbolic Asymptotes}
+                    \begin{itemize}
+                        \item Expanding 2D Lambert transfers to 3D inertial space.
+                        \item Asymptote coordinates ($\alpha, \delta$) and the \textbf{Inclination Trap} ($i \ge |\delta|$).
+                    \end{itemize}
+                    \item \textbf{Week 6: Gravity Assist Mechanics \& Powered Flybys}
+                    \begin{itemize}
+                        \item Planetary SOI momentum exchange; turning angle $\delta_{\text{turn}}(r_p)$.
+                        \item Leading vs. Trailing encounters and deep-space Oberth burns.
+                    \end{itemize}
+                    \item \textbf{Week 7: The B-Plane Targeting Framework}
+                    \begin{itemize}
+                        \item $(\hat{\mathbf{S}}, \hat{\mathbf{T}}, \hat{\mathbf{R}})$ frame derivation and impact parameter $\mathbf{B}$.
+                        \item Multi-variable differential correctors in NASA's GMAT.
+                    \end{itemize}
+                \end{itemize}
+            \end{block}
+        \end{column}
+        
+        \begin{column}{0.37\textwidth}
+            \begin{alertblock}{Forensic Engineering Core}
+                \scriptsize
+                Planetary targeting cannot rely on point-coincidence root finders. We map state transition matrices to project miss distances onto invariant planetocentric target planes.
+            \end{alertblock}
+            \vspace{-0.1cm}
+            \centering
+            \begin{tikzpicture}[scale=0.55]
+                \draw[thick, ->, >=stealth, color=UdeAGreen] (0,0) -- (2.6,0) node[right]{\scriptsize $\hat{\mathbf{T}}$};
+                \draw[thick, ->, >=stealth, color=UdeAGreen] (0,0) -- (0,-2.0) node[below]{\scriptsize $\hat{\mathbf{R}}$};
+                \draw[thick, ->, >=stealth, color=UdeAGold] (0,0) -- (1.9,-1.3) node[midway, above right]{\scriptsize $\mathbf{B}$};
+                \draw[dashed, color=gray] (1.9,-1.3) -- (1.9,0);
+                \draw[dashed, color=gray] (1.9,-1.3) -- (0,-1.3);
+                \node at (0,0) [circle, fill=Charcoal, inner sep=1.2pt, label=above left:{\tiny Target}]{};
+            \end{tikzpicture}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 2: 3D PATCHED CONICS
+% ==============================================================================
+\begin{frame}{Week 5: 3D Patched Conics --- The Planetocentric Patch}
+    \begin{columns}[t]
+        \begin{column}{0.54\textwidth}
+            \begin{block}{Heliocentric $\to$ Planetocentric Patching}
+                \footnotesize
+                \begin{itemize}
+                    \item Heliocentric 3D Lambert transfer yields $\mathbf{v}_1, \mathbf{v}_2$.
+                    \item \textbf{Hyperbolic Excess Velocity} vector at departure:
+                    \begin{equation*}
+                        \mathbf{v}_{\infty,\text{dep}} = \mathbf{v}_{\text{Lambert},1} - \mathbf{v}_{\text{planet},1}
+                    \end{equation*}
+                    \item Departure parameters: $C_3 = v_\infty^2$, $a_h = -\mu_p / v_\infty^2$.
+                    \item Eccentricity: $e_h = 1 + r_p v_\infty^2 / \mu_p$.
+                    \item Injection burn from parking orbit ($r_p$):
+                    \begin{equation*}
+                        \Delta v_{\text{inj}} = \sqrt{v_\infty^2 + \frac{2\mu_p}{r_p}} - \sqrt{\frac{\mu_p}{r_p}}
+                    \end{equation*}
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.43\textwidth}
+            \begin{block}{Asymptote Direction Unit Vector $\hat{\mathbf{S}}$}
+                \footnotesize
+                In Planet-Centered Inertial (PCI) frame:
+                \begin{equation*}
+                    \hat{\mathbf{S}} = \frac{\mathbf{v}_\infty}{\|\mathbf{v}_\infty\|} = \begin{bmatrix} S_x \\ S_y \\ S_z \end{bmatrix} = \begin{bmatrix} \cos\delta \cos\alpha \\ \cos\delta \sin\alpha \\ \sin\delta \end{bmatrix}
+                \end{equation*}
+                \begin{itemize}
+                    \item \textbf{Declination ($\delta$):} $\delta = \arcsin(S_z) \in [-90^\circ, +90^\circ]$
+                    \item \textbf{Right Ascension ($\alpha$):} $\alpha = \operatorname{atan2}(S_y, S_x)$
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 3: THE INCLINATION TRAP
+% ==============================================================================
+\begin{frame}{The Launch Geometry Boundary: The "Inclination Trap"}
+    \begin{columns}[t]
+        \begin{column}{0.54\textwidth}
+            \begin{alertblock}{The Mathematical Constraint: $i \ge |\delta|$}
+                \footnotesize
+                \begin{itemize}
+                    \item Parking orbit reaches maximum geocentric latitude $\phi_{\max} = i$.
+                    \item For departure burn $\Delta \mathbf{v}_{\text{inj}}$ to be executed \textbf{in-plane} (zero plane change penalty):
+                    \begin{equation*}
+                        \sin i = \cos \delta \sin(\beta_{\text{inertial}}) \implies i \ge |\delta|
+                    \end{equation*}
+                    \item If $i < |\delta|$ (\textbf{The Inclination Trap}), no coplanar injection exists!
+                    \item Forces costly non-coplanar wedge burn:
+                    \begin{equation*}
+                        \Delta v_{\text{penalty}} \approx 2 v_{\text{park}} \sin\left(\frac{\Delta \psi}{2}\right)
+                    \end{equation*}
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.43\textwidth}
+            \begin{block}{Launch Azimuth $\beta_{\text{launch}}$}
+                \footnotesize
+                From launch latitude $\phi_L$ into inclination $i$:
+                \begin{equation*}
+                    \cos \beta = \frac{\cos i}{\cos \phi_L}
+                \end{equation*}
+                \centering
+                \begin{tikzpicture}[scale=0.65]
+                    \draw[thick, color=Charcoal] (0,0) circle (1.1cm);
+                    \draw[dashed, color=gray] (-1.3,0) -- (1.3,0) node[right]{\tiny Equator};
+                    \draw[thick, color=UdeAGreen, rotate=35] (-1.1,0) -- (1.1,0) node[right]{\tiny Plane ($i$)};
+                    \draw[thick, ->, >=stealth, color=AlertRed] (0,0) -- (0.8,0.8) node[above right]{\tiny $\hat{\mathbf{S}} (\delta)$};
+                    \draw[dashed, color=AlertRed] (0.8,0.8) -- (0.8,0) node[below]{\tiny $\delta$};
+                \end{tikzpicture}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 4: WORKED EXAMPLE 1 (COMPACT MATH)
+% ==============================================================================
+\begin{frame}{Worked Example 1: Earth-to-Mars Departure Geometry}
+    \begin{exampleblock}{Analytical Trajectory Benchmark}
+        \scriptsize
+        Lambert: $\mathbf{v}_{\text{Lambert}} = [32.45, 12.10, 4.85]\text{ km/s}$, Earth: $\mathbf{v}_{\oplus} = [29.78, 0.00, 0.00]\text{ km/s}$. \\
+        $h_p = 250\text{ km}$ ($R_{\oplus} = 6378\text{ km}, \mu_{\oplus} = 398600.44\text{ km}^3/\text{s}^2$). Launch site: $\phi_L = 28.5^\circ$.
+    \end{exampleblock}
+
+    \vspace{-0.1cm}
+
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \footnotesize
+            \textbf{Step 1: Hyperbolic Excess Vector ($\mathbf{v}_\infty$)}
+            \begin{align*}
+                \mathbf{v}_\infty &= \mathbf{v}_{\text{Lambert}} - \mathbf{v}_{\oplus} = [2.67, 12.10, 4.85]\text{ km/s} \\
+                v_\infty &= \sqrt{2.67^2 + 12.10^2 + 4.85^2} = 13.31\text{ km/s} \\
+                C_3 &= v_\infty^2 = 177.27\text{ km}^2/\text{s}^2
+            \end{align*}
+            \textbf{Step 2: Asymptote Declination \& RA}
+            \begin{equation*}
+                \delta = \arcsin(4.85/13.31) = +21.37^\circ, \quad \alpha = 77.56^\circ
+            \end{equation*}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \footnotesize
+            \textbf{Step 3: Check Inclination Trap}
+            \begin{equation*}
+                i_{\text{park}} = 28.5^\circ \ge |\delta| = 21.37^\circ \quad \textcolor{UdeAGreen}{\textbf{[PASS]}}
+            \end{equation*}
+            \textbf{Step 4: Trans-Mars Injection $\Delta v_{\text{TMI}}$}
+            \begin{align*}
+                r_p &= 6378 + 250 = 6628\text{ km} \\
+                v_{\text{park}} &= \sqrt{\mu/r_p} = 7.755\text{ km/s} \\
+                v_{\text{periapsis}} &= \sqrt{v_\infty^2 + 2\mu/r_p} = 17.247\text{ km/s} \\
+                \Delta v_{\text{TMI}} &= 17.247 - 7.755 = \mathbf{9.492\text{ km/s}}
+            \end{align*}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 5: GRAVITY ASSISTS
+% ==============================================================================
+\begin{frame}{Week 6: Planetary Gravity Assists --- SOI Momentum Exchange}
+    \begin{columns}[t]
+        \begin{column}{0.54\textwidth}
+            \begin{block}{Planetocentric Turning Angle ($\delta_{\text{turn}}$)}
+                \footnotesize
+                \begin{itemize}
+                    \item Inside planetary SOI, speed is conserved:
+                    \begin{equation*}
+                        \|\mathbf{v}_{\infty,\text{in}}\| = \|\mathbf{v}_{\infty,\text{out}}\| = v_\infty
+                    \end{equation*}
+                    \item Hyperbolic eccentricity $e$:
+                    \begin{equation*}
+                        e = 1 + \frac{r_p v_\infty^2}{\mu_p}
+                    \end{equation*}
+                    \item Turning angle $\delta_{\text{turn}}$ from asymptote geometry:
+                    \begin{equation*}
+                        \sin\left(\frac{\delta_{\text{turn}}}{2}\right) = \frac{1}{e} = \frac{1}{1 + \frac{r_p v_\infty^2}{\mu_p}}
+                    \end{equation*}
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.43\textwidth}
+            \begin{block}{Flyby Vector Geometry}
+                \centering
+                \begin{tikzpicture}[scale=0.60]
+                    \draw[thick, fill=gray!30] (0,0) circle (0.35cm) node[above=0.35cm]{\tiny Planet ($\mu_p$)};
+                    \draw[thick, ->, >=stealth, color=Charcoal] (-1.5, 0.9) -- (-0.6, 0.45) node[midway, above]{\tiny $\mathbf{v}_{\infty,\text{in}}$};
+                    \draw[thick, color=UdeAGreen] (-1.5, 0.9) to[out=-25, in=120] (0, 0.45) to[out=-60, in=160] (1.1, -0.7);
+                    \draw[thick, ->, >=stealth, color=Charcoal] (0.5, -0.35) -- (1.2, -0.9) node[midway, below left]{\tiny $\mathbf{v}_{\infty,\text{out}}$};
+                    \draw[dashed, color=AlertRed] (-0.6, 0.45) -- (1.0, -0.3);
+                    \draw[dashed, color=AlertRed] (0.5, -0.35) -- (-0.5, 0.35);
+                    \draw[<->, >=stealth, color=UdeAGold] (0,0) -- (0,0.45) node[midway, right]{\tiny $r_p$};
+                \end{tikzpicture}
+            \end{block}
+            \vspace{-0.1cm}
+            \begin{alertblock}{Feasibility Bound}
+                \scriptsize $r_p \ge R_{\text{planet}} + h_{\text{atm,safe}}$ sets maximum deflection $\delta_{\text{turn,max}}$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 6: HELIOCENTRIC MOMENTUM & OBERTH
+% ==============================================================================
+\begin{frame}{Heliocentric Momentum Transfer \& Powered Flybys}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Heliocentric Energy Exchange}
+                \footnotesize
+                \begin{equation*}
+                    \mathbf{v}_{\odot,\text{out}} = \mathbf{v}_{\text{planet}} + \mathbf{v}_{\infty,\text{out}}
+                \end{equation*}
+                Net heliocentric velocity change:
+                \begin{equation*}
+                    \|\Delta \mathbf{V}_{\odot}\| = 2 v_\infty \sin\left(\frac{\delta_{\text{turn}}}{2}\right)
+                \end{equation*}
+                \begin{itemize}
+                    \item \textbf{Trailing-Side:} Pulled forward $\implies \Delta E_\odot > 0$ (Speed Boost).
+                    \item \textbf{Leading-Side:} Pulled backward $\implies \Delta E_\odot < 0$ (Gravity Brake).
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{The Deep-Space Oberth Effect}
+                \footnotesize
+                Executing burn $\Delta v_p$ at periapsis $r_p$:
+                \begin{align*}
+                    v_{p,-} &= \sqrt{v_\infty^2 + \frac{2\mu_p}{r_p}} \\
+                    v_{\infty,\text{out}} &= \sqrt{(v_{p,-} + \Delta v_p)^2 - \frac{2\mu_p}{r_p}}
+                \end{align*}
+                \textbf{Kinetic Energy Lever Arm:}
+                \begin{equation*}
+                    \Delta E_k \approx v_{p,-}\Delta v_p \gg v_\infty \Delta v_p
+                \end{equation*}
+                Periapsis burns maximize excess velocity gains!
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 7: WORKED EXAMPLE 2
+% ==============================================================================
+\begin{frame}{Worked Example 2: Voyager 2 Jupiter Gravity Assist}
+    \begin{exampleblock}{Jupiter Encounter Benchmark}
+        \scriptsize
+        Voyager 2 approaches Jupiter ($\mu_J = 1.26686 \times 10^8\text{ km}^3/\text{s}^2$, $R_J = 71492\text{ km}$) with $v_\infty = 10.60\text{ km/s}$ at $r_p = 5.0\,R_J = 357460\text{ km}$.
+    \end{exampleblock}
+
+    \vspace{-0.1cm}
+
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \footnotesize
+            \textbf{Step 1: Eccentricity \& Turning Angle}
+            \begin{align*}
+                e &= 1 + \frac{r_p v_\infty^2}{\mu_J} = 1 + \frac{(357460)(10.60)^2}{1.26686 \times 10^8} = 1.317 \\
+                \sin\left(\frac{\delta}{2}\right) &= \frac{1}{1.317} = 0.7593 \implies \delta_{\text{turn}} = \mathbf{98.81^\circ}
+            \end{align*}
+            \textbf{Step 2: Periapsis Velocity}
+            \begin{equation*}
+                v_p = \sqrt{10.60^2 + \frac{2(1.26686 \times 10^8)}{357460}} = \mathbf{28.65\text{ km/s}}
+            \end{equation*}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \footnotesize
+            \textbf{Step 3: Heliocentric Flyby $\Delta \mathbf{V}_\odot$}
+            \begin{equation*}
+                \|\Delta \mathbf{V}_{\odot}\| = 2(10.60)\sin(49.40^\circ) = \mathbf{16.10\text{ km/s}}
+            \end{equation*}
+            \textbf{Step 4: Energy Audit}
+            \begin{itemize}
+                \item Delivering $16.10\text{ km/s}$ chemically requires propellant mass fraction $>99.5\%$.
+                \item Gravity assist delivers this velocity gain \textbf{propellant-free}.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 8: B-PLANE FOUNDATIONS
+% ==============================================================================
+\begin{frame}{Week 7: The B-Plane Targeting Framework --- Foundations}
+    \begin{columns}[t]
+        \begin{column}{0.54\textwidth}
+            \begin{block}{Why Direct Targeting Fails in Deep Space}
+                \footnotesize
+                \begin{itemize}
+                    \item Propagating to fixed $t_f$ is ill-conditioned: a 1-second timing error causes $>30\text{ km}$ miss distance.
+                    \item \textbf{Solution:} B-Plane target disk passes through body center, perpendicular to incoming asymptote $\mathbf{v}_\infty$.
+                \end{itemize}
+            \end{block}
+            \begin{block}{Orthonormal Basis $(\hat{\mathbf{S}}, \hat{\mathbf{T}}, \hat{\mathbf{R}})$}
+                \footnotesize
+                \begin{equation*}
+                    \hat{\mathbf{S}} = \frac{\mathbf{v}_\infty}{\|\mathbf{v}_\infty\|}, \quad
+                    \hat{\mathbf{T}} = \frac{\hat{\mathbf{S}} \times \hat{\mathbf{k}}}{\|\hat{\mathbf{S}} \times \hat{\mathbf{k}}\|}, \quad
+                    \hat{\mathbf{R}} = \hat{\mathbf{S}} \times \hat{\mathbf{T}}
+                \end{equation*}
+                where $\hat{\mathbf{k}}$ is reference normal (e.g., Ecliptic North).
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.43\textwidth}
+            \begin{block}{B-Plane Geometry}
+                \centering
+                \begin{tikzpicture}[scale=0.65]
+                    \draw[thick, fill=LightBg] (0,0) circle (1.3cm);
+                    \draw[thick, ->, >=stealth, color=Charcoal] (-1.3,0) -- (1.3,0) node[right]{\tiny $\hat{\mathbf{T}}$};
+                    \draw[thick, ->, >=stealth, color=Charcoal] (0,1.3) -- (0,-1.3) node[below]{\tiny $\hat{\mathbf{R}}$};
+                    \filldraw[color=UdeAGreen] (0,0) circle (2pt) node[below left]{\tiny Target};
+                    \draw[thick, ->, >=stealth, color=AlertRed, line width=0.8pt] (0,0) -- (0.9,-0.7) node[midway, above right]{\tiny $\mathbf{B}$};
+                    \draw[dashed, color=gray] (0.9,-0.7) -- (0.9,0) node[above]{\tiny $B\cdot T$};
+                    \draw[dashed, color=gray] (0.9,-0.7) -- (0,-0.7) node[left]{\tiny $B\cdot R$};
+                \end{tikzpicture}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 9: B-PLANE PARAMETERS
+% ==============================================================================
+\begin{frame}{B-Plane Target Quantities \& Impact Parameter Derivations}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Impact Parameter Vector $\mathbf{B}$}
+                \footnotesize
+                The miss vector $\mathbf{B}$ on the B-plane:
+                \begin{equation*}
+                    \mathbf{B} = (B \cdot T)\hat{\mathbf{T}} + (B \cdot R)\hat{\mathbf{R}}
+                \end{equation*}
+                \begin{align*}
+                    B \cdot T &= \|\mathbf{B}\| \cos \theta_B \\
+                    B \cdot R &= \|\mathbf{B}\| \sin \theta_B
+                \end{align*}
+                \textbf{Impact Parameter Magnitude ($B = \|\mathbf{B}\|$):}
+                \begin{equation*}
+                    B = r_p \sqrt{1 + \frac{2\mu_p}{r_p v_\infty^2}} = \frac{\mu_p}{v_\infty^2}\sqrt{e^2 - 1}
+                \end{equation*}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Linearized State Transition Mapping}
+                \footnotesize
+                For mid-course TCM burn $\Delta \mathbf{v}_{\text{TCM}}$ at epoch $t_{\text{TCM}}$:
+                \begin{equation*}
+                    \begin{bmatrix} \Delta(B \cdot T) \\ \Delta(B \cdot R) \\ \Delta \text{TIF} \end{bmatrix} = \left[ \frac{\partial \mathbf{B}}{\partial \mathbf{r}(t_f)} \boldsymbol{\Phi}_{r v}(t_f, t_{\text{TCM}}) \right] \Delta \mathbf{v}_{\text{TCM}}
+                \end{equation*}
+                where $\text{TIF}$ is Time to Intercept and $\boldsymbol{\Phi}_{rv}$ is the State Transition Matrix partition.
+                \begin{itemize}
+                    \item Matrix inversion yields exact 3-axis TCM commands.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 10: NASA GMAT SCRIPTING (FRAGILE FRAME)
+% ==============================================================================
+\begin{frame}[fragile]{Implementing B-Plane Targeting in NASA's GMAT}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{GMAT Targeter Architecture}
+                \footnotesize
+                \begin{itemize}
+                    \item \textbf{Vary Commands:} Adjust TCM velocity components ($\Delta V_X, \Delta V_Y, \Delta V_Z$).
+                    \item \textbf{Achieve Commands:} Target arrival coordinates at Mars:
+                    \begin{itemize}
+                        \item \texttt{Achieve DC(Sat.MarsInertial.BdotT = -4500)}
+                        \item \texttt{Achieve DC(Sat.MarsInertial.BdotR = +2800)}
+                    \end{itemize}
+                \end{itemize}
+            \end{block}
+            \begin{alertblock}{Forensic Check: Coordinate Origin}
+                \scriptsize
+                $B\cdot T$ and $B\cdot R$ must be evaluated in \textbf{Mars Centered Frame} (\texttt{MarsInertial}), never EarthMJ2000!
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.50\textwidth}
+\begin{lstlisting}[style=gmatstyle]
+Target 'Target Mars B-Plane' DC {SolveMode = Solve}
+    Vary 'Vary TCM_Vx' DC(TCM.Element1 = 0.05, ...
+         {Perturbation = 1e-4, MaxStep = 0.01})
+    Vary 'Vary TCM_Vy' DC(TCM.Element2 = -0.02, ...
+         {Perturbation = 1e-4, MaxStep = 0.01})
+    Vary 'Vary TCM_Vz' DC(TCM.Element3 = 0.01, ...
+         {Perturbation = 1e-4, MaxStep = 0.01})
+    
+    Maneuver 'Apply TCM' TCM(MarsProbe);
+    Propagate 'To Mars Periapsis' ...
+         DeepSpaceProp(MarsProbe) ...
+         {MarsProbe.Mars.Periapsis};
+         
+    Achieve 'Target BdotT' ...
+         DC(MarsProbe.MarsInertial.BdotT = -4500.0, ...
+         {Tolerance = 0.1});
+    Achieve 'Target BdotR' ...
+         DC(MarsProbe.MarsInertial.BdotR = 2800.0, ...
+         {Tolerance = 0.1});
+EndSubSequence;
+\end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 11: FORENSIC BUG AUDIT
+% ==============================================================================
+\begin{frame}{Forensic Bug Audit: Identifying Non-Linear Navigation Errors}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Case A: The "Inclination Violation"}
+                \scriptsize
+                \textbf{Observed Defect:}
+                GMAT targeter fails to converge on a Mars departure arc from LEO ($i = 28.5^\circ$), oscillating infinitely.
+                
+                \textbf{Root Cause Analysis:}
+                Lambert solver computed $\delta = +36.2^\circ$. Because $i < |\delta|$, no coplanar injection exists, causing Jacobian singularity in differential corrector.
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Case B: B-Plane Sign Reversal}
+                \scriptsize
+                \textbf{Observed Defect:}
+                Aiming for a trailing gravity assist at Jupiter, spacecraft passes leading side, losing $8\text{ km/s}$.
+
+                \textbf{Root Cause Analysis:}
+                Angle $\theta_B$ was set to $+45^\circ$ instead of $-135^\circ$, projecting $\mathbf{B}$ in front of Jupiter's orbital path and flipping energy gain to loss.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 12: MIDTERM SUMMARY
+% ==============================================================================
+\begin{frame}{Module 2 Synthesis \& Midterm Take-Home Challenge}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Key Mathematical Formulations}
+                \footnotesize
+                \begin{itemize}
+                    \item \textbf{Asymptote:} $\delta = \arcsin(S_z)$, $\alpha = \operatorname{atan2}(S_y, S_x)$.
+                    \item \textbf{Feasibility:} $i \ge |\delta|$ avoids plane change penalty.
+                    \item \textbf{Flyby Turn:} $\sin(\delta_{\text{turn}}/2) = (1 + r_p v_\infty^2/\mu_p)^{-1}$.
+                    \item \textbf{B-Plane:} $\mathbf{B} = (B\cdot T)\hat{\mathbf{T}} + (B\cdot R)\hat{\mathbf{R}}$.
+                    \item \textbf{Impact Parameter:} $B = \frac{\mu_p}{v_\infty^2}\sqrt{e^2 - 1}$.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \begin{exampleblock}{24-Hour Midterm Exam Challenge}
+                \footnotesize
+                \textbf{Task:} Multi-Stage Planetary Intercept.
+                \begin{enumerate}
+                    \item Compute 3D Lambert departure from Earth ($h_p = 300\text{ km}$) to Venus.
+                    \item Size Venus gravity assist to redirect trajectory toward Mercury propellant-free.
+                    \item Target Mercury B-plane ($B\cdot T, B\cdot R$) for a $200\text{ km}$ polar capture.
+                \end{enumerate}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 13: CONCLUSION
+% ==============================================================================
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{1.0cm}
+        {\Large \textbf{\textcolor{UdeAGreen}{Universidad de Antioquia --- Faculty of Engineering}}} \\
+        \vspace{0.3cm}
+        {\large \textbf{Department of Aerospace Engineering}} \\
+        \vspace{0.8cm}
+        {\LARGE \textbf{\textcolor{Charcoal}{Next Module: Continuous Low-Thrust Trajectories}}} \\
+        \vspace{0.3cm}
+        \small Edelbaum Steering, 7D State Formulations, and Non-Linear Collocation Methods \\
+        \vspace{1.0cm}
+        \textbf{Questions \& Discussion}
+    \end{center}
+\end{frame}
+
+\end{document}

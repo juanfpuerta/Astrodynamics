@@ -40,7 +40,7 @@ jobs:
       - name: Stage Deployment Directory
         run: |
           mkdir -p public
-          mv Astrodynamics_Content.pdf public/Astrodynamics_Section_1.pdf
+          mv Astrodynamics_Content_1.pdf public/Astrodynamics_Section_1.pdf
           mv Astrodynamics_Content_2.pdf public/Astrodynamics_Section_2.pdf
           cp *.{html,png} public/ 2>/dev/null || true
 

@@ -620,6 +620,154 @@
     \end{columns}
 \end{frame}
 
+% --- SLIDE 1: THE FLOW REGIME & KNUDSEN NUMBER ---
+\begin{frame}{The Flow Regime: Rarefied Gas Dynamics \& Knudsen Number}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{The Knudsen Number ($Kn$)}
+                \small
+                Characterizes the rarefaction of orbital gas:
+                {\small
+                \begin{equation*}
+                    Kn = \frac{\lambda}{l}
+                \end{equation*}
+                }
+                \vspace{-0.3cm}
+                \begin{itemize}\setlength{\itemsep}{1pt}
+                    \item \textbf{Free Molecular Flow ($Kn > 10$):} LEO operational regime ($h > 200\text{ km}$). Direct impacts without prior collisions.
+                    \item \textbf{Hypersonic Continuum ($Kn < 0.1$):} Re-entry regime ($h < 90\text{ km}$). Detached shock wave shields spacecraft.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \begin{exampleblock}{Key Phenomenon: No Shock Layer}
+                \small
+                In Free Molecular Flow, re-emitted particles leave the surface without interacting with incoming particles. Every incoming molecule impacts frontal area $A$ with full relative orbital speed $v_{\text{rel}}$.
+            \end{exampleblock}
+            \vspace{-0.1cm}
+            \begin{alertblock}{Altitude Transition}
+                \small
+                Below $120\text{ km}$, $\lambda \to 0$, driving flow from free molecular into transitional and continuum regimes.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% --- SLIDE 2: FIRST-PRINCIPLES DERIVATION ---
+\begin{frame}{First-Principles Derivation: Why is Nominal $C_D = 2$?}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{1. Incoming Momentum Flux}
+                \small
+                Mass sweeping frontal area $A$ in time $\Delta t$:
+                {\small
+                \begin{equation*}
+                    \Delta m = \rho A v_{\text{rel}} \Delta t
+                \end{equation*}
+                }
+                \vspace{-0.3cm}
+                Assuming complete momentum absorption:
+                {\small
+                \begin{align*}
+                    \Delta p &= \Delta m \cdot v_{\text{rel}} = \rho A v_{\text{rel}}^2 \Delta t \\
+                    F_{\text{impact}} &= \frac{\Delta p}{\Delta t} = \rho A v_{\text{rel}}^2
+                \end{align*}
+                }
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{2. Classical Drag Formulation}
+                \small
+                Defined using dynamic pressure $q = \frac{1}{2}\rho v_{\text{rel}}^2$:
+                {\small
+                \begin{equation*}
+                    F_{\text{drag}} = \frac{1}{2}\rho v_{\text{rel}}^2 C_D A
+                \end{equation*}
+                }
+            \end{block}
+            \vspace{-0.1cm}
+            \begin{alertblock}{3. Physical Force vs. Definition}
+                \small
+                \begin{equation*}
+                    \frac{1}{2} \rho v_{\text{rel}}^2 C_D A = \rho A v_{\text{rel}}^2 \implies \mathbf{C_D = 2.0}
+                \end{equation*}
+                The factor of $2$ appears because the conventional drag equation retains the continuum factor of $\frac{1}{2}$!
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% --- SLIDE 3: GAS-SURFACE INTERACTIONS ---
+\begin{frame}{Gas-Surface Interactions: Diffuse vs. Specular Reflections}
+    \begin{columns}[t]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Scattering Mechanics}
+                \small
+                Molecules interact with surface lattice:
+                \begin{itemize}\setlength{\itemsep}{1pt}
+                    \item \textbf{Diffuse Reflection (LEO Dominant):} Particles accommodate thermally, scattering diffusely (Lambertian distribution). Adds recoil momentum:
+                    \begin{equation*}
+                        \mathbf{C_D \approx 2.0\text{--}2.3} \quad \text{(convex shapes)}
+                    \end{equation*}
+                    \item \textbf{Specular Reflection:} Elastic reflection preserving tangential momentum.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Flow Regime vs. Drag Coefficient}
+                \centering
+                \scriptsize
+                \begin{tabular}{@{}lcc@{}}
+                    \toprule
+                    \textbf{Regime} & \textbf{Knudsen} & \textbf{Nominal $C_D$} \\ \midrule
+                    Free Molecular & $Kn > 10$ & \textbf{$2.0\text{--}2.3$} \\
+                    Transitional   & $0.1 \le Kn \le 10$ & $1.4\text{--}1.9$ \\
+                    Hypersonic Continuum & $Kn < 0.1$ & \textbf{$\sim 1.0\text{--}1.2$} \\ \bottomrule
+                \end{tabular}
+            \end{block}
+            \vspace{-0.1cm}
+            \begin{exampleblock}{Shock Layer Effect}
+                \small
+                In continuum flow, the detached bow shock deflects incoming gas before impacting the surface directly, cutting $C_D$ in half.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% --- SLIDE 4: ORBIT DETERMINATION ESTIMATION ---
+\begin{frame}{Drag Coefficient Modeling in Precision Orbit Determination}
+    \begin{columns}[t]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Why $C_D$ is an Estimated Free Parameter}
+                \small
+                Analytical thermospheric models (Jacchia-Roberts, NRLMSISE-00) have density errors of \textbf{$15\%\text{--}30\%$} due to:
+                \begin{itemize}\setlength{\itemsep}{1pt}
+                    \item Dynamic solar EUV fluxes ($F_{10.7}$) and geomagnetic activity ($K_p/A_p$).
+                    \item Diurnal atmospheric bulge variations.
+                    \item Unmodeled attitude changes affecting cross-sectional area $A(t)$.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{The "Catch-All" Estimator}
+                \small
+                In Batch Least Squares and EKFs, $C_D$ is treated as an estimated solve-for state:
+                {\small
+                \begin{equation*}
+                    \hat{\mathbf{x}} = \begin{bmatrix} \mathbf{r} \\ \mathbf{v} \\ C_D \end{bmatrix}
+                \end{equation*}
+                }
+                \vspace{-0.2cm}
+                Estimating $C_D$ aggregates and absorbs modeling errors across mass, frontal area, and upper-atmospheric density simultaneously.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
 \begin{frame}{Effects of Drag on Orbital Propagation}
     \begin{columns}
         \begin{column}{0.55\textwidth}

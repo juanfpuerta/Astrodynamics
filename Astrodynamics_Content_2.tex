@@ -125,6 +125,178 @@
     \end{columns}
 \end{frame}
 
+% Slide SOI 2
+\begin{frame}{Planetary Sphere of Influence: Laplace vs. Hill Formulations}
+    \begin{columns}[t]
+        \begin{column}{0.52\textwidth}
+            \begin{block}{Laplace Sphere of Influence ($r_{\text{SOI}}$)}
+                \footnotesize
+                Defines the boundary where the planetocentric 2-body approximation is more accurate than the heliocentric 2-body model:
+                \begin{equation*}
+                    \frac{a_{\text{perturb, Sun}}}{a_{\text{central, planet}}} = \frac{a_{\text{perturb, planet}}}{a_{\text{central, Sun}}} \implies r_{\text{SOI}} = d \left(\frac{\mu_p}{\mu_\odot}\right)^{2/5}
+                \end{equation*}
+                where $d$ is the orbital distance from the central body.
+            \end{block}
+            \begin{block}{Hill Sphere ($r_H$)}
+                \footnotesize
+                Defines the outer limit for stable, permanent closed orbits under rotating 3-body tidal forces:
+                \begin{equation*}
+                    r_H = d \left(\frac{\mu_p}{3\mu_\odot}\right)^{1/3}
+                \end{equation*}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.45\textwidth}
+            \begin{block}{SOI Radius Comparison}
+                \centering
+                \scriptsize
+                \begin{tabular}{lccc}
+                    \toprule
+                    \textbf{Body} & $\bm{d\text{ [AU]}}$ & $\bm{r_{\text{SOI}}\text{ [km]}}$ & $\bm{r_H\text{ [km]}}$ \\ \midrule
+                    Mercury & 0.387 & $1.12 \times 10^5$ & $2.20 \times 10^5$ \\
+                    Venus   & 0.723 & $6.16 \times 10^5$ & $1.01 \times 10^6$ \\
+                    Earth   & 1.000 & $9.25 \times 10^5$ & $1.50 \times 10^6$ \\
+                    Moon    & 0.00257$^*$ & $6.62 \times 10^4$ & $1.29 \times 10^5$ \\
+                    Jupiter & 5.204 & $4.82 \times 10^7$ & $5.31 \times 10^7$ \\ \bottomrule
+                \end{tabular}
+                \vspace{0.05cm}
+                \par \tiny $^*$Moon distance relative to Earth center.
+            \end{block}
+            \begin{alertblock}{Patched Conics Patch Point}
+                \scriptsize Patched conics assumes an instantaneous switch from heliocentric transfer to planetocentric hyperbola at $r = r_{\text{SOI}}$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Slide SOI 3
+\begin{frame}{Why Kepler's Third Law Governs the SOI Boundary}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{1. Solar Tidal Gradient}
+                \footnotesize
+                A spacecraft at distance $r$ from a planet experiences a differential solar tidal acceleration:
+                \begin{equation*}
+                    a_{\text{tidal}} \approx \frac{\partial}{\partial d}\left(\frac{\mu_\odot}{d^2}\right) r = \frac{2\mu_\odot}{d^3} r
+                \end{equation*}
+            \end{block}
+            \begin{block}{2. Kepler's 3rd Law Substitution}
+                \footnotesize
+                By Kepler's Third Law, the planet's orbital mean motion $n_p$ is linked to the semi-major axis $d$:
+                \begin{equation*}
+                    n_p^2 = \frac{\mu_\odot}{d^3} = \left(\frac{2\pi}{T_p}\right)^2 \implies a_{\text{tidal}} \approx 2 n_p^2 r
+                \end{equation*}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \begin{alertblock}{3. Gravitational Balance Condition}
+                \footnotesize
+                Equating local planetary gravity to solar tidal pull:
+                \begin{equation*}
+                    \frac{\mu_p}{r^2} \sim n_p^2 r = \frac{\mu_\odot}{d^3} r \implies r^3 \sim d^3 \left(\frac{\mu_p}{\mu_\odot}\right)
+                \end{equation*}
+                Yielding the canonical Hill radius $r_H \propto d (\mu_p / 3\mu_\odot)^{1/3}$.
+            \end{alertblock}
+            \begin{exampleblock}{Physical Consequence}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1pt}
+                    \item Fast-orbiting inner planets (e.g., Mercury) endure strong solar tidal fields ($n_p \uparrow$), shrinking their SOI.
+                    \item Outer planets (e.g., Jupiter, Neptune) have weak solar tides ($n_p \downarrow$), allowing enormous gravitational spheres.
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Slide SOI 4
+\begin{frame}{Gravity Determination: Why We Must Orbit Moonless Bodies}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Bodies With Natural Moons}
+                \scriptsize
+                For bodies with moons (Earth, Mars, Jupiter), optical tracking yields $\mu_p$ via Kepler's 3rd Law:
+                \par\vspace{2pt}
+                {\centering $\displaystyle \mu_p \approx \frac{4\pi^2 a_{\text{moon}}^3}{T_{\text{moon}}^2}$\par}
+                \vspace{2pt}
+                Yields high accuracy without in-situ missions.
+            \end{block}
+
+            \vspace{-0.1cm}
+
+            \begin{alertblock}{The ``No-Moon'' Dilemma}
+                \scriptsize
+                \textbf{Mercury, Venus, and asteroids lack moons!}
+                \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\topsep}{1pt}
+                    \item Pre-spaceflight mass estimates relied on weak perturbations ($\pm 1\%\text{--}5\%$ error).
+                    \item Internal composition remained uncertain.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Artificial Satellite Orbit Determination}
+                \scriptsize
+                Placing an artificial probe in a closed orbit:
+                \begin{enumerate}\setlength{\itemsep}{1pt}\setlength{\topsep}{1pt}
+                    \item Radio Doppler tracking accurately measures orbit period $T_{\text{sc}}$ and semi-major axis $a_{\text{sc}}$.
+                    \item Invert Kepler's Third Law:
+                    \par\vspace{2pt}
+                    {\centering $\displaystyle \mu_p = \frac{4\pi^2 a_{\text{sc}}^3}{T_{\text{sc}}^2}$\par}
+                    \vspace{2pt}
+                    \item Line-of-sight range-rate residuals map higher geopotential harmonics ($J_2, C_{nm}, S_{nm}$).
+                \end{enumerate}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Slide SOI 5
+\begin{frame}{Worked Example: Measuring the Mass of Moonless Venus}
+    \begin{exampleblock}{Spacecraft Orbit Benchmark (e.g., Magellan / Venus Express)}
+        \scriptsize
+        A science probe is placed into a circular orbit around Venus ($R_V = 6051.8\text{ km}$). Deep Space Network (DSN) 2-way Doppler tracking measures an orbital altitude $h = 500.0\text{ km}$ and period $T = 5621.5\text{ s}$. \\
+        Given $G = 6.67430 \times 10^{-20}\text{ km}^3/\text{kg}\cdot\text{s}^2$, $d_V = 1.0816 \times 10^8\text{ km}$, $\mu_\odot = 1.32712 \times 10^{11}\text{ km}^3/\text{s}^2$:
+    \end{exampleblock}
+
+    \vspace{-0.15cm}
+
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \scriptsize
+            \textbf{Step 1: Semi-Major Axis ($a$)}
+            \par\vspace{1pt}
+            $a = R_V + h = 6051.8 + 500.0 = \mathbf{6551.8\text{ km}}$
+
+            \vspace{0.12cm}
+            \textbf{Step 2: Gravitational Parameter ($\mu_V$)}
+            \par\vspace{1pt}
+            $\mu_V = \frac{4\pi^2 a^3}{T^2} = \frac{4\pi^2 (6551.8)^3}{(5621.5)^2} = \mathbf{324858.6\text{ km}^3/\text{s}^2}$
+
+            \vspace{0.12cm}
+            \textbf{Step 3: Planetary Mass ($M_V$)}
+            \par\vspace{1pt}
+            $M_V = \frac{\mu_V}{G} = \frac{324858.6}{6.67430 \times 10^{-20}} = \mathbf{4.8673 \times 10^{24}\text{ kg}}$
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \scriptsize
+            \textbf{Step 4: Laplace Sphere of Influence ($r_{\text{SOI}}$)}
+            \begin{align*}
+                r_{\text{SOI}} &= d_V \left(\frac{\mu_V}{\mu_\odot}\right)^{2/5} \\
+                &= (1.0816 \times 10^8)\left(\frac{324858.6}{1.32712 \times 10^{11}}\right)^{2/5} \\
+                &= \mathbf{6.165 \times 10^5\text{ km}} \approx \mathbf{101.9\,R_V}
+            \end{align*}
+
+            \vspace{-0.2cm}
+            \begin{alertblock}{Precision Outcome}
+                \scriptsize
+                Direct Doppler tracking resolved $\mu_V$ to 7 significant figures, reducing mass uncertainty from $\sim 2\%$ down to $< 0.001\%$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
 % ==============================================================================
 % SLIDE 2: 3D PATCHED CONICS
 % ==============================================================================
@@ -165,17 +337,236 @@
     \end{columns}
 \end{frame}
 
+\begin{frame}{The Patched Conic Section Method}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1.0\textwidth]{Images/IT_1.jpg}
+    \end{figure}
+\end{frame}
+
+% ==============================================================================
+% SECTION: METHOD OF PATCHED CONICS (3-PHASE ARCHITECTURE)
+% ==============================================================================
+\section{Method of Patched Conics: 3-Phase Methodology}
+
+% ==============================================================================
+% SLIDE 1: METHOD OF PATCHED CONICS — 3-PHASE ARCHITECTURE
+% ==============================================================================
+\begin{frame}{Method of Patched Conics: The 3-Phase Architecture}
+    \begin{columns}[t]
+        \begin{column}{0.54\textwidth}
+            \begin{block}{Approximation of the $N$-Body Problem}
+                \scriptsize
+                The gravitational $N$-body problem is non-integrable. The \textbf{Patched Conic Method} approximates the trajectory as three sequential 2-body Keplerian regimes[cite: 2, 4]:
+                \begin{enumerate}\setlength{\itemsep}{3pt}\setlength{\topsep}{2pt}
+                    \item \textbf{Phase 1: Planetocentric Departure ($r < r_{\text{SOI},1}$)} \\
+                    Central body: Earth ($\mu_1$). Hyperbolic escape from circular parking orbit[cite: 2, 4].
+                    \item \textbf{Phase 2: Heliocentric Transfer ($r_{\text{SOI},1} \le R \le r_{\text{SOI},2}$)} \\
+                    Central body: Sun ($\mu_\odot$). Keplerian transfer ellipse connecting departure and arrival planetary orbits[cite: 2, 4].
+                    \item \textbf{Phase 3: Planetocentric Arrival ($r < r_{\text{SOI},2}$)} \\
+                    Central body: Target planet ($\mu_2$). Hyperbolic encounter, capture burn, or planetary flyby[cite: 2, 4].
+                \end{enumerate}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.43\textwidth}
+            \begin{block}{Patch Boundary Rule}
+                \scriptsize
+                \textbf{Fundamental Assumption:} At the SOI boundary ($r = r_{\text{SOI}}$), gravitational dominance switches instantaneously between the planet and the Sun[cite: 2]:
+                \par\vspace{2pt}
+                {\centering $\displaystyle \mathbf{V}_{\text{heliocentric}} = \mathbf{V}_{\text{planet}} + \mathbf{v}_{\infty}$\par}
+            \end{block}
+
+            \vspace{-0.1cm}
+
+            \begin{alertblock}{Energy Conservation Across Frames}
+                \scriptsize
+                Inside the SOI, planetocentric specific energy is conserved[cite: 2, 4]:
+                \par\vspace{2pt}
+                {\centering $\displaystyle C_3 = v_\infty^2 = v_p^2 - \frac{2\mu_p}{r_p} = \text{const}$\par}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 2: PHASE 1 — PLANETOCENTRIC DEPARTURE & HYPERBOLIC ESCAPE
+% ==============================================================================
+\begin{frame}{Phase 1: Planetocentric Departure and Hyperbolic Escape}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Geocentric Escape Mechanics}
+                \scriptsize
+                \begin{enumerate}\setlength{\itemsep}{3pt}\setlength{\topsep}{1pt}
+                    \item Spacecraft waits in circular parking orbit ($r_p = R_1 + h_p$) at orbital speed $v_c = \sqrt{\mu_1 / r_p}$[cite: 2, 4].
+                    \item Trans-Planetary Injection (TMI) burn $\Delta v_{\text{inj}}$ is executed tangentially at periapsis[cite: 2, 4]:
+                    \par\vspace{2pt}
+                    {\centering $\displaystyle v_p = \sqrt{v_{\infty,\text{dep}}^2 + \frac{2\mu_1}{r_p}} \implies \Delta v_{\text{inj}} = v_p - v_c$\par}
+                    \vspace{2pt}
+                    \item Spacecraft follows a hyperbolic escape arc, crossing Earth's SOI with excess speed $\mathbf{v}_{\infty,\text{dep}}$[cite: 2, 4].
+                \end{enumerate}
+            \end{block}
+
+            \vspace{-0.1cm}
+
+            \begin{exampleblock}{Characteristic Launch Energy ($C_3$)}
+                \scriptsize
+                $C_3 = v_{\infty,\text{dep}}^2 = 2\mathcal{E}_h$ measures launch vehicle escape performance ($C_3 > 0$ for interplanetary escape)[cite: 2, 4].
+            \end{exampleblock}
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \begin{block}{Phase 1 Vector Geometry}
+                \centering
+                \vspace{0.05cm}
+                \begin{tikzpicture}[scale=0.68]
+                    % SOI Circle
+                    \draw[dashed, color=gray, line width=0.8pt] (0,0) circle (2.1cm);
+                    \node[color=gray] at (1.0, 1.85) {\tiny Earth SOI ($r_{\text{SOI}}$)};
+                    
+                    % Parking Orbit
+                    \draw[thick, color=UdeAGreen!70] (0,0) circle (0.65cm);
+                    \node[color=UdeAGreen!80] at (-1.25, 0.4) {\tiny Parking Orbit};
+                    
+                    % Central Earth
+                    \draw[thick, fill=blue!35] (0,0) circle (0.35cm) node{\tiny Earth};
+                    
+                    % Earth Velocity Vector
+                    \draw[thick, ->, >=stealth, color=Charcoal] (0,0) -- (0,-1.3) node[midway, right]{\tiny $\mathbf{v}_{\text{Earth}}$};
+                    
+                    % Hyperbolic Escape Trajectory
+                    \draw[thick, color=UdeAGreen, line width=1.1pt] (0, 0.65) to[out=180, in=90] (-0.8, 0.0) to[out=-90, in=85] (-1.2, -2.3);
+                    
+                    % Injection Burn Point
+                    \filldraw[color=AlertRed] (0, 0.65) circle (1.8pt) node[above right]{\tiny $\Delta v_{\text{inj}} (r_p)$};
+                    
+                    % Excess Velocity Asymptote
+                    \draw[thick, ->, >=stealth, color=AlertRed, line width=1.0pt] (-1.2, -1.4) -- (-1.2, -2.5) node[midway, left]{\tiny $\mathbf{v}_{\infty,\text{dep}}$};
+                \end{tikzpicture}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 3: PHASE 2 — HELIOCENTRIC CRUISE & VECTOR PATCHING
+% ==============================================================================
+\begin{frame}{Phase 2: Heliocentric Cruise and Vector Patching}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Heliocentric Cruise Mechanics}
+                \scriptsize
+                At Earth SOI exit, the spacecraft enters heliocentric space[cite: 2]. The initial transfer velocity $\mathbf{V}_{\text{tx},1}$ is the vector sum[cite: 2]:
+                \par\vspace{2pt}
+                {\centering $\displaystyle \mathbf{V}_{\text{tx},1} = \mathbf{V}_{\text{planet},1} + \mathbf{v}_{\infty,\text{dep}}$\par}
+                \vspace{2pt}
+                \begin{itemize}\setlength{\itemsep}{2pt}\setlength{\topsep}{2pt}
+                    \item \textbf{Prograde $\mathbf{v}_\infty$:} Raises aphelion ($R_a > R_1$) toward outer planets (Mars, Jupiter)[cite: 2, 4].
+                    \item \textbf{Retrograde $\mathbf{v}_\infty$:} Lowers perihelion ($R_p < R_1$) toward inner planets (Venus, Mercury)[cite: 4].
+                \end{itemize}
+                \par\vspace{3pt}
+                \textbf{Arrival Patch Condition at Target ($R_2$)[cite: 2]:}
+                \par\vspace{1pt}
+                {\centering $\displaystyle \mathbf{v}_{\infty,\text{arr}} = \mathbf{V}_{\text{tx},2} - \mathbf{V}_{\text{planet},2}$\par}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \begin{block}{Phase 2 Heliocentric Transfer Arc}
+                \centering
+                \vspace{0.05cm}
+                \begin{tikzpicture}[scale=0.68]
+                    % Sun at Center
+                    \draw[thick, fill=yellow!80] (0,0) circle (0.32cm) node[below=0.35cm]{\tiny Sun ($\mu_\odot$)};
+                    
+                    % Departure Planet Orbit (Blue)
+                    \draw[thick, color=blue!60] (0,0) circle (1.3cm);
+                    \node[color=blue!80] at (-1.45, 1.05) {\tiny Orbit 1 (Earth)};
+                    
+                    % Arrival Planet Orbit (Orange)
+                    \draw[thick, color=orange!80] (0,0) circle (2.3cm);
+                    \node[color=orange!90] at (1.65, 2.05) {\tiny Orbit 2 (Target)};
+                    
+                    % Heliocentric Transfer Ellipse (Green)
+                    \draw[thick, color=UdeAGreen, line width=1.1pt] (-1.3,0) arc (180:0:1.8cm and 1.55cm);
+                    \node[color=UdeAGreen] at (0.0, 1.75) {\tiny Transfer Arc};
+                    
+                    % Departure Patch Point
+                    \filldraw[color=blue!80] (-1.3,0) circle (2.0pt) node[left]{\tiny Departure};
+                    \draw[thick, ->, >=stealth, color=Charcoal] (-1.3,0) -- (-1.3,0.85) node[left]{\tiny $\mathbf{V}_{\text{tx},1}$};
+                    
+                    % Arrival Patch Point
+                    \filldraw[color=orange!80] (2.3,0) circle (2.0pt) node[right]{\tiny Arrival};
+                    \draw[thick, ->, >=stealth, color=Charcoal] (2.3,0) -- (2.3,-0.75) node[right]{\tiny $\mathbf{V}_{\text{tx},2}$};
+                \end{tikzpicture}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% --- SLIDE D: PHASE 3 - PLANETOCENTRIC ARRIVAL & CAPTURE ---
+\begin{frame}{Phase 3: Planetocentric Arrival, Capture and Insertion}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Arrival Hyperbola and Orbit Insertion}
+                \footnotesize
+                \begin{enumerate}\setlength{\itemsep}{2pt}
+                    \item Spacecraft enters target SOI along hyperbolic arrival asymptote with excess speed $\mathbf{v}_{\infty,\text{arr}}$[cite: 2].
+                    \item Hyperbolic periapsis speed at closest approach $r_{p,2}$[cite: 2, 4]:
+                    \begin{equation*}
+                        v_{p,\text{hyp}} = \sqrt{v_{\infty,\text{arr}}^2 + \frac{2\mu_2}{r_{p,2}}}
+                    \end{equation*}
+                    \item \textbf{Orbit Insertion Burn ($\Delta v_{\text{cap}}$):} Retrograde burn at periapsis captures probe into closed orbit ($v_c = \sqrt{\mu_2/r_{p,2}}$)[cite: 2, 4]:
+                    \begin{equation*}
+                        \Delta v_{\text{cap}} = v_{p,\text{hyp}} - v_c = \sqrt{v_{\infty,\text{arr}}^2 + \frac{2\mu_2}{r_{p,2}}} - \sqrt{\frac{\mu_2}{r_{p,2}}}
+                    \end{equation*}
+                \end{enumerate}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \begin{block}{Phase 3 Vector Geometry}
+                \centering
+                \begin{tikzpicture}[scale=0.72]
+                    % Target SOI Circle
+                    \draw[dashed, color=gray, line width=0.8pt] (0,0) circle (2.2cm);
+                    \node at (-1.1, 2.0) {\tiny Target SOI ($r_{\text{SOI}}$)};
+                    
+                    % Target Planet
+                    \draw[thick, fill=orange!60] (0,0) circle (0.35cm) node[below=0.35cm]{\tiny Planet ($\mu_2$)};
+                    
+                    % Planet Velocity Relative to Sun
+                    \draw[thick, ->, >=stealth, color=Charcoal] (0,0) -- (0,1.4) node[midway, left]{\tiny $\mathbf{v}_{\text{planet}}$};
+                    
+                    % Captured Closed Orbit (Green Ellipse)
+                    \draw[thick, color=UdeAGold, line width=0.9pt] (0,0) ellipse (0.75cm and 0.55cm);
+                    \node[color=UdeAGold] at (-1.1, -0.4) {\tiny Captured Orbit};
+                    
+                    % Hyperbolic Arrival Path
+                    \draw[thick, color=UdeAGreen, line width=1.1pt] (1.3, -2.4) to[out=95, in=-90] (0.8, 0.0) to[out=90, in=0] (0, 0.55);
+                    
+                    % Insertion Retrograde Burn Point
+                    \filldraw[color=AlertRed] (0, 0.55) circle (1.8pt) node[above]{\tiny $\Delta v_{\text{cap}} (r_p)$};
+                    
+                    % Incoming Velocity Vector
+                    \draw[thick, ->, >=stealth, color=AlertRed, line width=1.0pt] (1.3, -2.6) -- (1.3, -1.5) node[midway, right]{\tiny $\mathbf{v}_{\infty,\text{arr}}$};
+                \end{tikzpicture}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
 % ==============================================================================
 % SLIDE 3: THE INCLINATION TRAP
 % ==============================================================================
 \begin{frame}{The Launch Geometry Boundary: The "Inclination Trap"}
     \begin{columns}[t]
-        \begin{column}{0.54\textwidth}
+        \begin{column}{0.50\textwidth}
             \begin{alertblock}{The Mathematical Constraint: $i \ge |\delta|$}
                 \footnotesize
-                \begin{itemize}
-                    \item Parking orbit reaches maximum geocentric latitude $\phi_{\max} = i$.
-                    \item For departure burn $\Delta \mathbf{v}_{\text{inj}}$ to be executed \textbf{in-plane} (zero plane change penalty):
+                \begin{itemize}\setlength{\itemsep}{2pt}
+                    \item Parking orbit reaches maximum latitude $\phi_{\max} = i$.
+                    \item For departure burn $\Delta \mathbf{v}_{\text{inj}}$ to be executed \textbf{in-plane} (zero out-of-plane penalty):
                     \begin{equation*}
                         \sin i = \cos \delta \sin(\beta_{\text{inertial}}) \implies i \ge |\delta|
                     \end{equation*}
@@ -188,7 +579,7 @@
             \end{alertblock}
         \end{column}
 
-        \begin{column}{0.43\textwidth}
+        \begin{column}{0.47\textwidth}
             \begin{block}{Launch Azimuth $\beta_{\text{launch}}$}
                 \footnotesize
                 From launch latitude $\phi_L$ into inclination $i$:
@@ -196,12 +587,13 @@
                     \cos \beta = \frac{\cos i}{\cos \phi_L}
                 \end{equation*}
                 \centering
-                \begin{tikzpicture}[scale=0.65]
-                    \draw[thick, color=Charcoal] (0,0) circle (1.1cm);
-                    \draw[dashed, color=gray] (-1.3,0) -- (1.3,0) node[right]{\tiny Equator};
-                    \draw[thick, color=UdeAGreen, rotate=35] (-1.1,0) -- (1.1,0) node[right]{\tiny Plane ($i$)};
-                    \draw[thick, ->, >=stealth, color=AlertRed] (0,0) -- (0.8,0.8) node[above right]{\tiny $\hat{\mathbf{S}} (\delta)$};
-                    \draw[dashed, color=AlertRed] (0.8,0.8) -- (0.8,0) node[below]{\tiny $\delta$};
+                \vspace{0.05cm}
+                \begin{tikzpicture}[scale=0.95]
+                    \draw[thick, color=Charcoal] (0,0) circle (1.3cm);
+                    \draw[dashed, color=gray] (-1.6,0) -- (1.6,0) node[right]{\scriptsize Equator};
+                    \draw[thick, color=UdeAGreen, rotate=35] (-1.3,0) -- (1.3,0) node[right]{\scriptsize Plane ($i$)};
+                    \draw[thick, ->, >=stealth, color=AlertRed, line width=0.9pt] (0,0) -- (1.05,1.05) node[above right]{\scriptsize $\hat{\mathbf{S}} (\delta)$};
+                    \draw[dashed, color=AlertRed] (1.05,1.05) -- (1.05,0) node[midway, right]{\scriptsize $\delta$};
                 \end{tikzpicture}
             \end{block}
         \end{column}
@@ -257,10 +649,10 @@
 % ==============================================================================
 \begin{frame}{Week 6: Planetary Gravity Assists --- SOI Momentum Exchange}
     \begin{columns}[t]
-        \begin{column}{0.54\textwidth}
+        \begin{column}{0.50\textwidth}
             \begin{block}{Planetocentric Turning Angle ($\delta_{\text{turn}}$)}
                 \footnotesize
-                \begin{itemize}
+                \begin{itemize}\setlength{\itemsep}{2pt}
                     \item Inside planetary SOI, speed is conserved:
                     \begin{equation*}
                         \|\mathbf{v}_{\infty,\text{in}}\| = \|\mathbf{v}_{\infty,\text{out}}\| = v_\infty
@@ -277,17 +669,18 @@
             \end{block}
         \end{column}
 
-        \begin{column}{0.43\textwidth}
+        \begin{column}{0.47\textwidth}
             \begin{block}{Flyby Vector Geometry}
                 \centering
-                \begin{tikzpicture}[scale=0.60]
-                    \draw[thick, fill=gray!30] (0,0) circle (0.35cm) node[above=0.35cm]{\tiny Planet ($\mu_p$)};
-                    \draw[thick, ->, >=stealth, color=Charcoal] (-1.5, 0.9) -- (-0.6, 0.45) node[midway, above]{\tiny $\mathbf{v}_{\infty,\text{in}}$};
-                    \draw[thick, color=UdeAGreen] (-1.5, 0.9) to[out=-25, in=120] (0, 0.45) to[out=-60, in=160] (1.1, -0.7);
-                    \draw[thick, ->, >=stealth, color=Charcoal] (0.5, -0.35) -- (1.2, -0.9) node[midway, below left]{\tiny $\mathbf{v}_{\infty,\text{out}}$};
-                    \draw[dashed, color=AlertRed] (-0.6, 0.45) -- (1.0, -0.3);
-                    \draw[dashed, color=AlertRed] (0.5, -0.35) -- (-0.5, 0.35);
-                    \draw[<->, >=stealth, color=UdeAGold] (0,0) -- (0,0.45) node[midway, right]{\tiny $r_p$};
+                \vspace{0.05cm}
+                \begin{tikzpicture}[scale=0.85]
+                    \draw[thick, fill=gray!25] (0,0) circle (0.45cm) node[above=0.5cm]{\scriptsize Planet ($\mu_p$)};
+                    \draw[thick, ->, >=stealth, color=Charcoal, line width=0.8pt] (-2.0, 1.2) -- (-0.8, 0.6) node[midway, above]{\scriptsize $\mathbf{v}_{\infty,\text{in}}$};
+                    \draw[thick, color=UdeAGreen, line width=1.1pt] (-2.0, 1.2) to[out=-25, in=120] (0, 0.6) to[out=-60, in=160] (1.6, -1.0);
+                    \draw[thick, ->, >=stealth, color=Charcoal, line width=0.8pt] (0.7, -0.45) -- (1.8, -1.2) node[midway, below left]{\scriptsize $\mathbf{v}_{\infty,\text{out}}$};
+                    \draw[dashed, color=AlertRed] (-0.8, 0.6) -- (1.3, -0.45);
+                    \draw[dashed, color=AlertRed] (0.7, -0.45) -- (-0.7, 0.45);
+                    \draw[<->, >=stealth, color=UdeAGold, line width=0.8pt] (0,0) -- (0,0.6) node[midway, right]{\scriptsize $r_p$};
                 \end{tikzpicture}
             \end{block}
             \vspace{-0.1cm}

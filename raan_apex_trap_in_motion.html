@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAAN Apex Trap & VNB Frame Dynamics - UdeA Astrodynamics</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: #080c15;
+            color: #e2e8f0;
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+        }
+        #canvas-container {
+            flex: 1;
+            height: 100%;
+            position: relative;
+        }
+        #sidebar {
+            width: 440px;
+            background-color: #0f172a;
+            border-left: 1px solid #1e293b;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            box-shadow: -6px 0 20px rgba(0,0,0,0.6);
+            z-index: 10;
+        }
+        h2 {
+            color: #10b981;
+            font-size: 0.9rem;
+            border-bottom: 2px solid #065f46;
+            padding-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .control-group {
+            background-color: #1e293b;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+        }
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            margin-bottom: 3px;
+            font-weight: 600;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            accent-color: #10b981;
+            cursor: pointer;
+        }
+        .val-display { color: #38bdf8; font-family: monospace; font-weight: bold; }
+        
+        .strategy-toggle {
+            display: flex;
+            gap: 6px;
+            background: #090d16;
+            padding: 4px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+        }
+        .strat-btn {
+            flex: 1;
+            padding: 8px 6px;
+            font-size: 0.74rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #94a3b8;
+            background: transparent;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .strat-btn.active-trap { background-color: #dc2626; color: #fff; }
+        .strat-btn.active-correct { background-color: #10b981; color: #fff; }
+
+        .btn-row {
+            display: flex;
+            gap: 8px;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 7px;
+            background-color: #334155;
+            color: #f8fafc;
+            border: 1px solid #475569;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .action-btn:hover { background-color: #475569; }
+
+        .dashboard {
+            background-color: #090d16;
+            border-left: 4px solid #f59e0b;
+            padding: 8px 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.75rem;
+            line-height: 1.4;
+        }
+        .dashboard div { display: flex; justify-content: space-between; margin-bottom: 2px; }
+        .dash-label { color: #94a3b8; }
+        .dash-val { color: #38bdf8; font-weight: bold; }
+        .dash-error { color: #ef4444; font-weight: bold; }
+        .dash-good { color: #10b981; font-weight: bold; }
+
+        .theory-card {
+            background: #090d16;
+            border: 1px solid #1e293b;
+            border-left: 4px solid #38bdf8;
+            padding: 8px 10px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            line-height: 1.35;
+            color: #cbd5e1;
+        }
+        .theory-card code { color: #38bdf8; font-family: monospace; }
+
+        #overlay-info {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: rgba(15, 23, 42, 0.94);
+            border: 1px solid #334155;
+            padding: 12px 16px;
+            border-radius: 8px;
+            pointer-events: none;
+            max-width: 440px;
+        }
+        #overlay-info h1 { font-size: 1.0rem; color: #10b981; margin-bottom: 4px; }
+        #overlay-info p { font-size: 0.76rem; color: #94a3b8; line-height: 1.3; }
+        
+        .burn-alert {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .status-coast { background: #1e293b; color: #94a3b8; }
+        .status-burn { background: #f59e0b; color: #000; animation: pulse 0.5s infinite alternate; }
+        .status-done { background: #065f46; color: #a7f3d0; }
+
+        @keyframes pulse {
+            from { opacity: 0.7; }
+            to { opacity: 1.0; }
+        }
+
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            margin-top: 8px;
+            font-size: 0.7rem;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-color { width: 12px; height: 3px; border-radius: 2px; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+    <div id="canvas-container">
+        <div id="overlay-info">
+            <h1>Dynamic RAAN ($\Delta\Omega$) Transfer & Apex Trap</h1>
+            <p>Watch the spacecraft orbit in real time. Firing at the apex ($u=90^\circ$) causes an inclination overshoot, whereas firing at the intersection ($u_{\text{burn}}$) preserves inclination.</p>
+            <div style="margin-top: 4px;">
+                Burn Status: <span id="status-badge" class="burn-alert status-coast">COASTING TO MANEUVER</span>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-color" style="background: #10b981;"></span> Orbit 1 (Initial Plane)</div>
+                <div class="legend-item"><span class="legend-color" style="background: #f59e0b;"></span> Orbit 2 (Target Plane, Shifted RAAN)</div>
+                <div class="legend-item"><span class="legend-color" style="background: #ef4444;"></span> Flawed Orbit If Burned at Apex (Inclination Leak)</div>
+                <div class="legend-item"><span class="legend-color" style="background: #06b6d4;"></span> VNB Triad: V (Cyan), N (Magenta), B (Yellow)</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <h2>Burn Location Strategy</h2>
+        <div class="strategy-toggle">
+            <button id="btn-trap" class="strat-btn active-trap" onclick="setStrategy('trap')">
+                Trap: Apex ($u = 90^\circ$)
+            </button>
+            <button id="btn-correct" class="strat-btn" onclick="setStrategy('correct')">
+                Exact: Intersection ($u_{\text{burn}}$)
+            </button>
+        </div>
+
+        <h2>Animation Controls</h2>
+        <div class="btn-row">
+            <button class="action-btn" id="btn-pause" onclick="togglePlay()">Pause Motion</button>
+            <button class="action-btn" onclick="resetSatellite()">Reset Orbit</button>
+        </div>
+
+        <div class="control-group">
+            <label>Simulation Speed: <span class="val-display" id="speed-val">1.0x</span></label>
+            <input type="range" id="speed-slider" min="0.2" max="3.0" step="0.1" value="1.0">
+        </div>
+
+        <h2>Orbital Parameters</h2>
+        <div class="control-group">
+            <label>Inclination ($i$): <span class="val-display" id="inc-val">45.0°</span></label>
+            <input type="range" id="inc-slider" min="20" max="70" step="1" value="45">
+        </div>
+
+        <div class="control-group">
+            <label>RAAN Shift ($\Delta\Omega$): <span class="val-display" id="raan-val">22.0°</span></label>
+            <input type="range" id="raan-slider" min="5" max="45" step="1" value="22">
+        </div>
+
+        <h2>Why Gauss's Law Creates the Trap</h2>
+        <div class="theory-card">
+            <b>Gauss Variational Equations:</b><br>
+            <code>di/dt = (r cos u / h) * f_h</code><br>
+            <code>dΩ/dt = (r sin u / (h sin i)) * f_h</code><br>
+            At <code>u = 90°</code>, <code>cos(90°) = 0</code> implies zero inclination change. But this holds strictly for <i>infinitesimal continuous force</i>. For a discrete impulse, the new orbit is forced through the peak of Orbit 1, which is <b>not</b> the apex of Orbit 2. The orbit continues to climb, causing an inclination overshoot!
+        </div>
+
+        <h2>Live Telemetry</h2>
+        <div class="dashboard">
+            <div><span class="dash-label">Argument of Latitude ($u$):</span><span class="dash-val" id="dash-u">0.0°</span></div>
+            <div><span class="dash-label">Geocentric Latitude ($\phi$):</span><span class="dash-val" id="dash-lat">0.0°</span></div>
+            <div><span class="dash-label">Apex Latitude Angle:</span><span class="dash-val">90.000°</span></div>
+            <div><span class="dash-label">Offset Past Apex ($\delta u$):</span><span class="dash-val" id="dash-deltau">+7.826°</span></div>
+            <div><span class="dash-label">Intersection Anomaly ($u_{\text{burn}}$):</span><span class="dash-val" id="dash-uburn">97.826°</span></div>
+            <hr style="border:0; border-top:1px solid #1e293b; margin: 4px 0;">
+            <div><span class="dash-label">Target Inclination:</span><span class="dash-val" id="dash-targ-inc">45.000°</span></div>
+            <div><span class="dash-label">Post-Burn Inclination:</span><span class="dash-val" id="dash-ach-inc">45.824°</span></div>
+            <div><span class="dash-label">Inclination Leak ($\Delta i$):</span><span class="dash-error" id="dash-inc-err">+0.824°</span></div>
+            <hr style="border:0; border-top:1px solid #1e293b; margin: 4px 0;">
+            <div><span class="dash-label">Impulse $\Delta V_V$ (Braking):</span><span class="dash-val" id="dash-dvv">-0.274 km/s</span></div>
+            <div><span class="dash-label">Impulse $\Delta V_N$ (Normal):</span><span class="dash-val" id="dash-dvn">+2.042 km/s</span></div>
+            <div><span class="dash-label">Total Impulse ($\Delta V_\Omega$):</span><span class="dash-val" id="dash-dvtot">2.060 km/s</span></div>
+        </div>
+    </div>
+
+    <script>
+        const MU_EARTH = 398600.4415;
+        const R_EARTH_KM = 6378.136;
+        const ALT_KM = 461.9;
+        const R_ORBIT_KM = R_EARTH_KM + ALT_KM;
+        const SCALE = 3.6 / R_EARTH_KM;
+
+        let burnStrategy = 'trap'; // 'trap' (90 deg) or 'correct' (u_burn)
+        let isRunning = true;
+        let simSpeed = 1.0;
+        let currentU = 0.0;        // Radians
+        let hasBurned = false;
+
+        // Scene Setup
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x080c15);
+
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(13, 14, 18);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        // Lighting
+        scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+        const dirLight = new THREE.DirectionalLight(0xfffaed, 1.4);
+        dirLight.position.set(30, 20, 20);
+        scene.add(dirLight);
+
+        // Earth
+        const earthRadius = R_EARTH_KM * SCALE;
+        const earthGeo = new THREE.SphereGeometry(earthRadius, 48, 48);
+        const earthMat = new THREE.MeshStandardMaterial({ color: 0x0f2b46, roughness: 0.65 });
+        const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+        scene.add(earthMesh);
+
+        // Equator Circle
+        const eqPts = [];
+        for (let j = 0; j <= 90; j++) {
+            const rad = (j / 90) * 2 * Math.PI;
+            eqPts.push(new THREE.Vector3(earthRadius * 1.03 * Math.cos(rad), 0, earthRadius * 1.03 * Math.sin(rad)));
+        }
+        const eqLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(eqPts), new THREE.LineBasicMaterial({ color: 0x334155 }));
+        scene.add(eqLine);
+
+        // Polar Axis
+        const axisGeo = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(0, -earthRadius * 1.35, 0),
+            new THREE.Vector3(0, earthRadius * 1.35, 0)
+        ]);
+        const axisLine = new THREE.Line(axisGeo, new THREE.LineDashedMaterial({ color: 0x64748b, dashSize: 0.3, gapSize: 0.2 }));
+        axisLine.computeLineDistances();
+        scene.add(axisLine);
+
+        // Orbit Lines
+        const orbit1Line = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0x10b981, linewidth: 2 }));
+        const orbit2Line = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xf59e0b, linewidth: 2 }));
+        const resultOrbitLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineDashedMaterial({ color: 0xef4444, dashSize: 0.35, gapSize: 0.2 }));
+        scene.add(orbit1Line);
+        scene.add(orbit2Line);
+        scene.add(resultOrbitLine);
+
+        // Markers
+        const apexMarker = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshBasicMaterial({ color: 0xef4444 }));
+        const interMarker = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), new THREE.MeshBasicMaterial({ color: 0x10b981 }));
+        scene.add(apexMarker);
+        scene.add(interMarker);
+
+        // Spacecraft Model (Bus + Panels)
+        const scGroup = new THREE.Group();
+        const busMesh = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.24, 0.24), new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.8 }));
+        const panelMesh = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.02, 0.3), new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.5 }));
+        scGroup.add(busMesh);
+        scGroup.add(panelMesh);
+        scene.add(scGroup);
+
+        // Thruster Fire Glow
+        const fireGeo = new THREE.SphereGeometry(0.25, 16, 16);
+        const fireMat = new THREE.MeshBasicMaterial({ color: 0xffa500, transparent: true, opacity: 0.0 });
+        const fireMesh = new THREE.Mesh(fireGeo, fireMat);
+        scGroup.add(fireMesh);
+
+        // Dynamic VNB Triad Arrows
+        const vArrow = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(0,0,0), 1.6, 0x06b6d4, 0.3, 0.15); // Velocity (Cyan)
+        const nArrow = new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(0,0,0), 1.6, 0xd946ef, 0.3, 0.15); // Normal (Magenta)
+        const bArrow = new THREE.ArrowHelper(new THREE.Vector3(0,0,1), new THREE.Vector3(0,0,0), 1.6, 0xeab308, 0.3, 0.15); // Binormal (Yellow)
+        scene.add(vArrow);
+        scene.add(nArrow);
+        scene.add(bArrow);
+
+        function setStrategy(strat) {
+            burnStrategy = strat;
+            document.getElementById('btn-trap').className = strat === 'trap' ? 'strat-btn active-trap' : 'strat-btn';
+            document.getElementById('btn-correct').className = strat === 'correct' ? 'strat-btn active-correct' : 'strat-btn';
+            resetSatellite();
+        }
+
+        function togglePlay() {
+            isRunning = !isRunning;
+            document.getElementById('btn-pause').textContent = isRunning ? 'Pause Motion' : 'Resume Motion';
+        }
+
+        function resetSatellite() {
+            currentU = 0.0;
+            hasBurned = false;
+            fireMat.opacity = 0.0;
+            const badge = document.getElementById('status-badge');
+            badge.className = 'burn-alert status-coast';
+            badge.textContent = 'COASTING TO MANEUVER';
+            updateGeometry();
+        }
+
+        function getOrbitalPoints(incDeg, raanDeg) {
+            const rScene = R_ORBIT_KM * SCALE;
+            const inc = THREE.MathUtils.degToRad(incDeg);
+            const raan = THREE.MathUtils.degToRad(raanDeg);
+            const pts = [];
+
+            for (let k = 0; k <= 128; k++) {
+                const u = (k / 128) * 2 * Math.PI;
+                const x = rScene * (Math.cos(raan) * Math.cos(u) - Math.sin(raan) * Math.sin(u) * Math.cos(inc));
+                const y = rScene * (Math.sin(u) * Math.sin(inc));
+                const z = rScene * (Math.sin(raan) * Math.cos(u) + Math.cos(raan) * Math.sin(u) * Math.cos(inc));
+                pts.push(new THREE.Vector3(x, y, z));
+            }
+            return pts;
+        }
+
+        function getPositionAndVNB(incDeg, raanDeg, uRad) {
+            const rScene = R_ORBIT_KM * SCALE;
+            const inc = THREE.MathUtils.degToRad(incDeg);
+            const raan = THREE.MathUtils.degToRad(raanDeg);
+
+            const pos = new THREE.Vector3(
+                rScene * (Math.cos(raan) * Math.cos(uRad) - Math.sin(raan) * Math.sin(uRad) * Math.cos(inc)),
+                rScene * (Math.sin(uRad) * Math.sin(inc)),
+                rScene * (Math.sin(raan) * Math.cos(uRad) + Math.cos(raan) * Math.sin(uRad) * Math.cos(inc))
+            );
+
+            const vel = new THREE.Vector3(
+                -Math.cos(raan) * Math.sin(uRad) - Math.sin(raan) * Math.cos(uRad) * Math.cos(inc),
+                Math.cos(uRad) * Math.sin(inc),
+                -Math.sin(raan) * Math.sin(uRad) + Math.cos(raan) * Math.cos(uRad) * Math.cos(inc)
+            ).normalize();
+
+            const norm = new THREE.Vector3(
+                Math.sin(raan) * Math.sin(inc),
+                Math.cos(inc),
+                -Math.cos(raan) * Math.sin(inc)
+            ).normalize();
+
+            const binorm = new THREE.Vector3().crossVectors(vel, norm).normalize();
+
+            return { pos, vel, norm, binorm };
+        }
+
+        function updateGeometry() {
+            const incDeg = parseFloat(document.getElementById('inc-slider').value);
+            const dRaanDeg = parseFloat(document.getElementById('raan-slider').value);
+
+            document.getElementById('inc-val').textContent = `${incDeg.toFixed(1)}°`;
+            document.getElementById('raan-val').textContent = `${dRaanDeg.toFixed(1)}°`;
+
+            const vc = Math.sqrt(MU_EARTH / R_ORBIT_KM);
+            const incRad = THREE.MathUtils.degToRad(incDeg);
+            const dRaanRad = THREE.MathUtils.degToRad(dRaanDeg);
+
+            // Plane intersection mathematics
+            const tanDeltaU = Math.cos(incRad) * Math.tan(dRaanRad / 2.0);
+            const deltaURad = Math.atan(tanDeltaU);
+            const deltaUDeg = THREE.MathUtils.radToDeg(deltaURad);
+            const uBurnDeg = 90.0 + deltaUDeg;
+
+            // 3D velocity rotation angle alpha
+            const sinHalfAlpha = Math.sin(incRad) * Math.sin(dRaanRad / 2.0);
+            const alphaRad = 2.0 * Math.asin(Math.min(1.0, sinHalfAlpha));
+            const alphaDeg = THREE.MathUtils.radToDeg(alphaRad);
+
+            // VNB components
+            const dv_v = vc * (Math.cos(alphaRad) - 1.0);
+            const dv_n = vc * Math.sin(alphaRad);
+            const dv_tot = 2.0 * vc * Math.sin(alphaRad / 2.0);
+
+            // Calculate achieved inclination in trap mode
+            const sinAchInc = Math.min(1.0, Math.sin(incRad) / Math.cos(deltaURad));
+            const trapAchInc = THREE.MathUtils.radToDeg(Math.asin(sinAchInc));
+            const trapError = trapAchInc - incDeg;
+
+            // Telemetry updates
+            document.getElementById('dash-deltau').textContent = `+${deltaUDeg.toFixed(3)}°`;
+            document.getElementById('dash-uburn').textContent = `${uBurnDeg.toFixed(3)}°`;
+            document.getElementById('dash-targ-inc').textContent = `${incDeg.toFixed(3)}°`;
+            document.getElementById('dash-dvv').textContent = `${dv_v.toFixed(3)} km/s`;
+            document.getElementById('dash-dvn').textContent = `+${dv_n.toFixed(3)} km/s`;
+            document.getElementById('dash-dvtot').textContent = `${dv_tot.toFixed(3)} km/s`;
+
+            if (burnStrategy === 'trap') {
+                document.getElementById('dash-ach-inc').textContent = `${trapAchInc.toFixed(3)}°`;
+                document.getElementById('dash-inc-err').textContent = `+${trapError.toFixed(3)}°`;
+                document.getElementById('dash-inc-err').className = 'dash-error';
+            } else {
+                document.getElementById('dash-ach-inc').textContent = `${incDeg.toFixed(3)}°`;
+                document.getElementById('dash-inc-err').textContent = `0.000°`;
+                document.getElementById('dash-inc-err').className = 'dash-good';
+            }
+
+            // Draw Paths
+            orbit1Line.geometry.setFromPoints(getOrbitalPoints(incDeg, 0));
+            orbit2Line.geometry.setFromPoints(getOrbitalPoints(incDeg, dRaanDeg));
+
+            if (burnStrategy === 'trap') {
+                resultOrbitLine.visible = true;
+                resultOrbitLine.geometry.setFromPoints(getOrbitalPoints(trapAchInc, dRaanDeg));
+                resultOrbitLine.computeLineDistances();
+            } else {
+                resultOrbitLine.visible = false;
+            }
+
+            // Static Markers on Sphere
+            const stateApex = getPositionAndVNB(incDeg, 0, Math.PI / 2.0);
+            const stateInter = getPositionAndVNB(incDeg, 0, THREE.MathUtils.degToRad(uBurnDeg));
+            apexMarker.position.copy(stateApex.pos);
+            interMarker.position.copy(stateInter.pos);
+        }
+
+        // Event Listeners
+        document.getElementById('inc-slider').addEventListener('input', () => { updateGeometry(); resetSatellite(); });
+        document.getElementById('raan-slider').addEventListener('input', () => { updateGeometry(); resetSatellite(); });
+        document.getElementById('speed-slider').addEventListener('input', (e) => {
+            simSpeed = parseFloat(e.target.value);
+            document.getElementById('speed-val').textContent = `${simSpeed.toFixed(1)}x`;
+        });
+
+        // Animation Loop with Real-Time Motion
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (isRunning) {
+                const incDeg = parseFloat(document.getElementById('inc-slider').value);
+                const dRaanDeg = parseFloat(document.getElementById('raan-slider').value);
+
+                const incRad = THREE.MathUtils.degToRad(incDeg);
+                const dRaanRad = THREE.MathUtils.degToRad(dRaanDeg);
+                const deltaURad = Math.atan(Math.cos(incRad) * Math.tan(dRaanRad / 2.0));
+                const uBurnRad = (Math.PI / 2.0) + deltaURad;
+
+                const burnTriggerU = (burnStrategy === 'trap') ? (Math.PI / 2.0) : uBurnRad;
+
+                // Advance anomaly
+                currentU += 0.008 * simSpeed;
+                if (currentU > 2.0 * Math.PI) {
+                    currentU -= 2.0 * Math.PI;
+                    hasBurned = false; // Reset for next revolution
+                }
+
+                // Check burn trigger
+                const badge = document.getElementById('status-badge');
+                if (Math.abs(currentU - burnTriggerU) < 0.06 && !hasBurned) {
+                    hasBurned = true;
+                    fireMat.opacity = 0.9;
+                    badge.className = 'burn-alert status-burn';
+                    badge.textContent = 'THRUSTER FIRING (IMPULSE APPLIED)';
+                } else if (hasBurned) {
+                    fireMat.opacity *= 0.88; // Fade out flash
+                    badge.className = 'burn-alert status-done';
+                    badge.textContent = (burnStrategy === 'trap') 
+                        ? 'BURN COMPLETE: FLIGHT INCLINATION OVERSHOT!' 
+                        : 'BURN COMPLETE: PERFECT PLANE MATCH';
+                } else {
+                    badge.className = 'burn-alert status-coast';
+                    badge.textContent = 'COASTING TO MANEUVER';
+                }
+
+                // Determine current orbital plane parameters
+                let activeInc = incDeg;
+                let activeRaan = 0.0;
+
+                if (hasBurned) {
+                    if (burnStrategy === 'trap') {
+                        const sinAchInc = Math.min(1.0, Math.sin(incRad) / Math.cos(deltaURad));
+                        activeInc = THREE.MathUtils.radToDeg(Math.asin(sinAchInc));
+                        activeRaan = dRaanDeg;
+                    } else {
+                        activeInc = incDeg;
+                        activeRaan = dRaanDeg;
+                    }
+                }
+
+                // Spacecraft State Vector & VNB Frame Triad
+                const state = getPositionAndVNB(activeInc, activeRaan, currentU);
+                scGroup.position.copy(state.pos);
+
+                // Align spacecraft bus with velocity vector
+                scGroup.quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), state.vel);
+
+                // Update VNB Triad position and direction
+                vArrow.position.copy(state.pos);
+                vArrow.setDirection(state.vel);
+
+                nArrow.position.copy(state.pos);
+                nArrow.setDirection(state.norm);
+
+                bArrow.position.copy(state.pos);
+                bArrow.setDirection(state.binorm);
+
+                // Update Live Telemetry
+                const uDeg = THREE.MathUtils.radToDeg(currentU);
+                const currentLat = THREE.MathUtils.radToDeg(Math.asin(state.pos.y / (R_ORBIT_KM * SCALE)));
+                document.getElementById('dash-u').textContent = `${uDeg.toFixed(1)}°`;
+                document.getElementById('dash-lat').textContent = `${currentLat.toFixed(1)}°`;
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        updateGeometry();
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+    </script>
+</body>
+</html>

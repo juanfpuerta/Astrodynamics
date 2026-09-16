@@ -32,7 +32,7 @@
 \setbeamercolor{block title alerted}{bg=AlertRed, fg=white}
 \setbeamercolor{block body alerted}{bg=white, fg=Charcoal}
 
-% --- Custom Header & Footer Setup with Lower-Right Logo ---
+% Custom Header & Footer Setup with Lower-Right Logo
 \setbeamertemplate{headline}{}
 \setbeamertemplate{footline}{%
     \leavevmode%
@@ -52,7 +52,7 @@
 % Code Listings Configuration
 \lstdefinestyle{gmatstyle}{
     backgroundcolor=\color{LightBg},
-    basicstyle=\ttfamily\fontsize{5.0pt}{5.8pt}\selectfont\color{Charcoal},
+    basicstyle=\ttfamily\fontsize{4.8pt}{5.5pt}\selectfont\color{Charcoal},
     keywordstyle=\bfseries\color{UdeAGreen},
     commentstyle=\itshape\color{gray},
     stringstyle=\color{UdeAGold!90!black},
@@ -66,7 +66,7 @@
 
 \lstdefinestyle{pythoncode}{
     backgroundcolor=\color{white},
-    basicstyle=\ttfamily\fontsize{4.8pt}{5.6pt}\selectfont\color{Charcoal},
+    basicstyle=\ttfamily\fontsize{4.6pt}{5.3pt}\selectfont\color{Charcoal},
     keywordstyle=\bfseries\color{UdeAGreen},
     commentstyle=\itshape\color{gray},
     stringstyle=\color{UdeAGold!90!black},
@@ -115,8 +115,8 @@
     \begin{columns}[t]
         \begin{column}{0.60\textwidth}
             \begin{block}{From Planar Transfers to 3D Navigation}
-                \fontsize{6.5pt}{7.8pt}\selectfont
-                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                \fontsize{6.2pt}{7.4pt}\selectfont
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
                     \item \textbf{Week 5: 3D Patched Conics and Hyperbolic Asymptotes}
                     \begin{itemize}\setlength{\itemsep}{0.5pt}
                         \item Expanding 2D Lambert transfers to 3D inertial space.
@@ -146,9 +146,9 @@
                 \scriptsize
                 Planetary targeting cannot rely on point-coincidence root finders. We map state transition matrices to project miss distances onto invariant planetocentric target planes.
             \end{alertblock}
-            \vspace{0.1cm}
+            \vspace{0.08cm}
             \centering
-            \begin{tikzpicture}[scale=0.52]
+            \begin{tikzpicture}[scale=0.50]
                 \draw[thick, ->, >=stealth, color=UdeAGreen] (0,0) -- (2.6,0) node[right]{\tiny $\hat{\mathbf{T}}$};
                 \draw[thick, ->, >=stealth, color=UdeAGreen] (0,0) -- (0,-1.8) node[below]{\tiny $\hat{\mathbf{R}}$};
                 \draw[thick, ->, >=stealth, color=UdeAGold] (0,0) -- (1.8,-1.2) node[midway, above right]{\tiny $\mathbf{B}$};
@@ -169,20 +169,20 @@
         \begin{column}{0.52\textwidth}
             \begin{block}{Laplace Sphere of Influence ($r_{\text{SOI}}$)}
                 \scriptsize
-                Defines the boundary where the planetocentric 2-body approximation is more accurate than the heliocentric model[cite: 2]:
+                Defines the boundary where the planetocentric 2-body approximation is more accurate than the heliocentric model:
                 \vspace{-0.1cm}
                 \begin{equation*}
                     \frac{a_{\text{perturb, Sun}}}{a_{\text{central, planet}}} = \frac{a_{\text{perturb, planet}}}{a_{\text{central, Sun}}} \implies r_{\text{SOI}} = d \left(\frac{\mu_p}{\mu_\odot}\right)^{2/5}
                 \end{equation*}
                 \vspace{-0.15cm}
-                where $d$ is the planetary orbital distance from the Sun[cite: 2].
+                where $d$ is the planetary orbital distance from the Sun.
             \end{block}
 
             \vspace{-0.1cm}
 
             \begin{block}{Hill Sphere ($r_H$)}
                 \scriptsize
-                Defines the outer limit for stable closed orbits under rotating 3-body tidal forces[cite: 2]:
+                Defines the outer limit for stable closed orbits under rotating 3-body tidal forces:
                 \vspace{-0.1cm}
                 \begin{equation*}
                     r_H = d \left(\frac{\mu_p}{3\mu_\odot}\right)^{1/3}
@@ -204,14 +204,14 @@
                     Jupiter & 5.204 & $4.82 \times 10^7$ & $5.31 \times 10^7$ \\ \bottomrule
                 \end{tabular}
                 \par\vspace{1pt}
-                \tiny $^*$Moon distance relative to Earth center[cite: 2].
+                \tiny $^*$Moon distance relative to Earth center.
             \end{block}
 
             \vspace{-0.1cm}
 
             \begin{alertblock}{Patched Conics Boundary}
                 \scriptsize
-                Patched conics assumes an instantaneous switch between 2-body regimes at $r = r_{\text{SOI}}$[cite: 2].
+                Patched conics assumes an instantaneous switch between 2-body regimes at $r = r_{\text{SOI}}$.
             \end{alertblock}
         \end{column}
     \end{columns}
@@ -250,15 +250,15 @@
                 \begin{equation*}
                     \frac{\mu_p}{r^2} \sim n_p^2 r = \frac{\mu_\odot}{d^3} r \implies r^3 \sim d^3 \left(\frac{\mu_p}{\mu_\odot}\right)
                 \end{equation*}
-                \vspace{-0.15cm}
+                \vspace{-0.05cm}
                 Yielding the canonical Hill radius $r_H \propto d (\mu_p / 3\mu_\odot)^{1/3}$.
             \end{alertblock}
             \vspace{-0.1cm}
             \begin{exampleblock}{Physical Consequence}
                 \scriptsize
                 \begin{itemize}\setlength{\itemsep}{1pt}
-                    \item Fast inner planets (Mercury) endure strong solar tides ($n_p \uparrow$), shrinking their SOI[cite: 2].
-                    \item Slow outer planets (Jupiter) have weak solar tides ($n_p \downarrow$), allowing enormous SOI volumes[cite: 2].
+                    \item Fast inner planets (Mercury) endure strong solar tides ($n_p \uparrow$), shrinking their SOI.
+                    \item Slow outer planets (Jupiter) have weak solar tides ($n_p \downarrow$), allowing enormous SOI volumes.
                 \end{itemize}
             \end{exampleblock}
         \end{column}
@@ -273,23 +273,23 @@
         \begin{column}{0.48\textwidth}
             \begin{block}{Bodies With Natural Moons}
                 \scriptsize
-                For Earth, Mars, or Jupiter, optical tracking of natural satellites yields $\mu_p$ via Kepler's 3rd Law[cite: 2]:
+                For bodies with moons (Earth, Mars, Jupiter), optical tracking of natural satellites yields $\mu_p$ via Kepler's 3rd Law:
                 \vspace{-0.12cm}
                 \begin{equation*}
                     \mu_p \approx \frac{4\pi^2 a_{\text{moon}}^3}{T_{\text{moon}}^2}
                 \end{equation*}
-                \vspace{-0.2cm}
-                Yields high accuracy without in-situ missions[cite: 2].
+                \vspace{-0cm}
+                Yields high accuracy without in-situ missions.
             \end{block}
 
             \vspace{-0.1cm}
 
             \begin{alertblock}{The ``No-Moon'' Dilemma}
                 \scriptsize
-                \textbf{Mercury, Venus, and asteroids lack moons!}[cite: 2]
+                \textbf{Mercury, Venus, and asteroids lack moons!}
                 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\topsep}{1pt}
-                    \item Pre-spaceflight mass estimates relied on weak perturbations ($\pm 1\%\text{--}5\%$ error)[cite: 2].
-                    \item Internal composition remained uncertain[cite: 2].
+                    \item Pre-spaceflight mass estimates relied on weak perturbations ($\pm 1\%\text{--}5\%$ error).
+                    \item Internal composition remained uncertain.
                 \end{itemize}
             \end{alertblock}
         \end{column}
@@ -297,16 +297,16 @@
         \begin{column}{0.48\textwidth}
             \begin{block}{Artificial Satellite Orbit Determination}
                 \scriptsize
-                Placing an artificial probe in a closed orbit[cite: 2]:
+                Placing an artificial probe in a closed orbit:
                 \begin{enumerate}\setlength{\itemsep}{1pt}\setlength{\topsep}{1pt}
-                    \item Radio Doppler tracking accurately measures orbit period $T_{\text{sc}}$ and semi-major axis $a_{\text{sc}}$[cite: 2].
-                    \item Invert Kepler's Third Law[cite: 2]:
+                    \item Radio Doppler tracking accurately measures orbit period $T_{\text{sc}}$ and semi-major axis $a_{\text{sc}}$.
+                    \item Invert Kepler's Third Law:
                     \vspace{-0.12cm}
                     \begin{equation*}
                         \mu_p = \frac{4\pi^2 a_{\text{sc}}^3}{T_{\text{sc}}^2}
                     \end{equation*}
                     \vspace{-0.2cm}
-                    \item Line-of-sight range-rate residuals map higher geopotential harmonics ($J_2, C_{nm}, S_{nm}$)[cite: 2].
+                    \item Line-of-sight range-rate residuals map higher geopotential harmonics ($J_2, C_{nm}, S_{nm}$).
                 \end{enumerate}
             \end{block}
         \end{column}
@@ -319,8 +319,8 @@
 \begin{frame}{Worked Example: Measuring the Mass of Moonless Venus}
     \begin{exampleblock}{Spacecraft Orbit Benchmark (e.g., Magellan / Venus Express)}
         \scriptsize
-        A science probe is placed into a circular orbit around Venus ($R_V = 6051.8\text{ km}$)[cite: 2]. DSN Doppler tracking measures an orbital altitude $h = 500.0\text{ km}$ and period $T = 5621.5\text{ s}$[cite: 2]. \\
-        Given $G = 6.67430 \times 10^{-20}\text{ km}^3/\text{kg}\cdot\text{s}^2$, $d_V = 1.0816 \times 10^8\text{ km}$, $\mu_\odot = 1.32712 \times 10^{11}\text{ km}^3/\text{s}^2$[cite: 2]:
+        A science probe is placed into a circular orbit around Venus ($R_V = 6051.8\text{ km}$). DSN Doppler tracking measures an orbital altitude $h = 500.0\text{ km}$ and period $T = 5621.5\text{ s}$. \\
+        Given $G = 6.67430 \times 10^{-20}\text{ km}^3/\text{kg}\cdot\text{s}^2$, $d_V = 1.0816 \times 10^8\text{ km}$, $\mu_\odot = 1.32712 \times 10^{11}\text{ km}^3/\text{s}^2$:
     \end{exampleblock}
 
     \vspace{-0.15cm}
@@ -330,17 +330,17 @@
             \scriptsize
             \textbf{Step 1: Semi-Major Axis ($a$)}
             \par\vspace{1pt}
-            $a = R_V + h = 6051.8 + 500.0 = \mathbf{6551.8}\text{ km}$[cite: 2]
+            $a = R_V + h = 6051.8 + 500.0 = \mathbf{6551.8}\text{ km}$
 
             \vspace{0.08cm}
             \textbf{Step 2: Gravitational Parameter ($\mu_V$)}
             \par\vspace{1pt}
-            $\mu_V = \frac{4\pi^2 a^3}{T^2} = \frac{4\pi^2 (6551.8)^3}{(5621.5)^2} = \mathbf{324858.6}\text{ km}^3/\text{s}^2$[cite: 2]
+            $\mu_V = \frac{4\pi^2 a^3}{T^2} = \frac{4\pi^2 (6551.8)^3}{(5621.5)^2} = \mathbf{324858.6}\text{ km}^3/\text{s}^2$
 
             \vspace{0.08cm}
             \textbf{Step 3: Planetary Mass ($M_V$)}
             \par\vspace{1pt}
-            $M_V = \frac{\mu_V}{G} = \frac{324858.6}{6.67430 \times 10^{-20}} = \mathbf{4.8673} \times 10^{24}\text{ kg}$[cite: 2]
+            $M_V = \frac{\mu_V}{G} = \frac{324858.6}{6.67430 \times 10^{-20}} = \mathbf{4.8673} \times 10^{24}\text{ kg}$
         \end{column}
 
         \begin{column}{0.48\textwidth}
@@ -348,13 +348,13 @@
             \textbf{Step 4: Laplace Sphere of Influence ($r_{\text{SOI}}$)}
             \begin{align*}
                 r_{\text{SOI}} &= d_V \left(\frac{\mu_V}{\mu_\odot}\right)^{2/5} = (1.0816 \times 10^8)\left(\frac{324858.6}{1.32712 \times 10^{11}}\right)^{2/5} \\
-                &= \mathbf{6.165} \times 10^5\text{ km} \approx \mathbf{101.9}\,R_V \quad \text{[cite: 2]}
+                &= \mathbf{6.165} \times 10^5\text{ km} \approx \mathbf{101.9}\,R_V
             \end{align*}
 
             \vspace{-0.2cm}
             \begin{alertblock}{Precision Outcome}
                 \scriptsize
-                Direct Doppler tracking resolved $\mu_V$ to 7 significant figures, reducing mass uncertainty from $\sim 2\%$ down to $< 0.001\%$[cite: 2].
+                Direct Doppler tracking resolved $\mu_V$ to 7 significant figures, reducing mass uncertainty from $\sim 2\%$ down to $< 0.001\%$.
             \end{alertblock}
         \end{column}
     \end{columns}
@@ -369,14 +369,14 @@
             \begin{block}{Heliocentric $\to$ Planetocentric Patching}
                 \scriptsize
                 \begin{itemize}\setlength{\itemsep}{1pt}
-                    \item Heliocentric 3D Lambert transfer yields $\mathbf{v}_1, \mathbf{v}_2$[cite: 2].
-                    \item \textbf{Hyperbolic Excess Velocity} vector at departure[cite: 2]:
+                    \item Heliocentric 3D Lambert transfer yields $\mathbf{v}_1, \mathbf{v}_2$.
+                    \item \textbf{Hyperbolic Excess Velocity} vector at departure:
                     \vspace{-0.05cm}
                     \begin{equation*}
-                        \mathbf{v}_{\infty,\text{dep}} = \mathbf{v}_{\text{Lambert},1} - \mathbf{v}_{\text{planet},1} \quad \text{[cite: 2]}
+                        \mathbf{v}_{\infty,\text{dep}} = \mathbf{v}_{\text{Lambert},1} - \mathbf{v}_{\text{planet},1}
                     \end{equation*}
                     \vspace{-0.2cm}
-                    \item Departure parameters: $C_3 = v_\infty^2$, $a_h = -\mu_p / v_\infty^2$, $e_h = 1 + r_p v_\infty^2 / \mu_p$[cite: 2].
+                    \item Departure parameters: $C_3 = v_\infty^2$, $a_h = -\mu_p / v_\infty^2$, $e_h = 1 + r_p v_\infty^2 / \mu_p$.
                     \item Injection burn from parking orbit ($r_p$):
                     \vspace{-0.05cm}
                     \begin{equation*}
@@ -410,7 +410,7 @@
 \begin{frame}{The Patched Conic Section Method}
     \centering
     \IfFileExists{Images/IT_1.jpg}{
-        \includegraphics[width=0.88\textwidth,height=0.74\textheight,keepaspectratio]{Images/IT_1.jpg}
+        \includegraphics[width=1.0\textwidth,height=0.74\textheight,keepaspectratio]{Images/IT_1.jpg}
     }{
         \begin{tikzpicture}
             \draw[thick, fill=DarkSlate, rounded corners=6pt] (-5.5,-2.5) rectangle (5.5,2.5);
@@ -429,14 +429,14 @@
         \begin{column}{0.54\textwidth}
             \begin{block}{Approximation of the $N$-Body Problem}
                 \scriptsize
-                The gravitational $N$-body problem is non-integrable. The \textbf{Patched Conic Method} approximates the trajectory as three sequential 2-body Keplerian regimes[cite: 2]:
+                The gravitational $N$-body problem is non-integrable. The \textbf{Patched Conic Method} approximates the trajectory as three sequential 2-body Keplerian regimes:
                 \begin{enumerate}\setlength{\itemsep}{2pt}\setlength{\topsep}{1pt}
                     \item \textbf{Phase 1: Planetocentric Departure ($r < r_{\text{SOI},1}$)} \\
-                    Central body: Earth ($\mu_1$). Hyperbolic escape from circular parking orbit[cite: 2].
+                    Central body: Earth ($\mu_1$). Hyperbolic escape from circular parking orbit.
                     \item \textbf{Phase 2: Heliocentric Transfer ($r_{\text{SOI},1} \le R \le r_{\text{SOI},2}$)} \\
-                    Central body: Sun ($\mu_\odot$). Keplerian transfer ellipse connecting departure and arrival planetary orbits[cite: 2].
+                    Central body: Sun ($\mu_\odot$). Keplerian transfer ellipse connecting departure and arrival planetary orbits.
                     \item \textbf{Phase 3: Planetocentric Arrival ($r < r_{\text{SOI},2}$)} \\
-                    Central body: Target planet ($\mu_2$). Hyperbolic encounter, capture burn, or planetary flyby[cite: 2].
+                    Central body: Target planet ($\mu_2$). Hyperbolic encounter, capture burn, or planetary flyby.
                 \end{enumerate}
             \end{block}
         \end{column}
@@ -444,10 +444,10 @@
         \begin{column}{0.43\textwidth}
             \begin{block}{Patch Boundary Rule}
                 \scriptsize
-                \textbf{Fundamental Assumption:} At the SOI boundary ($r = r_{\text{SOI}}$), gravitational dominance switches instantaneously between the planet and the Sun[cite: 2]:
+                \textbf{Fundamental Assumption:} At the SOI boundary ($r = r_{\text{SOI}}$), gravitational dominance switches instantaneously between the planet and the Sun:
                 \vspace{-0.08cm}
                 \begin{equation*}
-                    \mathbf{V}_{\text{heliocentric}} = \mathbf{V}_{\text{planet}} + \mathbf{v}_{\infty} \quad \text{[cite: 2]}
+                    \mathbf{V}_{\text{heliocentric}} = \mathbf{V}_{\text{planet}} + \mathbf{v}_{\infty}
                 \end{equation*}
             \end{block}
 
@@ -455,10 +455,10 @@
 
             \begin{alertblock}{Energy Conservation Across Frames}
                 \scriptsize
-                Inside the SOI, planetocentric specific energy is conserved[cite: 2]:
+                Inside the SOI, planetocentric specific energy is conserved:
                 \vspace{-0.08cm}
                 \begin{equation*}
-                    C_3 = v_\infty^2 = v_p^2 - \frac{2\mu_p}{r_p} = \text{const} \quad \text{[cite: 2]}
+                    C_3 = v_\infty^2 = v_p^2 - \frac{2\mu_p}{r_p} = \text{const}
                 \end{equation*}
             \end{alertblock}
         \end{column}
@@ -474,14 +474,14 @@
             \begin{block}{Geocentric Escape Mechanics}
                 \scriptsize
                 \begin{enumerate}\setlength{\itemsep}{2pt}\setlength{\topsep}{1pt}
-                    \item Spacecraft waits in circular parking orbit ($r_p = R_1 + h_p$) at orbital speed $v_c = \sqrt{\mu_1 / r_p}$[cite: 2].
-                    \item Trans-Planetary Injection (TMI) burn $\Delta v_{\text{inj}}$ is executed tangentially at periapsis[cite: 2]:
+                    \item Spacecraft waits in circular parking orbit ($r_p = R_1 + h_p$) at orbital speed $v_c = \sqrt{\mu_1 / r_p}$.
+                    \item Trans-Planetary Injection (TMI) burn $\Delta v_{\text{inj}}$ is executed tangentially at periapsis:
                     \vspace{-0.08cm}
                     \begin{equation*}
-                        v_p = \sqrt{v_{\infty,\text{dep}}^2 + \frac{2\mu_1}{r_p}} \implies \Delta v_{\text{inj}} = v_p - v_c \quad \text{[cite: 2]}
+                        v_p = \sqrt{v_{\infty,\text{dep}}^2 + \frac{2\mu_1}{r_p}} \implies \Delta v_{\text{inj}} = v_p - v_c
                     \end{equation*}
                     \vspace{-0.15cm}
-                    \item Spacecraft follows a hyperbolic escape arc, crossing Earth's SOI with excess speed $\mathbf{v}_{\infty,\text{dep}}$[cite: 2].
+                    \item Spacecraft follows a hyperbolic escape arc, crossing Earth's SOI with excess speed $\mathbf{v}_{\infty,\text{dep}}$.
                 \end{enumerate}
             \end{block}
 
@@ -489,7 +489,7 @@
 
             \begin{exampleblock}{Characteristic Launch Energy ($C_3$)}
                 \scriptsize
-                $C_3 = v_{\infty,\text{dep}}^2 = 2\mathcal{E}_h$ measures launch vehicle escape performance ($C_3 > 0$ for interplanetary escape)[cite: 2].
+                $C_3 = v_{\infty,\text{dep}}^2 = 2\mathcal{E}_h$ measures launch vehicle escape performance ($C_3 > 0$ for interplanetary escape).
             \end{exampleblock}
         \end{column}
 
@@ -536,8 +536,8 @@
                 \begin{equation*}
                     \cos\beta = \frac{1}{e_h} = \frac{1}{1 + \frac{r_p v_\infty^2}{\mu_p}}
                 \end{equation*}
-                \vspace{-0.15cm}
-                The spacecraft must coast in its circular parking orbit until it is positioned exactly \textbf{$\beta$ degrees away} from the target asymptote direction before firing!
+                \vspace{-0cm}
+                The spacecraft coasts in its circular parking orbit until it is positioned exactly \textbf{$\beta$ degrees away} from the target asymptote direction before firing!
             \end{block}
         \end{column}
 
@@ -566,7 +566,70 @@
 
             \begin{alertblock}{Operational Rule}
                 \scriptsize
-                Ignition must occur at true anomaly $\theta_p = \theta_\infty - \beta$. An anomaly error of $1^\circ$ causes a multi-thousand kilometer miss at arrival.
+                Ignition must occur at true anomaly $\theta_p = \theta_\infty - \beta$. An anomaly error of $1^\circ$ causes a multi-thousand-kilometer miss at arrival.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 11a: THE OBERTH EFFECT & ENERGY MULTIPLICATION
+% ==============================================================================
+\begin{frame}{The Oberth Effect: Energy Multiplication at High Velocity}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Kinetic Energy Lever Arm}
+                \scriptsize
+                Kinetic energy scales quadratically ($E_k = \frac{1}{2} m v^2$). Applying an impulsive burn $\Delta v$ at speed $v$:
+                \vspace{-0.08cm}
+                \begin{equation*}
+                    \Delta \mathcal{E}_k = \frac{1}{2}(v + \Delta v)^2 - \frac{1}{2}v^2 = v \Delta v + \frac{1}{2}(\Delta v)^2 \approx v \Delta v
+                \end{equation*}
+                \vspace{-0.05cm}
+                Current speed $v$ acts as a \textbf{linear multiplier} on energy gain for the exact same propellant mass.
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{block}{The Deep-Well Departure Advantage}
+                \scriptsize
+                Compare burning $\Delta v$ at periapsis ($v_p$) vs.\ in deep cruise ($v_\infty$):
+                \begin{itemize}\setlength{\itemsep}{1pt}
+                    \item \textbf{Deep Space Burn:} $\Delta C_3 = 2 v_\infty \Delta v + (\Delta v)^2$
+                    \item \textbf{Periapsis Burn ($r_p$):} $\Delta C_3 = 2 v_p \Delta v + (\Delta v)^2$
+                \end{itemize}
+                Because $v_p = \sqrt{v_\infty^2 + 2\mu/r_p} \gg v_\infty$, burning deep in Earth's gravity well dramatically magnifies excess energy $C_3$.
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \begin{block}{Exhaust Energy Transfer Mechanism}
+                \centering
+                \vspace{0.05cm}
+                \begin{tikzpicture}[scale=0.68]
+                    % Potential Well Curve
+                    \draw[thick, color=gray!60] (-2.2, 1.8) to[out=-70, in=180] (0, -1.5) to[out=0, in=-110] (2.2, 1.8);
+                    \node[above, font=\tiny, color=gray] at (0, 1.8) {Gravitational Potential Well};
+
+                    % Deep Burn at Periapsis (Bottom)
+                    \filldraw[color=AlertRed] (0, -1.5) circle (2.2pt);
+                    \draw[thick, ->, >=stealth, color=AlertRed, line width=1pt] (0, -1.5) -- (1.6, -1.5) node[right, font=\tiny]{$\mathbf{v}_p \gg 0$};
+                    \node[below=2pt, font=\tiny\bfseries, color=UdeAGreen] at (0, -1.5) {Periapsis Burn};
+                    \node[below=9pt, font=\tiny, color=Charcoal] at (0, -1.5) {$\Delta E_k \approx v_p \Delta v$ (Maximized)};
+
+                    % Shallow Burn in Cruise (Top)
+                    \filldraw[color=SpiceBlue] (1.8, 1.2) circle (2.2pt);
+                    \draw[thick, ->, >=stealth, color=SpiceBlue, line width=0.8pt] (1.8, 1.2) -- (2.4, 1.2) node[right, font=\tiny]{$\mathbf{v}_\infty$};
+                    \node[above=2pt, font=\tiny, color=SpiceBlue] at (1.8, 1.2) {Deep Space Burn};
+                    \node[below=1pt, font=\tiny, color=gray] at (1.8, 1.2) {$\Delta E_k \approx v_\infty \Delta v$};
+                \end{tikzpicture}
+            \end{block}
+
+            \vspace{-0.1cm}
+
+            \begin{alertblock}{Propellant Energy Accounting}
+                \scriptsize
+                Chemical energy is fixed. When burned at high velocity, the exhaust is left behind with near-zero inertial kinetic energy, transferring nearly all fuel energy into the spacecraft.
             \end{alertblock}
         \end{column}
     \end{columns}
@@ -580,7 +643,7 @@
         \begin{column}{0.50\textwidth}
             \begin{block}{Definition of Characteristic Energy ($C_3$)}
                 \scriptsize
-                When mission planners design interplanetary trajectories, they specify the \textbf{Characteristic Energy ($C_3$)}:
+                In interplanetary mission design, launch energy is quantified by the \textbf{Characteristic Energy ($C_3$)}:
                 \vspace{-0.08cm}
                 \begin{equation*}
                     C_3 = v_\infty^2 = 2 \mathcal{E}_h \quad [\text{km}^2/\text{s}^2]
@@ -589,10 +652,10 @@
 
             \begin{block}{Physical Meaning}
                 \scriptsize
-                $C_3$ measures the excess specific energy available to escape Earth's gravity and cruise to the destination:
-                \begin{itemize}\setlength{\itemsep}{1.5pt}
-                    \item $\mathbf{C_3 = 0}$: Spacecraft barely reaches parabolic escape ($v_\infty = 0$), entering an orbit identical to Earth's.
-                    \item $\mathbf{C_3 > 0}$: Spacecraft escapes with residual speed $v_\infty$ to climb outward to Mars or dive inward to Venus.
+                $C_3$ measures specific energy to escape Earth and reach target:
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
+                    \item $\mathbf{C_3 = 0}$: Parabolic escape ($v_\infty = 0$), matching Earth's solar orbit.
+                    \item $\mathbf{C_3 > 0}$: Hyperbolic excess $v_\infty$ to reach outer/inner planets.
                 \end{itemize}
             \end{block}
         \end{column}
@@ -602,15 +665,9 @@
                 \scriptsize
                 \begin{enumerate}\setlength{\itemsep}{2pt}
                     \item \textbf{Isolates the Interplanetary Problem:} \\
-                    $\Delta V$ depends heavily on the chosen parking orbit altitude $r_p$. $C_3$ is an absolute energy state independent of parking orbit altitude!
-                    \item \textbf{Dictates Launch Vehicle Selection:} \\
-                    Launch providers (NASA, SpaceX, ULA) publish standardized payload performance curves:
-                    \vspace{-0.05cm}
-                    \begin{equation*}
-                        \text{Payload Mass} = f(C_3)
-                    \end{equation*}
-                    \vspace{-0.2cm}
-                    A required $C_3 = 15\text{ km}^2/\text{s}^2$ dictates immediately how many kilograms a Falcon Heavy or SLS can inject.
+                    $\Delta V$ depends on parking altitude $r_p$. In contrast, $C_3$ is an absolute energy metric independent of parking orbit geometry!
+                    \item \textbf{Direct Launch Vehicle Sizing:} \\
+                    Launch providers publish payload curves: $\text{Mass} = f(C_3)$. A mission requirement of $C_3 = 15\text{ km}^2/\text{s}^2$ directly determines payload capacity for Falcon Heavy, Vulcan, or SLS.
                 \end{enumerate}
             \end{block}
         \end{column}
@@ -676,7 +733,7 @@
             \begin{block}{Why Coplanar Hohmann Fails in Practice}
                 \scriptsize
                 Standard textbook Hohmann transfers assume planets move in perfect, coplanar circles. In reality:
-                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
                     \item Planetary orbits are \textbf{eccentric} ($e_{\text{Mars}} = 0.0934$, $e_{\text{Mercury}} = 0.2056$).
                     \item Planetary orbits are \textbf{mutually inclined} ($i_{\text{Mars}} = 1.85^\circ$, $i_{\text{Mercury}} = 7.00^\circ$).
                     \item A pure $180^\circ$ Hohmann transfer almost never exists!
@@ -686,15 +743,15 @@
         \end{column}
 
         \begin{column}{0.47\textwidth}
-            \begin{alertblock}{The Computational Solution: Lambert Sweeps}
+            \begin{alertblock}{The Numerical Solution: Lambert Sweeps}
                 \scriptsize
-                Instead of guessing transfer conics, astrodynamicists use numerical solvers to solve \textbf{Lambert's Problem} across thousands of calendar combinations:
+                Instead of idealized conics, computers solve \textbf{Lambert's Problem} across thousands of calendar date pairs:
                 \vspace{-0.08cm}
                 \begin{equation*}
                     (\mathbf{r}_1(t_{\text{dep}}), \, \mathbf{r}_2(t_{\text{arr}}), \, \Delta t) \xrightarrow{\text{Lambert}} (\mathbf{V}_1, \, \mathbf{V}_2)
                 \end{equation*}
-                \vspace{-0.15cm}
-                Plotting the resulting $C_3$ values on a 2D date grid reveals the mission landscape: \textbf{The Porkchop Plot}!
+                \vspace{-0.0cm}
+                Mapping the resulting $C_3$ values over a 2D departure/arrival grid reveals the trajectory landscape: \textbf{The Porkchop Plot}!
             \end{alertblock}
         \end{column}
     \end{columns}
@@ -708,7 +765,7 @@
         \begin{column}{0.48\textwidth}
             \begin{block}{Anatomy of a Porkchop Plot}
                 \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
                     \item \textbf{X-Axis:} Departure Date ($t_{\text{dep}}$ from Earth).
                     \item \textbf{Y-Axis:} Arrival Date ($t_{\text{arr}}$ at target planet).
                     \item \textbf{Contour Lines:} Constant Characteristic Energy ($C_3$).
@@ -721,25 +778,29 @@
         \begin{column}{0.49\textwidth}
             \begin{block}{Porkchop Contour Schematic}
                 \centering
-                \begin{tikzpicture}[scale=0.64]
-                    \draw[fill=DarkSlate, rounded corners=6pt] (-2.8,-2.0) rectangle (2.8, 2.0);
+                \begin{tikzpicture}[scale=0.58]
+                    \draw[fill=DarkSlate, rounded corners=5pt] (-2.6,-1.7) rectangle (2.6, 1.8);
                     
-                    \draw[->, >=stealth, color=white, line width=0.9pt] (-2.4,-1.6) -- (2.5,-1.6) node[right, font=\tiny]{$t_{\text{dep}}$};
-                    \draw[->, >=stealth, color=white, line width=0.9pt] (-2.4,-1.6) -- (-2.4,1.8) node[above, font=\tiny]{$t_{\text{arr}}$};
+                    % Axes
+                    \draw[->, >=stealth, color=white, line width=0.8pt] (-2.2,-1.4) -- (2.3,-1.4) node[right, font=\tiny]{$t_{\text{dep}}$};
+                    \draw[->, >=stealth, color=white, line width=0.8pt] (-2.2,-1.4) -- (-2.2,1.6) node[above, font=\tiny]{$t_{\text{arr}}$};
                     
-                    \draw[color=UdeAGold!80, line width=0.7pt] (-1.3,-0.2) ellipse (0.7cm and 1.1cm);
-                    \draw[color=UdeAGreen!80, line width=0.9pt] (-1.3,-0.2) ellipse (0.45cm and 0.7cm);
-                    \draw[color=cyan!80, line width=1pt] (-1.3,-0.2) ellipse (0.22cm and 0.35cm);
-                    \node[color=cyan, font=\tiny] at (-1.3,-0.2) {$\bigstar$};
-                    \node[color=white, font=\tiny] at (-1.3, 1.2) {Type I};
+                    % Type I Valley
+                    \draw[color=UdeAGold!80, line width=0.6pt] (-1.2,-0.1) ellipse (0.65cm and 0.95cm);
+                    \draw[color=UdeAGreen!80, line width=0.8pt] (-1.2,-0.1) ellipse (0.40cm and 0.60cm);
+                    \draw[color=cyan!80, line width=0.9pt] (-1.2,-0.1) ellipse (0.20cm and 0.30cm);
+                    \node[color=cyan, font=\tiny] at (-1.2,-0.1) {$\bigstar$};
+                    \node[color=white, font=\tiny] at (-1.2, 1.1) {Type I};
                     
-                    \draw[color=UdeAGold!80, line width=0.7pt] (0.9, 0.4) ellipse (0.8cm and 1.0cm);
-                    \draw[color=UdeAGreen!80, line width=0.9pt] (0.9, 0.4) ellipse (0.5cm and 0.65cm);
-                    \draw[color=cyan!80, line width=1pt] (0.9, 0.4) ellipse (0.25cm and 0.35cm);
+                    % Type II Valley
+                    \draw[color=UdeAGold!80, line width=0.6pt] (0.9, 0.4) ellipse (0.75cm and 0.90cm);
+                    \draw[color=UdeAGreen!80, line width=0.8pt] (0.9, 0.4) ellipse (0.45cm and 0.55cm);
+                    \draw[color=cyan!80, line width=0.9pt] (0.9, 0.4) ellipse (0.22cm and 0.28cm);
                     \node[color=cyan, font=\tiny] at (0.9, 0.4) {$\bigstar$};
-                    \node[color=white, font=\tiny] at (0.9, 1.6) {Type II};
+                    \node[color=white, font=\tiny] at (0.9, 1.45) {Type II};
                     
-                    \draw[dashed, color=AlertRed!80, line width=0.8pt] (-2.2, 0.2) -- (1.5, -1.5) node[midway, above right, sloped, font=\tiny]{$TOF = 200\text{ d}$};
+                    % TOF Diagonal Line
+                    \draw[dashed, color=AlertRed!90, line width=0.8pt] (-2.0, 0.3) -- (1.6, -1.2) node[midway, above, sloped, font=\tiny]{$TOF = 200\text{ d}$};
                 \end{tikzpicture}
             \end{block}
         \end{column}
@@ -753,16 +814,16 @@
     \begin{columns}[t]
         \begin{column}{0.50\textwidth}
             \begin{block}{Steps 1 to 3: The Lambert Sweep Loop}
-                \scriptsize
+                \fontsize{6.0pt}{7.0pt}\selectfont
                 \begin{enumerate}\setlength{\itemsep}{1pt}\setlength{\topsep}{1pt}
-                    \item \textbf{Define Constraints:} Select bodies, calendar windows ($t_{\text{dep}}, t_{\text{arr}}$), and launcher $C_3$ limits.
-                    \item \textbf{Initialize 2D Grid:} Set calendar step size ($\Delta t = 2\text{ days}$) across both axes.
-                    \item \textbf{Execute Lambert Sweep (Each point):}
+                    \item \textbf{Define Constraints:} Select bodies, calendar spans ($t_{\text{dep}}, t_{\text{arr}}$), and launcher $C_3$ limits.
+                    \item \textbf{Initialize 2D Grid:} Set calendar step size ($\Delta t = 2\text{ days}$) across departure and arrival axes.
+                    \item \textbf{Execute Lambert Sweep (For each point):}
                     \begin{itemize}\setlength{\itemsep}{0.5pt}
-                        \item Query ephemerides $\mathbf{r}_1(t_{\text{dep}}), \mathbf{r}_2(t_{\text{arr}})$ from SPICE.
+                        \item Query ephemerides $\mathbf{r}_1(t_{\text{dep}}), \mathbf{r}_2(t_{\text{arr}})$ from SPICE kernels.
                         \item Solve Lambert BVP for $TOF = t_{\text{arr}} - t_{\text{dep}}$ to obtain $\mathbf{V}_1, \mathbf{V}_2$.
-                        \item Excess vector: $\mathbf{v}_\infty = \mathbf{V}_1 - \mathbf{V}_{\text{planet},1}$.
-                        \item Store parameter: $C_3 = \|\mathbf{v}_\infty\|^2$.
+                        \item Departure excess: $\mathbf{v}_\infty = \mathbf{V}_1 - \mathbf{V}_{\text{planet},1}$.
+                        \item Store grid energy: $C_3 = \|\mathbf{v}_\infty\|^2$.
                     \end{itemize}
                 \end{enumerate}
             \end{block}
@@ -770,12 +831,12 @@
 
         \begin{column}{0.47\textwidth}
             \begin{block}{Steps 4 and 5: Window Selection}
-                \scriptsize
-                \begin{enumerate}\setcounter{enumi}{3}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{1pt}
+                \fontsize{6.0pt}{7.0pt}\selectfont
+                \begin{enumerate}\setcounter{enumi}{3}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{1pt}
                     \item \textbf{Generate Contour Map:} Plot 2D isopower contours of $C_3$, filtering unfeasible domains ($C_3 > C_{3,\max}$).
                     \item \textbf{Identify Opportunity Valleys:}
-                    \begin{itemize}\setlength{\itemsep}{1pt}
-                        \item Locate local minima (valleys) in the contours.
+                    \begin{itemize}\setlength{\itemsep}{0.8pt}
+                        \item Locate local energy minima (valleys) in the contours.
                         \item Trade $C_3$ against flight time and arrival speed $v_{\infty,\text{arr}}$.
                         \item Select between \textbf{Type I} ($\Delta\nu < 180^\circ$) and \textbf{Type II} ($\Delta\nu > 180^\circ$) transfer geometries.
                     \end{itemize}
@@ -792,17 +853,17 @@
     \begin{columns}[t]
         \begin{column}{0.48\textwidth}
             \begin{block}{Type I Trajectories ($\Delta\nu < 180^\circ$)}
-                \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                \fontsize{6.0pt}{7.0pt}\selectfont
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
                     \item True anomaly change is less than half an orbit ($\Delta\nu < 180^\circ$).
-                    \item \textbf{Shorter Time of Flight:} Spacecraft reaches target before aphelion (typically $\sim 200\text{ days}$ for Mars).
+                    \item \textbf{Shorter Time of Flight:} Spacecraft reaches target before aphelion ($\sim 200\text{ days}$ for Mars).
                     \item Often incurs slightly higher $C_3$ or higher arrival velocity $v_{\infty,\text{arr}}$.
                 \end{itemize}
             \end{block}
-
+            \vspace{-0.1cm}
             \begin{block}{Type II Trajectories ($\Delta\nu > 180^\circ$)}
-                \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                \fontsize{6.0pt}{7.0pt}\selectfont
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
                     \item True anomaly change exceeds half an orbit ($\Delta\nu > 180^\circ$).
                     \item \textbf{Longer Time of Flight:} Spacecraft passes aphelion before intercepting the planet ($\sim 250\text{--}300\text{ days}$).
                     \item Often yields lower $C_3$ launch energy, maximizing payload capacity!
@@ -832,22 +893,22 @@
         \begin{column}{0.54\textwidth}
             \begin{block}{Keplerian Boundary Value Formulation}
                 \scriptsize
-                Determine the transfer orbit connecting planetary positions $\mathbf{r}_1$ and $\mathbf{r}_2$ in gravitational parameter $\mu$ over time of flight $\Delta t = t_2 - t_1$[cite: 1]:
+                Determine the transfer orbit connecting planetary positions $\mathbf{r}_1$ and $\mathbf{r}_2$ in gravitational parameter $\mu$ over time of flight $\Delta t = t_2 - t_1$:
                 \vspace{-0.08cm}
                 \begin{equation}
                     \Delta t = f(a, \|\mathbf{r}_1\| + \|\mathbf{r}_2\|, c)
                 \end{equation}
-                \vspace{-0.15cm}
-                where $c = \|\mathbf{r}_2 - \mathbf{r}_1\|$ is the geometric chord[cite: 1].
+                \vspace{-0.05cm}
+                where $c = \|\mathbf{r}_2 - \mathbf{r}_1\|$ is the geometric chord.
             \end{block}
             \vspace{-0.1cm}
             \begin{block}{Izzo's Algorithm in \texttt{poliastro.iod.izzo}}
                 \scriptsize
                 \begin{itemize}\setlength{\itemsep}{1pt}
-                    \item Parameterizes transfer geometry using transformed chord variables $(x, y)$[cite: 1].
-                    \item Solves for semi-major axis $a$ using rapid Householder iterations[cite: 1].
-                    \item Computes departure velocity $\mathbf{v}_1$ and arrival velocity $\mathbf{v}_2$[cite: 1].
-                    \item Multi-revolution indexing: selects the 0-revolution direct solution (\texttt{sol[0]})[cite: 1].
+                    \item Parameterizes transfer geometry using transformed chord variables $(x, y)$.
+                    \item Solves for semi-major axis $a$ using rapid Householder iterations.
+                    \item Computes departure velocity $\mathbf{v}_1$ and arrival velocity $\mathbf{v}_2$.
+                    \item Multi-revolution indexing: selects the 0-revolution direct solution (\texttt{sol[0]}).
                 \end{itemize}
             \end{block}
         \end{column}
@@ -855,7 +916,7 @@
         \begin{column}{0.44\textwidth}
             \begin{block}{Lambert Transfer Geometry}
                 \centering
-                \begin{tikzpicture}[scale=0.70]
+                \begin{tikzpicture}[scale=0.68]
                     \filldraw[color=yellow!90!orange] (0,0) circle (4pt) node[below left, font=\tiny, color=DarkSlate]{\textbf{Sun} ($\mu_\odot$)};
                     
                     \coordinate (R1) at (2.0, 0.3);
@@ -887,17 +948,17 @@
         \begin{column}{0.54\textwidth}
             \begin{block}{NASA SPICE Kernels Ingestion}
                 \scriptsize
-                High-fidelity interplanetary trajectory design requires high-precision ephemerides rather than mean Keplerian elements[cite: 1]:
+                High-fidelity interplanetary trajectory design requires high-precision ephemerides rather than mean Keplerian elements:
                 \begin{itemize}\setlength{\itemsep}{1.5pt}
-                    \item \textbf{SPK (\texttt{de442.bsp}):} JPL ephemeris providing 3D states[cite: 1].
-                    \item \textbf{LSK (\texttt{naif0012.tls}):} Leapseconds; UTC $\to$ Ephemeris Time[cite: 1].
-                    \item \textbf{PCK (\texttt{gm\_de440.tpc}):} Planetary gravitational constants ($\mu$)[cite: 1].
+                    \item \textbf{SPK (\texttt{de442.bsp}):} JPL ephemeris providing 3D states.
+                    \item \textbf{LSK (\texttt{naif0012.tls}):} Leapseconds; UTC $\to$ Ephemeris Time.
+                    \item \textbf{PCK (\texttt{gm\_de440.tpc}):} Planetary gravitational constants ($\mu$).
                 \end{itemize}
             \end{block}
             \vspace{-0.1cm}
             \begin{exampleblock}{Automated Kernel Ingestion}
                 \scriptsize
-                Kernels are downloaded via \texttt{urllib} and registered into memory via \texttt{spy.furnsh()}[cite: 1].
+                Kernels are downloaded via \texttt{urllib} and registered into memory via \texttt{spy.furnsh()}.
             \end{exampleblock}
         \end{column}
 
@@ -931,23 +992,24 @@ dep_end   = spy.utc2et("1978-05-01T00:00:00")
             \begin{block}{The Multi-Planet Dimension Dilemma}
                 \scriptsize
                 An Earth $\to$ Jupiter $\to$ Saturn trajectory spans 3 independent dates:
-                \vspace{-0.08cm}
+                \vspace{-0.05cm}
                 \begin{equation*}
-                    \mathbf{T} = [t_{\text{Earth}}, \; t_{\text{Jupiter}}, \; t_{\text{Saturn}}]^T \in \mathbb{R}^3 \quad \text{[cite: 1]}
+                    \mathbf{T} = [t_{\text{Earth}}, \; t_{\text{Jupiter}}, \; t_{\text{Saturn}}]^T \in \mathbb{R}^3
                 \end{equation*}
-                \vspace{-0.15cm}
-                A brute-force 3D grid ($100^3$ points) requires \textbf{$10^6$ double-Lambert evaluations}[cite: 1].
+                \vspace{-0cm}
+                A brute-force 3D grid ($100^3$ points) requires $10^6$ double-Lambert evaluations, which is computationally expensive.
             \end{block}
-            \begin{alertblock}{The Code Strategy: Freezing Jupiter--Saturn TOF}
+            \vspace{-0.08cm}
+            \begin{alertblock}{Strategy: Freezing Jupiter--Saturn TOF}
                 \scriptsize
                 \begin{itemize}\setlength{\itemsep}{1pt}
-                    \item Slices the 3D tensor into a 2D Opportunity Map[cite: 1]:
+                    \item Slices the 3D tensor into a 2D Opportunity Map:
                     \vspace{-0.05cm}
                     \begin{equation*}
-                        t_{\text{Saturn}} = t_{\text{Jupiter}} + \Delta t_{\text{fixed}} \quad (\Delta t_{\text{fixed}} = 2.0\text{ years}) \quad \text{[cite: 1]}
+                        t_{\text{Saturn}} = t_{\text{Jupiter}} + \Delta t_{\text{fixed}} \quad (\Delta t_{\text{fixed}} = 2.0\text{ years})
                     \end{equation*}
                     \vspace{-0.15cm}
-                    \item Non-physical bounds ($t_{\text{Jupiter}} \le t_{\text{Earth}}$) are skipped with \texttt{continue}, leaving matrix entries as \texttt{np.nan}[cite: 1].
+                    \item Non-physical combinations ($t_{\text{Jupiter}} \le t_{\text{Earth}}$) are skipped with \texttt{continue}, populated as \texttt{np.nan}.
                 \end{itemize}
             \end{alertblock}
         \end{column}
@@ -982,17 +1044,17 @@ dv_penalty_grid = np.full((100, 100), np.nan)
         \begin{column}{0.50\textwidth}
             \begin{block}{Flyby Conservation vs. $\Delta v_{\text{penalty}}$}
                 \scriptsize
-                Inside the planetary SOI, mechanical energy is conserved without propulsion: $\|\mathbf{v}_{\infty,\text{in}}\| = \|\mathbf{v}_{\infty,\text{out}}\|$[cite: 1].
+                Inside the planetary SOI, mechanical energy is conserved without propulsion: $\|\mathbf{v}_{\infty,\text{in}}\| = \|\mathbf{v}_{\infty,\text{out}}\|$.
                 \begin{itemize}\setlength{\itemsep}{1pt}
-                    \item \textbf{Leg 1 (Earth $\to$ Jupiter):} Lambert yields $\mathbf{v}_{1,J}$[cite: 1]. Subtracting Jupiter's heliocentric velocity $\mathbf{V}_J$ gives $\mathbf{v}_{\infty,\text{in}} = \mathbf{v}_{1,J} - \mathbf{V}_J$[cite: 1].
-                    \item \textbf{Leg 2 (Jupiter $\to$ Saturn):} Lambert yields $\mathbf{v}_{2,J}$[cite: 1]. Outbound excess: $\mathbf{v}_{\infty,\text{out}} = \mathbf{v}_{2,J} - \mathbf{V}_J$[cite: 1].
+                    \item \textbf{Leg 1 (Earth $\to$ Jupiter):} Lambert yields $\mathbf{v}_{1,J}$. Outbound excess: $\mathbf{v}_{\infty,\text{in}} = \mathbf{v}_{1,J} - \mathbf{V}_J$.
+                    \item \textbf{Leg 2 (Jupiter $\to$ Saturn):} Lambert yields $\mathbf{v}_{2,J}$. Outbound excess: $\mathbf{v}_{\infty,\text{out}} = \mathbf{v}_{2,J} - \mathbf{V}_J$.
                     \item \textbf{Matching Penalty Function:}
                     \vspace{-0.05cm}
                     \begin{equation*}
-                        \Delta v_{\text{penalty}} = \big| \|\mathbf{v}_{\infty,\text{out}}\| - \|\mathbf{v}_{\infty,\text{in}}\| \big| \quad \text{[cite: 1]}
+                        \Delta v_{\text{penalty}} = \big| \|\mathbf{v}_{\infty,\text{out}}\| - \|\mathbf{v}_{\infty,\text{in}}\| \big|
                     \end{equation*}
-                    \vspace{-0.15cm}
-                    A ballistic flyby occurs when $\Delta v_{\text{penalty}} \to 0$![cite: 1]
+                    \vspace{-0.05cm}
+                    A ballistic flyby occurs when $\Delta v_{\text{penalty}} \to 0$!
                 \end{itemize}
             \end{block}
         \end{column}
@@ -1017,7 +1079,8 @@ v2_J, v2_S = sol_2[0]
 v_inf_out = v2_J.to_value(u.km/u.s) - vel_J
 
 # --- POWERED FLYBY PENALTY ---
-dv_penalty_grid[i, j] = abs(np.linalg.norm(v_inf_out) - np.linalg.norm(v_inf_in))
+dv = np.linalg.norm(v_inf_out) - np.linalg.norm(v_inf_in)
+dv_penalty_grid[i, j] = abs(dv)
 \end{lstlisting}
         \end{column}
     \end{columns}
@@ -1032,16 +1095,16 @@ dv_penalty_grid[i, j] = abs(np.linalg.norm(v_inf_out) - np.linalg.norm(v_inf_in)
             \begin{block}{Unraveling 2D Matrix Minimum}
                 \scriptsize
                 \begin{itemize}\setlength{\itemsep}{1.5pt}
-                    \item \texttt{np.nanargmin()} returns the flat 1D index of the global minimum penalty[cite: 1].
-                    \item \texttt{np.unravel\_index()} restores the 2D matrix indices $(i_{\text{opt}}, j_{\text{opt}})$ corresponding to optimal epochs[cite: 1].
-                    \item \texttt{spy.et2utc()} converts Ephemeris Times to human-readable UTC strings[cite: 1].
-                    \item \texttt{plt.contourf()} renders filled penalty isochrones, overlaying a star marker at the global optimum[cite: 1].
+                    \item \texttt{np.nanargmin()} returns flat index of minimum penalty.
+                    \item \texttt{np.unravel\_index()} restores $(i_{\text{opt}}, j_{\text{opt}})$ date indices.
+                    \item \texttt{spy.et2utc()} converts ET seconds to human-readable UTC.
+                    \item \texttt{plt.contourf()} renders filled penalty isochrones.
                 \end{itemize}
             \end{block}
             \vspace{-0.1cm}
             \begin{exampleblock}{The 1977 Voyager Outcome}
                 \scriptsize
-                The algorithm automatically pinpoints the historic Voyager 2 launch corridor on \textbf{August 22, 1977} ($\Delta v_{\text{penalty}} \approx 0.08\text{ km/s}$)![cite: 1]
+                The algorithm automatically pinpoints the historic Voyager 2 launch corridor on \textbf{August 22, 1977} ($\Delta v_{\text{penalty}} \approx 0.08\text{ km/s}$)!
             \end{exampleblock}
         \end{column}
 
@@ -1056,12 +1119,18 @@ best_earth_utc = spy.et2utc(earth_dates[min_j], 'C', 0)
 best_jup_utc   = spy.et2utc(jup_dates[min_i], 'C', 0)
 
 # 2. Render Contour Opportunity Map
-earth_dt = [datetime.datetime.strptime(spy.et2utc(t, 'ISOC', 0), "%Y-%m-%dT%H:%M:%S") for t in earth_dates]
-jup_dt   = [datetime.datetime.strptime(spy.et2utc(t, 'ISOC', 0), "%Y-%m-%dT%H:%M:%S") for t in jup_dates]
+earth_dt = [datetime.datetime.strptime(
+    spy.et2utc(t, 'ISOC', 0), "%Y-%m-%dT%H:%M:%S") 
+    for t in earth_dates]
+jup_dt   = [datetime.datetime.strptime(
+    spy.et2utc(t, 'ISOC', 0), "%Y-%m-%dT%H:%M:%S") 
+    for t in jup_dates]
 
 X, Y = np.meshgrid(earth_dt, jup_dt)
-plt.contourf(X, Y, dv_penalty_grid, levels=np.linspace(0, 10, 20), cmap='viridis')
-plt.plot(earth_dt[min_j], jup_dt[min_i], marker='*', color='red', markersize=14)
+plt.contourf(X, Y, dv_penalty_grid, 
+    levels=np.linspace(0, 10, 20), cmap='viridis')
+plt.plot(earth_dt[min_j], jup_dt[min_i], 
+    marker='*', color='red', markersize=14)
 \end{lstlisting}
         \end{column}
     \end{columns}
@@ -1075,21 +1144,21 @@ plt.plot(earth_dt[min_j], jup_dt[min_i], marker='*', color='red', markersize=14)
         \begin{column}{0.50\textwidth}
             \begin{block}{Heliocentric Cruise Mechanics}
                 \scriptsize
-                At Earth SOI exit, the spacecraft enters heliocentric space[cite: 2]. The initial transfer velocity $\mathbf{V}_{\text{tx},1}$ is the vector sum[cite: 2]:
+                At Earth SOI exit, the spacecraft enters heliocentric space. The initial transfer velocity $\mathbf{V}_{\text{tx},1}$ is the vector sum:
                 \vspace{-0.08cm}
                 \begin{equation*}
-                    \mathbf{V}_{\text{tx},1} = \mathbf{V}_{\text{planet},1} + \mathbf{v}_{\infty,\text{dep}} \quad \text{[cite: 2]}
+                    \mathbf{V}_{\text{tx},1} = \mathbf{V}_{\text{planet},1} + \mathbf{v}_{\infty,\text{dep}}
                 \end{equation*}
                 \vspace{-0.15cm}
                 \begin{itemize}\setlength{\itemsep}{1.5pt}
-                    \item \textbf{Prograde $\mathbf{v}_\infty$:} Raises aphelion ($R_a > R_1$) toward outer planets (Mars, Jupiter)[cite: 2].
+                    \item \textbf{Prograde $\mathbf{v}_\infty$:} Raises aphelion ($R_a > R_1$) toward outer planets (Mars, Jupiter).
                     \item \textbf{Retrograde $\mathbf{v}_\infty$:} Lowers perihelion ($R_p < R_1$) toward inner planets (Venus, Mercury).
                 \end{itemize}
                 \par\vspace{2pt}
-                \textbf{Arrival Patch Condition at Target ($R_2$):}[cite: 2]
+                \textbf{Arrival Patch Condition at Target ($R_2$):}
                 \vspace{-0.08cm}
                 \begin{equation*}
-                    \mathbf{v}_{\infty,\text{arr}} = \mathbf{V}_{\text{tx},2} - \mathbf{V}_{\text{planet},2} \quad \text{[cite: 2]}
+                    \mathbf{v}_{\infty,\text{arr}} = \mathbf{V}_{\text{tx},2} - \mathbf{V}_{\text{planet},2}
                 \end{equation*}
             \end{block}
         \end{column}
@@ -1102,10 +1171,10 @@ plt.plot(earth_dt[min_j], jup_dt[min_i], marker='*', color='red', markersize=14)
                     \node[below=0.35cm, font=\tiny] at (0,0) {Sun ($\mu_\odot$)};
                     
                     \draw[thick, color=blue!60] (0,0) circle (1.3cm);
-                    \node[color=blue!80, font=\tiny] at (-1.5, 0.9) {Orbit 1 (Earth)};
+                    \node[color=blue!80, font=\tiny] at (-1.55, 0.5) {Orbit 1};
                     
                     \draw[thick, color=orange!80] (0,0) circle (2.3cm);
-                    \node[color=orange!90, font=\tiny] at (1.65, 2.05) {Orbit 2 (Target)};
+                    \node[color=orange!90, font=\tiny] at (1.65, 1.8) {Orbit 2};
                     
                     \draw[thick, color=UdeAGreen, line width=1.1pt] (-1.3,0) arc (180:0:1.8cm and 1.55cm);
                     \node[color=UdeAGreen, font=\tiny] at (0.0, 1.75) {Transfer Arc};
@@ -1132,17 +1201,17 @@ plt.plot(earth_dt[min_j], jup_dt[min_i], marker='*', color='red', markersize=14)
             \begin{block}{Arrival Hyperbola and Orbit Insertion}
                 \scriptsize
                 \begin{enumerate}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{1pt}
-                    \item Spacecraft enters target SOI along hyperbolic arrival asymptote with excess speed $\mathbf{v}_{\infty,\text{arr}}$[cite: 2].
-                    \item Periapsis speed at closest approach $r_{p,2}$[cite: 2]:
+                    \item Spacecraft enters target SOI along hyperbolic arrival asymptote with excess speed $\mathbf{v}_{\infty,\text{arr}}$.
+                    \item Periapsis speed at closest approach $r_{p,2}$:
                     \vspace{-0.08cm}
                     \begin{equation*}
-                        v_{p,\text{hyp}} = \sqrt{v_{\infty,\text{arr}}^2 + \frac{2\mu_2}{r_{p,2}}} \quad \text{[cite: 2]}
+                        v_{p,\text{hyp}} = \sqrt{v_{\infty,\text{arr}}^2 + \frac{2\mu_2}{r_{p,2}}}
                     \end{equation*}
                     \vspace{-0.15cm}
-                    \item \textbf{Orbit Insertion Burn ($\Delta v_{\text{cap}}$):} Retrograde burn at periapsis captures probe into circular orbit ($v_c = \sqrt{\mu_2/r_{p,2}}$)[cite: 2]:
+                    \item \textbf{Orbit Insertion Burn ($\Delta v_{\text{cap}}$):} Retrograde burn at periapsis captures probe into circular orbit ($v_c = \sqrt{\mu_2/r_{p,2}}$):
                     \vspace{-0.08cm}
                     \begin{equation*}
-                        \Delta v_{\text{cap}} = \sqrt{v_{\infty,\text{arr}}^2 + \frac{2\mu_2}{r_{p,2}}} - \sqrt{\frac{\mu_2}{r_{p,2}}} \quad \text{[cite: 2]}
+                        \Delta v_{\text{cap}} = \sqrt{v_{\infty,\text{arr}}^2 + \frac{2\mu_2}{r_{p,2}}} - \sqrt{\frac{\mu_2}{r_{p,2}}}
                     \end{equation*}
                 \end{enumerate}
             \end{block}
@@ -1156,15 +1225,16 @@ plt.plot(earth_dt[min_j], jup_dt[min_i], marker='*', color='red', markersize=14)
                     \node[color=gray, font=\tiny] at (-1.1, 1.85) {Target SOI ($r_{\text{SOI}}$)};
                     
                     \draw[thick, fill=orange!50] (0,0) circle (0.35cm) node[below=0.35cm, font=\tiny]{Planet ($\mu_2$)};
-                    \draw[thick, ->, >=stealth, color=Charcoal] (0,0) -- (0,1.25) node[left, font=\tiny]{$\mathbf{v}_{\text{planet}}$};
+                    \draw[thick, ->, >=stealth, color=Charcoal] (0,0) -- (0,1.25);
+                    \node[left, font=\tiny] at (0, 0.9) {$\mathbf{v}_{\text{planet}}$};
                     
                     \draw[thick, color=UdeAGold, line width=0.9pt] (0,0) ellipse (0.75cm and 0.55cm);
-                    \node[color=UdeAGold!90!black, font=\tiny] at (-1.2, -0.35) {Captured Orbit};
+                    \node[color=UdeAGold!90!black, font=\tiny] at (-1.2, -0.45) {Captured Orbit};
                     
                     \draw[thick, color=UdeAGreen, line width=1.1pt] (1.3, -2.3) to[out=95, in=-90] (0.8, 0.0) to[out=90, in=0] (0, 0.55);
                     
                     \filldraw[color=AlertRed] (0, 0.55) circle (1.8pt);
-                    \node[above right, color=AlertRed, font=\tiny] at (0, 0.55) {$\Delta v_{\text{cap}}(r_p)$};
+                    \node[right=2pt, color=AlertRed, font=\tiny] at (0, 0.60) {$\Delta v_{\text{cap}}$};
                     
                     \draw[thick, ->, >=stealth, color=AlertRed, line width=1.0pt] (1.3, -2.5) -- (1.3, -1.4) node[midway, right, font=\tiny]{$\mathbf{v}_{\infty,\text{arr}}$};
                 \end{tikzpicture}
@@ -1299,8 +1369,8 @@ plt.plot(earth_dt[min_j], jup_dt[min_i], marker='*', color='red', markersize=14)
             \begin{block}{Flyby Vector Geometry}
                 \centering
                 \begin{tikzpicture}[scale=0.68]
-                    \draw[thick, fill=gray!25] (0,0) circle (0.38cm);
-                    \node[below=0.42cm, font=\tiny] at (0,0) {Planet ($\mu_p$)};
+                    \draw[thick, fill=gray!20] (0,0) circle (0.42cm);
+                    \node[below=0.48cm, font=\tiny, color=DarkSlate] at (0,0) {Planet ($\mu_p$)};
                     
                     \draw[thick, ->, >=stealth, color=Charcoal, line width=0.8pt] (-1.8, 1.1) -- (-0.7, 0.55) node[midway, above, font=\tiny]{$\mathbf{v}_{\infty,\text{in}}$};
                     \draw[thick, color=UdeAGreen, line width=1.1pt] (-1.8, 1.1) to[out=-25, in=120] (0, 0.55) to[out=-60, in=160] (1.4, -0.9);
@@ -1355,7 +1425,7 @@ plt.plot(earth_dt[min_j], jup_dt[min_i], marker='*', color='red', markersize=14)
                 \begin{equation*}
                     \Delta E_k \approx v_{p,-}\Delta v_p \gg v_\infty \Delta v_p
                 \end{equation*}
-                \vspace{-0.15cm}
+                \vspace{-0.05cm}
                 Periapsis burns maximize excess velocity gains!
             \end{alertblock}
         \end{column}
@@ -1508,7 +1578,7 @@ plt.plot(earth_dt[min_j], jup_dt[min_i], marker='*', color='red', markersize=14)
                 \begin{equation*}
                     \begin{bmatrix} \Delta(B \cdot T) \\ \Delta(B \cdot R) \\ \Delta \text{TIF} \end{bmatrix} = \left[ \frac{\partial \mathbf{B}}{\partial \mathbf{r}(t_f)} \boldsymbol{\Phi}_{r v}(t_f, t_{\text{TCM}}) \right] \Delta \mathbf{v}_{\text{TCM}}
                 \end{equation*}
-                \vspace{-0.15cm}
+                \vspace{-0.0cm}
                 where $\text{TIF}$ is Time to Intercept and $\boldsymbol{\Phi}_{rv}$ is the State Transition Matrix partition.
                 \begin{itemize}\setlength{\itemsep}{1pt}
                     \item Matrix inversion yields exact 3-axis TCM commands.
@@ -1530,8 +1600,8 @@ plt.plot(earth_dt[min_j], jup_dt[min_i], marker='*', color='red', markersize=14)
                     \item \textbf{Vary Commands (Knobs):} Adjust TCM burn vector ($\Delta V_X, \Delta V_Y, \Delta V_Z$).
                     \item \textbf{Achieve Commands (Goals):} Constrain target parameters at Mars:
                     \begin{itemize}\setlength{\itemsep}{0pt}
-                        \item \texttt{Achieve DC(MarsProbe.MarsInertial.BdotT = -4500)}
-                        \item \texttt{Achieve DC(MarsProbe.MarsInertial.BdotR = +2800)}
+                        \item \texttt{Achieve DC(Mars.BdotT = -4500)}
+                        \item \texttt{Achieve DC(Mars.BdotR = +2800)}
                     \end{itemize}
                 \end{itemize}
             \end{block}

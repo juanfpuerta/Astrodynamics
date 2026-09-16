@@ -586,7 +586,7 @@
                     \Delta \mathcal{E}_k = \frac{1}{2}(v + \Delta v)^2 - \frac{1}{2}v^2 = v \Delta v + \frac{1}{2}(\Delta v)^2 \approx v \Delta v
                 \end{equation*}
                 \vspace{-0.05cm}
-                Current speed $v$ acts as a \textbf{linear multiplier} on energy gain for the exact same propellant mass.
+                Current speed $v$ acts as a \textbf{linear multiplier} on energy gain for the same propellant mass.
             \end{block}
 
             \vspace{-0.08cm}
@@ -1501,6 +1501,159 @@ plt.plot(earth_dt[min_j], jup_dt[min_i],
                 \end{itemize}
                 Delivered $\sim 20\text{ km/s}$ of free $\Delta V$, impossible with any single launch vehicle!
             \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE: NUMERICAL BOUNDARY SOLVERS & THE DIFFERENTIAL CORRECTOR
+% ==============================================================================
+\begin{frame}{Numerical Boundary Solvers: The Shooting Method and Differential Corrector}
+    \begin{columns}[t]
+        \begin{column}{0.53\textwidth}
+            \begin{block}{Two-Point Boundary Value Problem (TPBVP)}
+                \scriptsize
+                Interplanetary trajectory optimization is fundamentally a boundary value problem:
+                \begin{itemize}\setlength{\itemsep}{1pt}
+                    \item \textbf{Control Vector ($\mathbf{X} \in \mathbb{R}^n$):} Unknown initial/maneuver parameters (e.g., burn components $\Delta V_x, \Delta V_y, \Delta V_z$).
+                    \item \textbf{Goal Vector ($\mathbf{Y} \in \mathbb{R}^m$):} Constrained arrival states (e.g., $B\cdot T, B\cdot R$, altitude $r_p$).
+                \end{itemize}
+            \end{block}
+            \vspace{-0.1cm}
+            \begin{block}{Newton-Raphson Shooting & The Jacobian ($\mathbf{J}$)}
+                \scriptsize
+                The Differential Corrector (DC) linearizes state transitions around the current trajectory via the sensitivity Jacobian matrix:
+                \vspace{-0.05cm}
+                \begin{equation*}
+                    \mathbf{J} = \begin{bmatrix}
+                        \frac{\partial Y_1}{\partial X_1} & \cdots & \frac{\partial Y_1}{\partial X_n} \\
+                        \vdots & \ddots & \vdots \\
+                        \frac{\partial Y_m}{\partial X_1} & \cdots & \frac{\partial Y_m}{\partial X_n}
+                    \end{bmatrix}, \quad 
+                    J_{ij} \approx \frac{Y_i(\mathbf{X} + \delta X_j \hat{\mathbf{e}}_j) - Y_i(\mathbf{X})}{\delta X_j}
+                \end{equation*}
+                \vspace{-0.15cm}
+                \begin{itemize}\setlength{\itemsep}{1pt}
+                    \item Parameter update step: $\mathbf{X}_{k+1} = \mathbf{X}_k - \mathbf{J}^{-1} \left(\mathbf{Y}(\mathbf{X}_k) - \mathbf{Y}^*\right)$
+                    \item Requires $n+1$ forward trajectory integrations per iteration.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.44\textwidth}
+            \begin{block}{The Forward Shooting Mechanism}
+                \centering
+                \begin{tikzpicture}[scale=0.68]
+                    % Departure Node
+                    \filldraw[color=SpiceBlue] (-2.2, -1.0) circle (3pt) node[below left, font=\tiny]{Earth ($t_0$)};
+                    
+                    % Target Planet & Goal
+                    \draw[dashed, color=gray] (1.8, 1.2) circle (0.85cm);
+                    \filldraw[color=orange!80] (1.8, 1.2) circle (4pt) node[below right, font=\tiny]{Target};
+                    \filldraw[color=UdeAGreen] (1.2, 1.4) circle (2.5pt) node[above left, font=\tiny]{$\mathbf{Y}^*$ (Goal)};
+                    
+                    % Trajectory 0 (Nominal Miss)
+                    \draw[thick, color=AlertRed, dashed] (-2.2, -1.0) to[out=25, in=-120] (0.0, 0.4) to[out=60, in=-140] (1.9, -0.2);
+                    \filldraw[color=AlertRed] (1.9, -0.2) circle (2pt) node[right, font=\tiny]{$\mathbf{Y}(\mathbf{X}_0)$ [Miss]};
+                    
+                    % Perturbed Trajectory
+                    \draw[thick, color=UdeAGold, dotted] (-2.2, -1.0) to[out=32, in=-115] (0.1, 0.7) to[out=65, in=-135] (1.7, 0.5);
+                    \filldraw[color=UdeAGold!90!black] (1.7, 0.5) circle (1.8pt) node[right, font=\tiny]{Perturbed};
+                    
+                    % Converged Trajectory
+                    \draw[thick, color=UdeAGreen, line width=1.2pt] (-2.2, -1.0) to[out=38, in=-110] (0.0, 0.9) to[out=70, in=-120] (1.2, 1.4);
+                    \node[color=UdeAGreen, font=\tiny\bfseries] at (-0.7, 0.8) {Converged ($\mathbf{X}^*$)};
+                \end{tikzpicture}
+            \end{block}
+            \vspace{-0.1cm}
+            \begin{alertblock}{Iterative Convergence}
+                \scriptsize Execution loops until residual error $\|\mathbf{Y}(\mathbf{X}_k) - \mathbf{Y}^*\| \le \boldsymbol{\epsilon}_{\text{tol}}$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE: GMAT TARGET COMMAND & MISSION SEQUENCE ARCHITECTURE
+% ==============================================================================
+\begin{frame}[fragile]{NASA GMAT Target Sequence: Command Architecture}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{The Four Pillars of the Target Loop}
+                \scriptsize
+                GMAT structures the shooting solver into an isolated execution block via four specialized commands:
+                \begin{enumerate}\setlength{\itemsep}{2pt}\setlength{\topsep}{1pt}
+                    \item \textbf{\texttt{Target}:} Initiates the boundary-value solver loop and assigns the numerical engine (\texttt{DifferentialCorrector}).
+                    \item \textbf{\texttt{Vary} (The Knobs):} Defines the independent control variables $\mathbf{X}$, initial seeds, finite perturbation sizes, and allowable step bounds.
+                    \item \textbf{Dynamic Propagation:} Applies the maneuver (\texttt{Maneuver}) and propagates the spacecraft forward (\texttt{Propagate}) to a terminal event condition.
+                    \item \textbf{\texttt{Achieve} (The Goals):} Asserts boundary constraints $\mathbf{Y}^*$ evaluated at the stopping condition, along with acceptable tolerances.
+                \end{enumerate}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.50\textwidth}
+\begin{lstlisting}[style=gmatstyle]
+% Define Targeter Loop using Differential Corrector
+Target 'Mars B-Plane Targeting' DC {SolveMode = Solve}
+
+    % 1. VARY COMMANDS (Independent Variables X)
+    Vary 'Vary TCM_Vx' DC(TCM.Element1 = 0.05, ...
+         {Perturbation = 1e-4, Lower = -1.0, Upper = 1.0, MaxStep = 0.02})
+    Vary 'Vary TCM_Vy' DC(TCM.Element2 = -0.02, ...
+         {Perturbation = 1e-4, Lower = -1.0, Upper = 1.0, MaxStep = 0.02})
+    Vary 'Vary TCM_Vz' DC(TCM.Element3 = 0.01, ...
+         {Perturbation = 1e-4, Lower = -1.0, Upper = 1.0, MaxStep = 0.02})
+
+    % 2. STATE PROPAGATION (Forward Physics)
+    Maneuver 'Apply TCM' TCM(MarsProbe);
+    Propagate 'Cruise to Mars Periapsis' DeepSpaceProp(MarsProbe) ...
+         {MarsProbe.Mars.Periapsis};
+
+    % 3. ACHIEVE COMMANDS (Dependent Constraints Y)
+    Achieve 'Target BdotT' ...
+         DC(MarsProbe.MarsInertial.BdotT = -4500.0, {Tolerance = 0.5});
+    Achieve 'Target BdotR' ...
+         DC(MarsProbe.MarsInertial.BdotR =  2800.0, {Tolerance = 0.5});
+
+EndTarget;  % Concludes SubSequence Convergence
+\end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE: FORENSIC DC CONVERGENCE & TUNING RULES
+% ==============================================================================
+\begin{frame}{Forensic DC Convergence: Numerical Conditioning and Tuning Rules}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Parameter Tuning Rules}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{2pt}
+                    \item \textbf{\texttt{Perturbation} ($\delta X$):} Finite-difference step size used to build Jacobian columns.
+                    \begin{itemize}\setlength{\itemsep}{0.5pt}
+                        \item \textit{Too Large ($>10^{-2}$):} Incurs non-linear truncation error; derivatives become inaccurate.
+                        \item \textit{Too Small ($<10^{-7}$):} Integrator numerical noise dominates difference quotient, corrupting the gradient.
+                    \end{itemize}
+                    \item \textbf{\texttt{MaxStep}:} Dampens the Newton-Raphson update vector $\|\Delta \mathbf{X}\| \le \text{MaxStep}$. Prevents non-linear divergence during early iterations.
+                    \item \textbf{\texttt{Tolerance}:} Must reflect real astrodynamic physics. Setting B-plane tolerance to $0.001\text{ km}$ across $400\times 10^6\text{ km}$ cruise is computationally ill-posed.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \begin{alertblock}{Common Implementation Traps}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{2pt}
+                    \item \textbf{Singular Jacobian ($\det(\mathbf{J}) \approx 0$):} Occurs when control inputs are linearly dependent or have zero sensitivity relative to goals (e.g., varying an out-of-plane burn to change planar orbital period).
+                    \item \textbf{Frame Reference Error:} Evaluating B-plane goals ($B\cdot T, B\cdot R$) in \texttt{EarthMJ2000} instead of \texttt{MarsInertial} causes instant divergence.
+                    \item \textbf{\texttt{SolveMode} Selection:}
+                    \begin{itemize}\setlength{\itemsep}{0.5pt}
+                        \item \texttt{Solve}: Iterates automatically to convergence.
+                        \item \texttt{Suggest}: Updates script initial guesses without looping.
+                    \end{itemize}
+                \end{itemize}
+            \end{alertblock}
         \end{column}
     \end{columns}
 \end{frame}

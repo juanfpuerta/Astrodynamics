@@ -52,13 +52,13 @@
 % Code Listings Configuration
 \lstdefinestyle{gmatstyle}{
     backgroundcolor=\color{LightBg},
-    basicstyle=\ttfamily\fontsize{4.8pt}{5.5pt}\selectfont\color{Charcoal},
+    basicstyle=\ttfamily\fontsize{4.6pt}{5.4pt}\selectfont\color{Charcoal},
     keywordstyle=\bfseries\color{UdeAGreen},
     commentstyle=\itshape\color{gray},
     stringstyle=\color{UdeAGold!90!black},
     frame=single,
     rulecolor=\color{UdeAGreen},
-    breaklines=false,
+    breaklines=true,
     showstringspaces=false,
     xleftmargin=2pt,
     xrightmargin=2pt
@@ -66,7 +66,7 @@
 
 \lstdefinestyle{pythoncode}{
     backgroundcolor=\color{white},
-    basicstyle=\ttfamily\fontsize{4.6pt}{5.3pt}\selectfont\color{Charcoal},
+    basicstyle=\ttfamily\fontsize{4.5pt}{5.2pt}\selectfont\color{Charcoal},
     keywordstyle=\bfseries\color{UdeAGreen},
     commentstyle=\itshape\color{gray},
     stringstyle=\color{UdeAGold!90!black},
@@ -75,7 +75,7 @@
     numbersep=2pt,
     frame=single,
     rulecolor=\color{UdeAGreen!50},
-    breaklines=false,
+    breaklines=true,
     showstringspaces=false,
     tabsize=2,
     xleftmargin=2pt,
@@ -166,7 +166,7 @@
 % ==============================================================================
 \begin{frame}{Planetary Sphere of Influence: Laplace vs. Hill Formulations}
     \begin{columns}[t]
-        \begin{column}{0.52\textwidth}
+        \begin{column}{0.51\textwidth}
             \begin{block}{Laplace Sphere of Influence ($r_{\text{SOI}}$)}
                 \scriptsize
                 Defines the boundary where the planetocentric 2-body approximation is more accurate than the heliocentric model:
@@ -190,10 +190,11 @@
             \end{block}
         \end{column}
 
-        \begin{column}{0.45\textwidth}
+        \begin{column}{0.46\textwidth}
             \begin{block}{SOI Radius Comparison}
                 \centering
                 \scriptsize
+                \setlength{\tabcolsep}{3pt}
                 \begin{tabular}{lccc}
                     \toprule
                     \textbf{Body} & $\bm{d}$ \textbf{[AU]} & $\bm{r_{\text{SOI}}}$ \textbf{[km]} & $\bm{r_H}$ \textbf{[km]} \\ \midrule
@@ -278,7 +279,7 @@
                 \begin{equation*}
                     \mu_p \approx \frac{4\pi^2 a_{\text{moon}}^3}{T_{\text{moon}}^2}
                 \end{equation*}
-                \vspace{-0cm}
+                \vspace{-0.1cm}
                 Yields high accuracy without in-situ missions.
             \end{block}
 
@@ -536,7 +537,7 @@
                 \begin{equation*}
                     \cos\beta = \frac{1}{e_h} = \frac{1}{1 + \frac{r_p v_\infty^2}{\mu_p}}
                 \end{equation*}
-                \vspace{-0cm}
+                \vspace{-0.1cm}
                 The spacecraft coasts in its circular parking orbit until it is positioned exactly \textbf{$\beta$ degrees away} from the target asymptote direction before firing!
             \end{block}
         \end{column}
@@ -750,7 +751,7 @@
                 \begin{equation*}
                     (\mathbf{r}_1(t_{\text{dep}}), \, \mathbf{r}_2(t_{\text{arr}}), \, \Delta t) \xrightarrow{\text{Lambert}} (\mathbf{V}_1, \, \mathbf{V}_2)
                 \end{equation*}
-                \vspace{-0.0cm}
+                \vspace{-0.15cm}
                 Mapping the resulting $C_3$ values over a 2D departure/arrival grid reveals the trajectory landscape: \textbf{The Porkchop Plot}!
             \end{alertblock}
         \end{column}
@@ -898,7 +899,7 @@
                 \begin{equation}
                     \Delta t = f(a, \|\mathbf{r}_1\| + \|\mathbf{r}_2\|, c)
                 \end{equation}
-                \vspace{-0.05cm}
+                \vspace{-0.15cm}
                 where $c = \|\mathbf{r}_2 - \mathbf{r}_1\|$ is the geometric chord.
             \end{block}
             \vspace{-0.1cm}
@@ -972,10 +973,10 @@ spy.furnsh("naif0012.tls") # Leapseconds LSK
 spy.furnsh("gm_de440.tpc") # Constants PCK
 
 # 2. Extract Sun GM dynamically
-_, sun_values = spy.bodvrd('SUN', 'GM', 1)
-mu_sun = sun_values[0] # km^3/s^2
+_, sun_vals = spy.bodvrd('SUN', 'GM', 1)
+mu_sun = sun_vals[0] # km^3/s^2
 
-# 3. Convert Calendar Dates to ET Seconds
+# 3. Convert Calendar Dates to ET
 dep_start = spy.utc2et("1976-01-01T00:00:00")
 dep_end   = spy.utc2et("1978-05-01T00:00:00")
 \end{lstlisting}
@@ -996,7 +997,7 @@ dep_end   = spy.utc2et("1978-05-01T00:00:00")
                 \begin{equation*}
                     \mathbf{T} = [t_{\text{Earth}}, \; t_{\text{Jupiter}}, \; t_{\text{Saturn}}]^T \in \mathbb{R}^3
                 \end{equation*}
-                \vspace{-0cm}
+                \vspace{-0.15cm}
                 A brute-force 3D grid ($100^3$ points) requires $10^6$ double-Lambert evaluations, which is computationally expensive.
             \end{block}
             \vspace{-0.08cm}
@@ -1016,8 +1017,8 @@ dep_end   = spy.utc2et("1978-05-01T00:00:00")
 
         \begin{column}{0.44\textwidth}
 \begin{lstlisting}[style=pythoncode]
-# Freeze Jupiter-Saturn cruise time (2 Years)
-fixed_jup_sat_tof_sec = 2 * 365 * 86400
+# Freeze Jupiter-Saturn cruise (2 Years)
+fixed_tof_sec = 2 * 365 * 86400
 
 # Earth Departure Grid (Axis 1)
 dep_start = spy.utc2et("1976-01-01T00:00:00")
@@ -1025,9 +1026,9 @@ dep_end   = spy.utc2et("1978-05-01T00:00:00")
 earth_dates = np.linspace(dep_start, dep_end, 100)
 
 # Jupiter Flyby Grid (Axis 2)
-flyby_start = spy.utc2et("1979-01-01T00:00:00")
-flyby_end   = spy.utc2et("1981-01-01T00:00:00")
-jup_dates = np.linspace(flyby_start, flyby_end, 100)
+fb_start = spy.utc2et("1979-01-01T00:00:00")
+fb_end   = spy.utc2et("1981-01-01T00:00:00")
+jup_dates = np.linspace(fb_start, fb_end, 100)
 
 # Initialize Penalty Matrix with NaN
 dv_penalty_grid = np.full((100, 100), np.nan)
@@ -1053,7 +1054,7 @@ dv_penalty_grid = np.full((100, 100), np.nan)
                     \begin{equation*}
                         \Delta v_{\text{penalty}} = \big| \|\mathbf{v}_{\infty,\text{out}}\| - \|\mathbf{v}_{\infty,\text{in}}\| \big|
                     \end{equation*}
-                    \vspace{-0.05cm}
+                    \vspace{-0.15cm}
                     A ballistic flyby occurs when $\Delta v_{\text{penalty}} \to 0$!
                 \end{itemize}
             \end{block}
@@ -1062,24 +1063,31 @@ dv_penalty_grid = np.full((100, 100), np.nan)
         \begin{column}{0.48\textwidth}
 \begin{lstlisting}[style=pythoncode]
 # --- LEG 1: Earth to Jupiter ---
-pos_E, _ = spy.spkpos('EARTH', t_earth, 'J2000', 'NONE', 'SSB')
-pos_J, _ = spy.spkpos('JUPITER BARYCENTER', t_jup, 'J2000', 'NONE', 'SSB')
-sol_1 = list(izzo.lambert(mu_sun_u, pos_E*u.km, pos_J*u.km, tof_1*u.s))
+pos_E, _ = spy.spkpos('EARTH', t_earth,
+                      'J2000', 'NONE', 'SSB')
+pos_J, _ = spy.spkpos('JUPITER BARYCENTER',
+                      t_jup, 'J2000', 'NONE', 'SSB')
+sol_1 = list(izzo.lambert(mu_sun_u,
+             pos_E*u.km, pos_J*u.km, tof_1*u.s))
 v1_E, v1_J = sol_1[0]
 
 # Heliocentric Planet Velocity
-state_J, _ = spy.spkezr('JUPITER BARYCENTER', t_jup, 'J2000', 'NONE', 'SUN')
-vel_J = state_J[3:6]
+st_J, _ = spy.spkezr('JUPITER BARYCENTER',
+                     t_jup, 'J2000', 'NONE', 'SUN')
+vel_J = st_J[3:6]
 v_inf_in = v1_J.to_value(u.km/u.s) - vel_J
 
 # --- LEG 2: Jupiter to Saturn ---
-pos_S, _ = spy.spkpos('SATURN BARYCENTER', t_sat, 'J2000', 'NONE', 'SSB')
-sol_2 = list(izzo.lambert(mu_sun_u, pos_J*u.km, pos_S*u.km, fixed_tof_u))
+pos_S, _ = spy.spkpos('SATURN BARYCENTER',
+                      t_sat, 'J2000', 'NONE', 'SSB')
+sol_2 = list(izzo.lambert(mu_sun_u,
+             pos_J*u.km, pos_S*u.km, fixed_tof_u))
 v2_J, v2_S = sol_2[0]
 v_inf_out = v2_J.to_value(u.km/u.s) - vel_J
 
 # --- POWERED FLYBY PENALTY ---
-dv = np.linalg.norm(v_inf_out) - np.linalg.norm(v_inf_in)
+dv = np.linalg.norm(v_inf_out) - \
+     np.linalg.norm(v_inf_in)
 dv_penalty_grid[i, j] = abs(dv)
 \end{lstlisting}
         \end{column}
@@ -1113,24 +1121,25 @@ dv_penalty_grid[i, j] = abs(dv)
 # 1. Extract 2D Optimal Minimum Indices
 min_penalty = np.nanmin(dv_penalty_grid)
 flat_index  = np.nanargmin(dv_penalty_grid)
-min_i, min_j = np.unravel_index(flat_index, dv_penalty_grid.shape)
+min_i, min_j = np.unravel_index(flat_index,
+                                dv_penalty_grid.shape)
 
-best_earth_utc = spy.et2utc(earth_dates[min_j], 'C', 0)
-best_jup_utc   = spy.et2utc(jup_dates[min_i], 'C', 0)
+best_earth = spy.et2utc(earth_dates[min_j], 'C', 0)
+best_jup   = spy.et2utc(jup_dates[min_i], 'C', 0)
 
 # 2. Render Contour Opportunity Map
 earth_dt = [datetime.datetime.strptime(
-    spy.et2utc(t, 'ISOC', 0), "%Y-%m-%dT%H:%M:%S") 
-    for t in earth_dates]
+    spy.et2utc(t, 'ISOC', 0),
+    "%Y-%m-%dT%H:%M:%S") for t in earth_dates]
 jup_dt   = [datetime.datetime.strptime(
-    spy.et2utc(t, 'ISOC', 0), "%Y-%m-%dT%H:%M:%S") 
-    for t in jup_dates]
+    spy.et2utc(t, 'ISOC', 0),
+    "%Y-%m-%dT%H:%M:%S") for t in jup_dates]
 
 X, Y = np.meshgrid(earth_dt, jup_dt)
-plt.contourf(X, Y, dv_penalty_grid, 
+plt.contourf(X, Y, dv_penalty_grid,
     levels=np.linspace(0, 10, 20), cmap='viridis')
-plt.plot(earth_dt[min_j], jup_dt[min_i], 
-    marker='*', color='red', markersize=14)
+plt.plot(earth_dt[min_j], jup_dt[min_i],
+    marker='*', color='red', markersize=12)
 \end{lstlisting}
         \end{column}
     \end{columns}
@@ -1506,34 +1515,34 @@ plt.plot(earth_dt[min_j], jup_dt[min_i],
 \end{frame}
 
 % ==============================================================================
-% SLIDE: NUMERICAL BOUNDARY SOLVERS & THE DIFFERENTIAL CORRECTOR
+% SLIDE 31: NUMERICAL BOUNDARY SOLVERS & THE DIFFERENTIAL CORRECTOR
 % ==============================================================================
 \begin{frame}{Numerical Boundary Solvers: The Shooting Method and Differential Corrector}
     \begin{columns}[t]
         \begin{column}{0.53\textwidth}
             \begin{block}{Two-Point Boundary Value Problem (TPBVP)}
-                \scriptsize
+                \fontsize{5.8pt}{6.8pt}\selectfont
                 Interplanetary trajectory optimization is fundamentally a boundary value problem:
-                \begin{itemize}\setlength{\itemsep}{1pt}
-                    \item \textbf{Control Vector ($\mathbf{X} \in \mathbb{R}^n$):} Unknown initial/maneuver parameters (e.g., burn components $\Delta V_x, \Delta V_y, \Delta V_z$).
-                    \item \textbf{Goal Vector ($\mathbf{Y} \in \mathbb{R}^m$):} Constrained arrival states (e.g., $B\cdot T, B\cdot R$, altitude $r_p$).
+                \begin{itemize}\setlength{\itemsep}{0.5pt}\setlength{\topsep}{0.5pt}
+                    \item \textbf{Control Vector ($\mathbf{X} \in \mathbb{R}^n$):} Unknown parameters (burn components $\Delta V_x, \Delta V_y, \Delta V_z$).
+                    \item \textbf{Goal Vector ($\mathbf{Y} \in \mathbb{R}^m$):} Constrained arrival states ($B\cdot T, B\cdot R$, altitude $r_p$).
                 \end{itemize}
             \end{block}
-            \vspace{-0.1cm}
-            \begin{block}{Newton-Raphson Shooting & The Jacobian ($\mathbf{J}$)}
-                \scriptsize
-                The Differential Corrector (DC) linearizes state transitions around the current trajectory via the sensitivity Jacobian matrix:
+            \vspace{-0.12cm}
+            \begin{block}{Newton-Raphson Shooting and the Jacobian ($\mathbf{J}$)}
+                \fontsize{5.8pt}{6.8pt}\selectfont
+                The Differential Corrector (DC) linearizes state transitions around the trajectory via the sensitivity Jacobian matrix:
                 \vspace{-0.05cm}
                 \begin{equation*}
                     \mathbf{J} = \begin{bmatrix}
-                        \frac{\partial Y_1}{\partial X_1} & \cdots & \frac{\partial Y_1}{\partial X_n} \\
-                        \vdots & \ddots & \vdots \\
+                        \frac{\partial Y_1}{\partial X_1} & \cdots & \frac{\partial Y_1}{\partial X_n} \\[-2pt]
+                        \vdots & \ddots & \vdots \\[-2pt]
                         \frac{\partial Y_m}{\partial X_1} & \cdots & \frac{\partial Y_m}{\partial X_n}
                     \end{bmatrix}, \quad 
-                    J_{ij} \approx \frac{Y_i(\mathbf{X} + \delta X_j \hat{\mathbf{e}}_j) - Y_i(\mathbf{X})}{\delta X_j}
+                    J_{ij} \approx \frac{\Delta Y_i}{\Delta X_j}
                 \end{equation*}
-                \vspace{-0.15cm}
-                \begin{itemize}\setlength{\itemsep}{1pt}
+                \vspace{-0.12cm}
+                \begin{itemize}\setlength{\itemsep}{0.5pt}\setlength{\topsep}{0.5pt}
                     \item Parameter update step: $\mathbf{X}_{k+1} = \mathbf{X}_k - \mathbf{J}^{-1} \left(\mathbf{Y}(\mathbf{X}_k) - \mathbf{Y}^*\right)$
                     \item Requires $n+1$ forward trajectory integrations per iteration.
                 \end{itemize}
@@ -1543,86 +1552,86 @@ plt.plot(earth_dt[min_j], jup_dt[min_i],
         \begin{column}{0.44\textwidth}
             \begin{block}{The Forward Shooting Mechanism}
                 \centering
-                \begin{tikzpicture}[scale=0.68]
+                \vspace{0.02cm}
+                \begin{tikzpicture}[scale=0.55]
                     % Departure Node
-                    \filldraw[color=SpiceBlue] (-2.2, -1.0) circle (3pt) node[below left, font=\tiny]{Earth ($t_0$)};
+                    \filldraw[color=SpiceBlue] (-2.2, -1.0) circle (2.5pt) node[below left, font=\tiny]{Earth ($t_0$)};
                     
                     % Target Planet & Goal
-                    \draw[dashed, color=gray] (1.8, 1.2) circle (0.85cm);
-                    \filldraw[color=orange!80] (1.8, 1.2) circle (4pt) node[below right, font=\tiny]{Target};
-                    \filldraw[color=UdeAGreen] (1.2, 1.4) circle (2.5pt) node[above left, font=\tiny]{$\mathbf{Y}^*$ (Goal)};
+                    \draw[dashed, color=gray] (1.8, 1.2) circle (0.75cm);
+                    \filldraw[color=orange!80] (1.8, 1.2) circle (3.5pt) node[below right, font=\tiny]{Target};
+                    \filldraw[color=UdeAGreen] (1.2, 1.4) circle (2.2pt) node[above left, font=\tiny]{$\mathbf{Y}^*$ (Goal)};
                     
                     % Trajectory 0 (Nominal Miss)
                     \draw[thick, color=AlertRed, dashed] (-2.2, -1.0) to[out=25, in=-120] (0.0, 0.4) to[out=60, in=-140] (1.9, -0.2);
-                    \filldraw[color=AlertRed] (1.9, -0.2) circle (2pt) node[right, font=\tiny]{$\mathbf{Y}(\mathbf{X}_0)$ [Miss]};
+                    \filldraw[color=AlertRed] (1.9, -0.2) circle (1.8pt) node[right, font=\tiny]{$\mathbf{Y}(\mathbf{X}_0)$ [Miss]};
                     
                     % Perturbed Trajectory
                     \draw[thick, color=UdeAGold, dotted] (-2.2, -1.0) to[out=32, in=-115] (0.1, 0.7) to[out=65, in=-135] (1.7, 0.5);
-                    \filldraw[color=UdeAGold!90!black] (1.7, 0.5) circle (1.8pt) node[right, font=\tiny]{Perturbed};
+                    \filldraw[color=UdeAGold!90!black] (1.7, 0.5) circle (1.6pt) node[right, font=\tiny]{Perturbed};
                     
                     % Converged Trajectory
-                    \draw[thick, color=UdeAGreen, line width=1.2pt] (-2.2, -1.0) to[out=38, in=-110] (0.0, 0.9) to[out=70, in=-120] (1.2, 1.4);
+                    \draw[thick, color=UdeAGreen, line width=1.1pt] (-2.2, -1.0) to[out=38, in=-110] (0.0, 0.9) to[out=70, in=-120] (1.2, 1.4);
                     \node[color=UdeAGreen, font=\tiny\bfseries] at (-0.7, 0.8) {Converged ($\mathbf{X}^*$)};
                 \end{tikzpicture}
             \end{block}
-            \vspace{-0.1cm}
+            \vspace{-0.12cm}
             \begin{alertblock}{Iterative Convergence}
-                \scriptsize Execution loops until residual error $\|\mathbf{Y}(\mathbf{X}_k) - \mathbf{Y}^*\| \le \boldsymbol{\epsilon}_{\text{tol}}$.
+                \fontsize{5.8pt}{6.8pt}\selectfont Execution loops until residual error $\|\mathbf{Y}(\mathbf{X}_k) - \mathbf{Y}^*\| \le \boldsymbol{\epsilon}_{\text{tol}}$.
             \end{alertblock}
         \end{column}
     \end{columns}
 \end{frame}
 
 % ==============================================================================
-% SLIDE: GMAT TARGET COMMAND & MISSION SEQUENCE ARCHITECTURE
+% SLIDE 32: GMAT TARGET COMMAND & MISSION SEQUENCE ARCHITECTURE
 % ==============================================================================
 \begin{frame}[fragile]{NASA GMAT Target Sequence: Command Architecture}
     \begin{columns}[t]
         \begin{column}{0.48\textwidth}
             \begin{block}{The Four Pillars of the Target Loop}
                 \scriptsize
-                GMAT structures the shooting solver into an isolated execution block via four specialized commands:
-                \begin{enumerate}\setlength{\itemsep}{2pt}\setlength{\topsep}{1pt}
+                GMAT structures the shooting solver into an execution block via four specialized commands:
+                \begin{enumerate}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{1pt}
                     \item \textbf{\texttt{Target}:} Initiates the boundary-value solver loop and assigns the numerical engine (\texttt{DifferentialCorrector}).
                     \item \textbf{\texttt{Vary} (The Knobs):} Defines the independent control variables $\mathbf{X}$, initial seeds, finite perturbation sizes, and allowable step bounds.
-                    \item \textbf{Dynamic Propagation:} Applies the maneuver (\texttt{Maneuver}) and propagates the spacecraft forward (\texttt{Propagate}) to a terminal event condition.
-                    \item \textbf{\texttt{Achieve} (The Goals):} Asserts boundary constraints $\mathbf{Y}^*$ evaluated at the stopping condition, along with acceptable tolerances.
+                    \item \textbf{Dynamic Propagation:} Applies the maneuver (\texttt{Maneuver}) and propagates the spacecraft forward (\texttt{Propagate}) to a terminal condition.
+                    \item \textbf{\texttt{Achieve} (The Goals):} Asserts boundary constraints $\mathbf{Y}^*$ evaluated at stopping condition with tolerances.
                 \end{enumerate}
             \end{block}
         \end{column}
 
         \begin{column}{0.50\textwidth}
 \begin{lstlisting}[style=gmatstyle]
-% Define Targeter Loop using Differential Corrector
 Target 'Mars B-Plane Targeting' DC {SolveMode = Solve}
-
-    % 1. VARY COMMANDS (Independent Variables X)
+    % VARY: Independent Controls X
     Vary 'Vary TCM_Vx' DC(TCM.Element1 = 0.05, ...
-         {Perturbation = 1e-4, Lower = -1.0, Upper = 1.0, MaxStep = 0.02})
+         {Perturbation = 1e-4, MaxStep = 0.02})
     Vary 'Vary TCM_Vy' DC(TCM.Element2 = -0.02, ...
-         {Perturbation = 1e-4, Lower = -1.0, Upper = 1.0, MaxStep = 0.02})
+         {Perturbation = 1e-4, MaxStep = 0.02})
     Vary 'Vary TCM_Vz' DC(TCM.Element3 = 0.01, ...
-         {Perturbation = 1e-4, Lower = -1.0, Upper = 1.0, MaxStep = 0.02})
+         {Perturbation = 1e-4, MaxStep = 0.02})
 
-    % 2. STATE PROPAGATION (Forward Physics)
+    % PROPAGATE: Forward Dynamics
     Maneuver 'Apply TCM' TCM(MarsProbe);
-    Propagate 'Cruise to Mars Periapsis' DeepSpaceProp(MarsProbe) ...
+    Propagate 'Cruise to Mars' DeepSpaceProp(MarsProbe) ...
          {MarsProbe.Mars.Periapsis};
 
-    % 3. ACHIEVE COMMANDS (Dependent Constraints Y)
+    % ACHIEVE: Dependent Constraints Y
     Achieve 'Target BdotT' ...
-         DC(MarsProbe.MarsInertial.BdotT = -4500.0, {Tolerance = 0.5});
+         DC(MarsProbe.MarsInertial.BdotT = -4500.0, ...
+         {Tolerance = 0.5});
     Achieve 'Target BdotR' ...
-         DC(MarsProbe.MarsInertial.BdotR =  2800.0, {Tolerance = 0.5});
-
-EndTarget;  % Concludes SubSequence Convergence
+         DC(MarsProbe.MarsInertial.BdotR = 2800.0, ...
+         {Tolerance = 0.5});
+EndTarget;
 \end{lstlisting}
         \end{column}
     \end{columns}
 \end{frame}
 
 % ==============================================================================
-% SLIDE: FORENSIC DC CONVERGENCE & TUNING RULES
+% SLIDE 33: FORENSIC DC CONVERGENCE & TUNING RULES
 % ==============================================================================
 \begin{frame}{Forensic DC Convergence: Numerical Conditioning and Tuning Rules}
     \begin{columns}[t]
@@ -1659,7 +1668,7 @@ EndTarget;  % Concludes SubSequence Convergence
 \end{frame}
 
 % ==============================================================================
-% SLIDE 31: B-PLANE FOUNDATIONS
+% SLIDE 34: B-PLANE FOUNDATIONS
 % ==============================================================================
 \begin{frame}{Week 7: The B-Plane Targeting Framework --- Foundations}
     \begin{columns}[t]
@@ -1700,7 +1709,7 @@ EndTarget;  % Concludes SubSequence Convergence
 \end{frame}
 
 % ==============================================================================
-% SLIDE 32: B-PLANE PARAMETERS
+% SLIDE 35: B-PLANE PARAMETERS
 % ==============================================================================
 \begin{frame}{B-Plane Target Quantities and Impact Parameter Derivations}
     \begin{columns}[t]
@@ -1731,7 +1740,7 @@ EndTarget;  % Concludes SubSequence Convergence
                 \begin{equation*}
                     \begin{bmatrix} \Delta(B \cdot T) \\ \Delta(B \cdot R) \\ \Delta \text{TIF} \end{bmatrix} = \left[ \frac{\partial \mathbf{B}}{\partial \mathbf{r}(t_f)} \boldsymbol{\Phi}_{r v}(t_f, t_{\text{TCM}}) \right] \Delta \mathbf{v}_{\text{TCM}}
                 \end{equation*}
-                \vspace{-0.0cm}
+                \vspace{-0.15cm}
                 where $\text{TIF}$ is Time to Intercept and $\boldsymbol{\Phi}_{rv}$ is the State Transition Matrix partition.
                 \begin{itemize}\setlength{\itemsep}{1pt}
                     \item Matrix inversion yields exact 3-axis TCM commands.
@@ -1742,54 +1751,7 @@ EndTarget;  % Concludes SubSequence Convergence
 \end{frame}
 
 % ==============================================================================
-% SLIDE 33: IMPLEMENTATION IN NASA GMAT
-% ==============================================================================
-\begin{frame}[fragile]{Implementing B-Plane Targeting in NASA's GMAT}
-    \begin{columns}[t]
-        \begin{column}{0.48\textwidth}
-            \begin{block}{GMAT Targeter Architecture}
-                \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1pt}
-                    \item \textbf{Vary Commands (Knobs):} Adjust TCM burn vector ($\Delta V_X, \Delta V_Y, \Delta V_Z$).
-                    \item \textbf{Achieve Commands (Goals):} Constrain target parameters at Mars:
-                    \begin{itemize}\setlength{\itemsep}{0pt}
-                        \item \texttt{Achieve DC(Mars.BdotT = -4500)}
-                        \item \texttt{Achieve DC(Mars.BdotR = +2800)}
-                    \end{itemize}
-                \end{itemize}
-            \end{block}
-
-            \vspace{-0.05cm}
-
-            \begin{alertblock}{Forensic Check: Frame Origin}
-                \scriptsize
-                $B\cdot T$ and $B\cdot R$ must be evaluated in \textbf{Mars Centered Frame} (\texttt{MarsInertial}), never in \texttt{EarthMJ2000}!
-            \end{alertblock}
-        \end{column}
-
-        \begin{column}{0.50\textwidth}
-\begin{lstlisting}[style=gmatstyle]
-Target 'Target Mars B-Plane' DC {SolveMode = Solve}
-    Vary 'TCM_Vx' DC(TCM.Element1 = 0.05, {MaxStep = 0.01})
-    Vary 'TCM_Vy' DC(TCM.Element2 = -0.02, {MaxStep = 0.01})
-    Vary 'TCM_Vz' DC(TCM.Element3 = 0.01, {MaxStep = 0.01})
-    
-    Maneuver 'Apply TCM' TCM(MarsProbe);
-    Propagate 'To Periapsis' DeepSpaceProp(MarsProbe) ...
-         {MarsProbe.Mars.Periapsis};
-         
-    Achieve 'Target BdotT' ...
-         DC(MarsProbe.MarsInertial.BdotT = -4500.0, {Tol = 0.1});
-    Achieve 'Target BdotR' ...
-         DC(MarsProbe.MarsInertial.BdotR = 2800.0, {Tol = 0.1});
-EndSubSequence;
-\end{lstlisting}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% ==============================================================================
-% SLIDE 34: MIDTERM SUMMARY
+% SLIDE 36: MIDTERM SUMMARY
 % ==============================================================================
 \begin{frame}{Module 2 Synthesis and Midterm Take-Home Challenge}
     \begin{columns}[t]
@@ -1821,7 +1783,7 @@ EndSubSequence;
 \end{frame}
 
 % ==============================================================================
-% SLIDE 35: CONCLUSION
+% SLIDE 37: CONCLUSION
 % ==============================================================================
 \begin{frame}[plain]
     \begin{center}

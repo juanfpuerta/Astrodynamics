@@ -1857,6 +1857,188 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
 \end{frame}
 
 % ==============================================================================
+% SLIDE A: NEWTON-RAPHSON IN GMAT DIFFERENTIAL CORRECTOR
+% ==============================================================================
+\begin{frame}{GMAT Differential Corrector: Full Newton-Raphson Algorithm}
+    \begin{columns}[t]
+        \begin{column}{0.52\textwidth}
+            \begin{block}{Exact Gradient Re-evaluation Principle}
+                \scriptsize
+                The standard \texttt{NewtonRaphson} algorithm reconstructs the full sensitivity Jacobian $\mathbf{J}_k \in \mathbb{R}^{m \times n}$ at \textbf{every iteration} $k$ via finite differences[cite: 9]:
+                \par\vspace{2pt}
+                {\centering $\displaystyle J_{ij} \approx \frac{Y_i(\mathbf{X}_k + \delta X_j \hat{\mathbf{e}}_j) - Y_i(\mathbf{X}_k)}{\delta X_j}$\par}
+                \vspace{2pt}
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item Parameter update step:
+                    \par\vspace{1pt}
+                    {\centering $\displaystyle \Delta \mathbf{X}_k = -\mathbf{J}_k^{-1} \left(\mathbf{Y}(\mathbf{X}_k) - \mathbf{Y}^*\right)$\par}
+                    \item Guarantees local \textbf{quadratic convergence} ($\|\mathbf{e}_{k+1}\| \propto \|\mathbf{e}_k\|^2$) near the root.
+                    \item Reaches convergence in the fewest number of solver iterations (typically 2--4 iterations).
+                \end{itemize}
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{alertblock}{The Computational Bottleneck}
+                \scriptsize
+                For $n$ control variables, assembling $\mathbf{J}_k$ demands:
+                \par\vspace{1pt}
+                {\centering $\text{Propagations per iteration} = n + 1$\par}
+                In high-fidelity interplanetary flight (numerical $N$-body, SRP, $J_2$), re-propagating $n+1$ trajectories every step dominates CPU runtime.
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.45\textwidth}
+            \begin{block}{Newton-Raphson Iteration Cost}
+                \centering
+                \vspace{0.1cm}
+                \begin{tikzpicture}[scale=0.72, >=stealth]
+                    % Step k box
+                    \draw[thick, fill=DarkSlate, rounded corners=3pt] (-2.2, 1.8) rectangle (2.2, 0.7);
+                    \node[color=white, font=\tiny\bfseries] at (0, 1.4) {Iteration $k$: State $\mathbf{X}_k$};
+                    \node[color=UdeAGold, font=\fontsize{5pt}{6pt}\selectfont] at (0, 0.95) {Nominal Flight + $n$ Perturbation Passes};
+
+                    % Arrows representing n+1 flights
+                    \draw[thick, color=SpiceBlue, ->] (-1.5, 0.7) -- (-1.5, -0.2) node[midway, left, font=\fontsize{4.5pt}{5pt}\selectfont]{Nominal};
+                    \draw[thick, color=AlertRed, dashed, ->] (-0.5, 0.7) -- (-0.5, -0.2) node[midway, left, font=\fontsize{4.5pt}{5pt}\selectfont]{$\delta X_1$};
+                    \draw[thick, color=AlertRed, dashed, ->] (0.5, 0.7) -- (0.5, -0.2) node[midway, right, font=\fontsize{4.5pt}{5pt}\selectfont]{$\delta X_2$};
+                    \draw[thick, color=AlertRed, dashed, ->] (1.5, 0.7) -- (1.5, -0.2) node[midway, right, font=\fontsize{4.5pt}{5pt}\selectfont]{$\delta X_n$};
+
+                    % Inversion block
+                    \draw[thick, fill=UdeAGreen!20, rounded corners=3pt] (-2.2, -0.2) rectangle (2.2, -1.0);
+                    \node[color=DarkSlate, font=\tiny\bfseries] at (0, -0.45) {Invert $\mathbf{J}_k \implies \Delta \mathbf{X} = -\mathbf{J}_k^{-1} \mathbf{F}_k$};
+                    \node[color=Charcoal, font=\fontsize{5pt}{6pt}\selectfont] at (0, -0.8) {Cost: $n+1$ Trajectory Propagations};
+
+                    % Next step arrow
+                    \draw[thick, color=UdeAGreen, ->] (0, -1.0) -- (0, -1.7);
+                    \node[below, font=\tiny\bfseries, color=UdeAGreen] at (0, -1.7) {Iteration $k+1$: Repeat all $n+1$ flights};
+                \end{tikzpicture}
+            \end{block}
+
+            \vspace{-0.1cm}
+
+            \begin{exampleblock}{Recommended Use in GMAT}
+                \scriptsize
+                Best for simple transfers ($n \le 3$), highly non-linear orbital regimes, or when initial guesses are poor[cite: 3].
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE B: BROYDEN'S QUASI-NEWTON METHOD IN GMAT
+% ==============================================================================
+\begin{frame}{GMAT Differential Corrector: Broyden's Quasi-Newton Method}
+    \begin{columns}[t]
+        \begin{column}{0.53\textwidth}
+            \begin{block}{Rank-1 Secant Matrix Update Principle}
+                \scriptsize
+                The \texttt{Broyden} algorithm replaces expensive derivative flights with a multi-dimensional secant approximation[cite: 9]:
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Iteration $k = 0$:} Computes initial $\mathbf{B}_0 \approx \mathbf{J}_0$ using finite-difference perturbation passes ($n+1$ propagations).
+                    \item \textbf{Iterations $k \ge 1$:} Uses trajectory telemetry from the previous step to update $\mathbf{B}_k$ with \textbf{zero perturbation flights}:
+                    \par\vspace{1pt}
+                    {\centering $\displaystyle \mathbf{B}_{k+1} = \mathbf{B}_k + \frac{\left(\Delta \mathbf{F}_k - \mathbf{B}_k \Delta \mathbf{X}_k\right) \Delta \mathbf{X}_k^T}{\Delta \mathbf{X}_k^T \Delta \mathbf{X}_k}$\par}
+                    where $\Delta \mathbf{X}_k = \mathbf{X}_{k+1} - \mathbf{X}_k$ and $\Delta \mathbf{F}_k = \mathbf{F}_{k+1} - \mathbf{F}_k$.
+                \end{itemize}
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{exampleblock}{The Numerical Payoff: 1 Propagation per Step}
+                \scriptsize
+                After iteration 0, \textbf{each iteration requires only 1 forward trajectory integration}!
+                \begin{itemize}\setlength{\itemsep}{0.8pt}
+                    \item Achieves \textbf{superlinear convergence} rate.
+                    \item May require 1--2 more iterations than Newton-Raphson, but cuts total trajectory propagations by up to $60\%$.
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Broyden Secant Efficiency}
+                \centering
+                \vspace{0.1cm}
+                \begin{tikzpicture}[scale=0.72, >=stealth]
+                    % Step 0
+                    \draw[thick, fill=DarkSlate, rounded corners=3pt] (-2.2, 1.8) rectangle (2.2, 0.9);
+                    \node[color=white, font=\tiny\bfseries] at (0, 1.5) {Step $k=0$ (Seed Jacobian)};
+                    \node[color=UdeAGold, font=\fontsize{5pt}{6pt}\selectfont] at (0, 1.1) {Fires $n+1$ Perturbation Passes};
+
+                    \draw[thick, color=Charcoal, ->] (0, 0.9) -- (0, 0.3);
+
+                    % Step k >= 1
+                    \draw[thick, fill=UdeAGreen!15, rounded corners=3pt] (-2.2, 0.3) rectangle (2.2, -0.7);
+                    \node[color=DarkSlate, font=\tiny\bfseries] at (0, 0.05) {Steps $k \ge 1$ (Secant Updates)};
+                    \node[color=UdeAGreen, font=\fontsize{5pt}{6pt}\selectfont] at (0, -0.4) {\textbf{ONLY 1 Propagation per Iteration!}};
+
+                    % Recurse loop
+                    \draw[thick, color=UdeAGreen, ->] (2.2, -0.2) to[out=0, in=0] node[right, font=\fontsize{5pt}{6pt}\selectfont, color=UdeAGreen]{Rank-1 Update} (2.2, 0.2);
+                \end{tikzpicture}
+            \end{block}
+
+            \vspace{-0.1cm}
+
+            \begin{alertblock}{Operational Caveat in GMAT}
+                \scriptsize
+                GMAT must invert $\mathbf{B}_k$ at each iteration[cite: 9]. If dynamics are non-linear or steps are orthogonal, $\mathbf{B}_k$ can become ill-conditioned ($\det(\mathbf{B}_k) \approx 0$), causing matrix inversion failure[cite: 3].
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE C: MODIFIED BROYDEN & SOLVER SELECTION MATRIX
+% ==============================================================================
+\begin{frame}{Modified Broyden and GMAT Solver Selection Matrix}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Modified Broyden: Direct Inverse Update}
+                \scriptsize
+                The \texttt{ModifiedBroyden} algorithm updates the \textbf{inverse Jacobian} $\mathbf{H}_k \equiv \mathbf{B}_k^{-1}$ directly using the Sherman-Morrison theorem[cite: 9]:
+                \par\vspace{1pt}
+                {\centering $\displaystyle \mathbf{H}_{k+1} = \mathbf{H}_k + \frac{\left(\Delta \mathbf{X}_k - \mathbf{H}_k \Delta \mathbf{F}_k\right) \Delta \mathbf{X}_k^T \mathbf{H}_k}{\Delta \mathbf{X}_k^T \mathbf{H}_k \Delta \mathbf{F}_k}$\par}
+                \vspace{2pt}
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item Parameter update requires no matrix inversion:
+                    \par\vspace{1pt}
+                    {\centering $\displaystyle \Delta \mathbf{X}_k = -\mathbf{H}_k \left(\mathbf{Y}(\mathbf{X}_k) - \mathbf{Y}^*\right)$\par}
+                    \item \textbf{1 propagation per step} for all $k \ge 1$.
+                    \item Completely eliminates singular matrix inversion crashes in GMAT[cite: 3].
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.50\textwidth}
+            \begin{block}{GMAT Differential Corrector Decision Matrix}
+                \centering
+                \scriptsize
+                \setlength{\tabcolsep}{2.5pt}
+                \begin{tabular}{lccc}
+                    \toprule
+                    \textbf{Metric} & \textbf{Newton-Raphson} & \textbf{Broyden} & \textbf{Mod-Broyden} \\ \midrule
+                    \textbf{Props / Step ($k \ge 1$)} & $n + 1$ & \textbf{1} & \textbf{1} \\
+                    \textbf{Convergence Rate} & Quadratic & Superlinear & Superlinear \\
+                    \textbf{Matrix Inversion} & Every Step & Every Step & \textbf{None (Direct)} \\
+                    \textbf{Singular Risk} & Moderate & High & \textbf{Lowest} \\
+                    \textbf{CPU Cost ($N$-body)} & Very High & Low & \textbf{Lowest} \\ \bottomrule
+                \end{tabular}
+            \end{block}
+
+            \vspace{-0.1cm}
+
+            \begin{exampleblock}{Engineering Rule of Thumb for GMAT}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1pt}
+                    \item Use \textbf{Newton-Raphson} when starting far from the solution or with few controls ($n \le 2$).
+                    \item Switch to \textbf{Modified Broyden} for production runs with complex force models or multi-variable targeting ($n \ge 3$) to cut simulation time.
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
 % SLIDE 37: GMAT TARGET COMMAND ARCHITECTURE
 % ==============================================================================
 \begin{frame}[fragile]{NASA GMAT Target Sequence: Command Architecture}

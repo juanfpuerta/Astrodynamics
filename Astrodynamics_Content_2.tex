@@ -66,7 +66,7 @@
 
 \lstdefinestyle{pythoncode}{
     backgroundcolor=\color{white},
-    basicstyle=\ttfamily\fontsize{4.5pt}{5.2pt}\selectfont\color{Charcoal},
+    basicstyle=\ttfamily\fontsize{4.4pt}{5.2pt}\selectfont\color{Charcoal},
     keywordstyle=\bfseries\color{UdeAGreen},
     commentstyle=\itshape\color{gray},
     stringstyle=\color{UdeAGold!90!black},
@@ -85,14 +85,12 @@
 \usetheme{Madrid}
 \usefonttheme{professionalfonts}
 
-% Positions logo in the upper right corner
 \logo{\vspace{-0.2cm}\hfill\includegraphics[width=1cm]{Images/UdeA+simplificado+Negro_Smaller.png}\hspace{0.1cm}}
 
-% Metadata & Title Page Logo
 \title[Astrodynamics Module 2]{\textbf{Module 2: 3D Interplanetary Trajectories and B-Plane Navigation}}
 \subtitle{Interplanetary Flight Mechanics}
-\author{\textbf{Juan Francisco Puerta Ibarra}}
-\institute{Aerospace Engineering}
+\author{\textbf{Prof. Juan Francisco Puerta Ibarra}}
+%\institute{Aerospace Engineering}
 \date{Semester 2026-2}
 \titlegraphic{\includegraphics[width=2.5cm,keepaspectratio]{Images/UdeA+simplificado+Negro_Smaller.png}}
 
@@ -104,36 +102,37 @@
 \begin{frame}[plain]
     \titlepage
     \begin{center}
-        \scriptsize \textcolor{DarkSlate}{\textit{Numerical Trajectory Optimization via NASA SPICE, poliastro, and GMAT}}
+        \scriptsize \textcolor{DarkSlate}{\textit{Analytical Flight Mechanics, NASA SPICE Optimization, and GMAT Targeting}}
     \end{center}
 \end{frame}
 
 % ==============================================================================
-% SLIDE 2: MODULE 2 ROADMAP
+% SLIDE 2: MODULE 2 ROADMAP (WITH ENLARGED TARGET DIAGRAM)
 % ==============================================================================
 \begin{frame}{Module 2: Architecture and Operational Roadmap}
     \begin{columns}[t]
-        \begin{column}{0.60\textwidth}
+        \begin{column}{0.68\textwidth}
             \begin{block}{From Planar Transfers to 3D Navigation}
-                \fontsize{6.2pt}{7.4pt}\selectfont
-                \begin{itemize}\setlength{\itemsep}{1.2pt}
+                \fontsize{5.8pt}{6.8pt}\selectfont
+                \begin{itemize}\setlength{\itemsep}{0.5pt}\setlength{\topsep}{1pt}\setlength{\parsep}{0pt}\setlength{\partopsep}{0pt}
                     \item \textbf{Week 5: 3D Patched Conics and Hyperbolic Asymptotes}
-                    \begin{itemize}\setlength{\itemsep}{0.5pt}
+                    \begin{itemize}\setlength{\itemsep}{0.2pt}\setlength{\topsep}{0pt}\setlength{\parsep}{0pt}
                         \item Expanding 2D Lambert transfers to 3D inertial space.
                         \item Asymptote ($\alpha, \delta$) and the \textbf{Inclination Trap} ($i \ge |\delta|$).
+                        \item Python 3D departure kinematics and launch azimuth solvers.
                     \end{itemize}
                     \item \textbf{Computational Mission Design: SPICE-Driven Porkchop Plots}
-                    \begin{itemize}\setlength{\itemsep}{0.5pt}
-                        \item Solving Lambert's BVP numerically via Izzo's algorithm.
-                        \item Multi-planet dimensionality reduction and flyby velocity matching.
+                    \begin{itemize}\setlength{\itemsep}{0.2pt}\setlength{\topsep}{0pt}\setlength{\parsep}{0pt}
+                        \item Solving Lambert's boundary value problem via Izzo's algorithm.
+                        \item Multi-planet dimensionality reduction and flyby $\Delta V$ matching.
                     \end{itemize}
                     \item \textbf{Week 6: Gravity Assists and Powered Flybys}
-                    \begin{itemize}\setlength{\itemsep}{0.5pt}
+                    \begin{itemize}\setlength{\itemsep}{0.2pt}\setlength{\topsep}{0pt}\setlength{\parsep}{0pt}
                         \item Planetary SOI momentum transfer; turn angle $\delta_{\text{turn}}(r_p)$.
                         \item Leading vs. Trailing encounters and deep-space Oberth burns.
                     \end{itemize}
                     \item \textbf{Week 7: The B-Plane Targeting Framework}
-                    \begin{itemize}\setlength{\itemsep}{0.5pt}
+                    \begin{itemize}\setlength{\itemsep}{0.2pt}\setlength{\topsep}{0pt}\setlength{\parsep}{0pt}
                         \item $(\hat{\mathbf{S}}, \hat{\mathbf{T}}, \hat{\mathbf{R}})$ frame and impact parameter vector $\mathbf{B}$.
                         \item Multi-variable differential correctors in NASA's GMAT.
                     \end{itemize}
@@ -141,21 +140,29 @@
             \end{block}
         \end{column}
         
-        \begin{column}{0.37\textwidth}
+        \begin{column}{0.30\textwidth}
             \begin{alertblock}{Forensic Engineering Core}
                 \scriptsize
                 Planetary targeting cannot rely on point-coincidence root finders. We map state transition matrices to project miss distances onto invariant planetocentric target planes.
             \end{alertblock}
-            \vspace{0.08cm}
+            \vspace{0.35cm}
             \centering
-            \begin{tikzpicture}[scale=0.50]
-                \draw[thick, ->, >=stealth, color=UdeAGreen] (0,0) -- (2.6,0) node[right]{\tiny $\hat{\mathbf{T}}$};
-                \draw[thick, ->, >=stealth, color=UdeAGreen] (0,0) -- (0,-1.8) node[below]{\tiny $\hat{\mathbf{R}}$};
-                \draw[thick, ->, >=stealth, color=UdeAGold] (0,0) -- (1.8,-1.2) node[midway, above right]{\tiny $\mathbf{B}$};
-                \draw[dashed, color=gray] (1.8,-1.2) -- (1.8,0);
-                \draw[dashed, color=gray] (1.8,-1.2) -- (0,-1.2);
-                \filldraw[color=Charcoal] (0,0) circle (2pt);
-                \node[above left, font=\tiny] at (0,0) {Target};
+            \begin{tikzpicture}[scale=0.85, >=stealth]
+                % Coordinate Axes
+                \draw[very thick, ->, color=UdeAGreen] (0,0) -- (3.3,0) node[right, font=\footnotesize]{$\hat{\mathbf{T}}$};
+                \draw[very thick, ->, color=UdeAGreen] (0,0) -- (0,-2.3) node[below, font=\footnotesize]{$\hat{\mathbf{R}}$};
+                
+                % Target Center of Mass
+                \filldraw[color=Charcoal] (0,0) circle (2.8pt);
+                \node[above left, font=\scriptsize\bfseries, color=Charcoal] at (0,0) {Target};
+                
+                % Impact Parameter Vector and Components
+                \draw[dashed, color=gray!90, line width=0.7pt] (2.3,-1.55) -- (2.3,0) node[above, font=\tiny, color=Charcoal]{$B\cdot T$};
+                \draw[dashed, color=gray!90, line width=0.7pt] (2.3,-1.55) -- (0,-1.55) node[left, font=\tiny, color=Charcoal]{$B\cdot R$};
+                \draw[very thick, ->, color=UdeAGold] (0,0) -- (2.3,-1.55) node[midway, above right, font=\footnotesize\bfseries]{$\mathbf{B}$};
+                
+                % Pierce Point Marker
+                \filldraw[color=AlertRed] (2.3,-1.55) circle (2.2pt);
             \end{tikzpicture}
         \end{column}
     \end{columns}
@@ -574,7 +581,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 11a: THE OBERTH EFFECT & ENERGY MULTIPLICATION
+% SLIDE 12: THE OBERTH EFFECT & ENERGY MULTIPLICATION
 % ==============================================================================
 \begin{frame}{The Oberth Effect: Energy Multiplication at High Velocity}
     \begin{columns}[t]
@@ -608,17 +615,14 @@
                 \centering
                 \vspace{0.05cm}
                 \begin{tikzpicture}[scale=0.68]
-                    % Potential Well Curve
                     \draw[thick, color=gray!60] (-2.2, 1.8) to[out=-70, in=180] (0, -1.5) to[out=0, in=-110] (2.2, 1.8);
                     \node[above, font=\tiny, color=gray] at (0, 1.8) {Gravitational Potential Well};
 
-                    % Deep Burn at Periapsis (Bottom)
                     \filldraw[color=AlertRed] (0, -1.5) circle (2.2pt);
                     \draw[thick, ->, >=stealth, color=AlertRed, line width=1pt] (0, -1.5) -- (1.6, -1.5) node[right, font=\tiny]{$\mathbf{v}_p \gg 0$};
                     \node[below=2pt, font=\tiny\bfseries, color=UdeAGreen] at (0, -1.5) {Periapsis Burn};
                     \node[below=9pt, font=\tiny, color=Charcoal] at (0, -1.5) {$\Delta E_k \approx v_p \Delta v$ (Maximized)};
 
-                    % Shallow Burn in Cruise (Top)
                     \filldraw[color=SpiceBlue] (1.8, 1.2) circle (2.2pt);
                     \draw[thick, ->, >=stealth, color=SpiceBlue, line width=0.8pt] (1.8, 1.2) -- (2.4, 1.2) node[right, font=\tiny]{$\mathbf{v}_\infty$};
                     \node[above=2pt, font=\tiny, color=SpiceBlue] at (1.8, 1.2) {Deep Space Burn};
@@ -637,7 +641,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 12: WHAT IS C3?
+% SLIDE 13: WHAT IS C3?
 % ==============================================================================
 \begin{frame}{What is $C_3$? Characteristic Energy Defined}
     \begin{columns}[t]
@@ -676,7 +680,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 13: ANALYTICAL EXAMPLE: EARTH TO VENUS
+% SLIDE 14: ANALYTICAL EXAMPLE: EARTH TO VENUS
 % ==============================================================================
 \begin{frame}{Analytical Example: Earth to Venus (Inner Trajectory)}
     \begin{exampleblock}{Mission Scenario}
@@ -726,7 +730,156 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 14: THE REALITY OF INTERPLANETARY FLIGHT
+% SLIDE 15: THE INCLINATION TRAP
+% ==============================================================================
+\begin{frame}{The Launch Geometry Boundary: The "Inclination Trap"}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{alertblock}{The Mathematical Constraint: $i \ge |\delta|$}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                    \item Parking orbit reaches maximum latitude $\phi_{\max} = i$.
+                    \item For departure burn $\Delta \mathbf{v}_{\text{inj}}$ to be executed \textbf{in-plane} (zero out-of-plane penalty):
+                    \vspace{-0.05cm}
+                    \begin{equation*}
+                        \sin i = \cos \delta \sin(\beta_{\text{inertial}}) \implies i \ge |\delta|
+                    \end{equation*}
+                    \vspace{-0.15cm}
+                    \item If $i < |\delta|$ (\textbf{The Inclination Trap}), no coplanar injection exists!
+                    \item Forces costly non-coplanar wedge burn:
+                    \vspace{-0.05cm}
+                    \begin{equation*}
+                        \Delta v_{\text{penalty}} \approx 2 v_{\text{park}} \sin\left(\frac{\Delta \psi}{2}\right)
+                    \end{equation*}
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \begin{block}{Launch Azimuth $\beta_{\text{launch}}$}
+                \scriptsize
+                From launch latitude $\phi_L$ into inclination $i$:
+                \vspace{-0.05cm}
+                \begin{equation*}
+                    \cos \beta = \frac{\cos i}{\cos \phi_L}
+                \end{equation*}
+                \centering
+                \begin{tikzpicture}[scale=0.80]
+                    \draw[thick, color=Charcoal] (0,0) circle (1.2cm);
+                    \draw[dashed, color=gray] (-1.5,0) -- (1.5,0) node[right, font=\tiny]{Equator};
+                    \draw[thick, color=UdeAGreen, rotate=35] (-1.2,0) -- (1.2,0) node[right, font=\tiny]{Plane ($i$)};
+                    \draw[thick, ->, >=stealth, color=AlertRed, line width=0.9pt] (0,0) -- (0.95,0.95) node[above right, font=\tiny]{$\hat{\mathbf{S}} (\delta)$};
+                    \draw[dashed, color=AlertRed] (0.95,0.95) -- (0.95,0) node[midway, right, font=\tiny]{$\delta$};
+                \end{tikzpicture}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 16: WORKED EXAMPLE 1 (EARTH TO MARS)
+% ==============================================================================
+\begin{frame}{Worked Example 1: Earth-to-Mars Departure Geometry}
+    \begin{exampleblock}{Analytical Trajectory Benchmark}
+        \scriptsize
+        Lambert: $\mathbf{v}_{\text{Lambert}} = [32.45, 12.10, 4.85]\text{ km/s}$, Earth: $\mathbf{v}_{\oplus} = [29.78, 0.00, 0.00]\text{ km/s}$. \\
+        $h_p = 250\text{ km}$ ($R_{\oplus} = 6378\text{ km}, \mu_{\oplus} = 398600.44\text{ km}^3/\text{s}^2$). Launch site: $\phi_L = 28.5^\circ$.
+    \end{exampleblock}
+
+    \vspace{-0.15cm}
+
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \scriptsize
+            \textbf{Step 1: Hyperbolic Excess Vector ($\mathbf{v}_\infty$)}
+            \begin{align*}
+                \mathbf{v}_\infty &= \mathbf{v}_{\text{Lambert}} - \mathbf{v}_{\oplus} = [2.67, 12.10, 4.85]\text{ km/s} \\
+                v_\infty &= \sqrt{2.67^2 + 12.10^2 + 4.85^2} = \mathbf{13.31}\text{ km/s} \\
+                C_3 &= v_\infty^2 = \mathbf{177.27}\text{ km}^2/\text{s}^2
+            \end{align*}
+            \vspace{-0.15cm}
+            \textbf{Step 2: Asymptote Declination and RA}
+            \begin{equation*}
+                \delta = \arcsin(4.85/13.31) = +\mathbf{21.37}^\circ, \quad \alpha = \mathbf{77.56}^\circ
+            \end{equation*}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \scriptsize
+            \textbf{Step 3: Check Inclination Trap}
+            \begin{equation*}
+                i_{\text{park}} = 28.5^\circ \ge |\delta| = 21.37^\circ \quad \textcolor{UdeAGreen}{\textbf{[PASS]}}
+            \end{equation*}
+            \textbf{Step 4: Trans-Mars Injection $\Delta v_{\text{TMI}}$}
+            \begin{align*}
+                r_p &= 6378 + 250 = 6628\text{ km} \\
+                v_{\text{park}} &= \sqrt{\mu/r_p} = 7.755\text{ km/s} \\
+                v_{\text{periapsis}} &= \sqrt{v_\infty^2 + 2\mu/r_p} = 17.247\text{ km/s} \\
+                \Delta v_{\text{TMI}} &= 17.247 - 7.755 = \mathbf{9.492}\text{ km/s}
+            \end{align*}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 17: PYTHON SCRIPT: DEPARTURE & INCLINATION TRAP SOLVER
+% ==============================================================================
+\begin{frame}[fragile]{Python Implementation: 3D Departure and Inclination Trap Solver}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Mathematical Routine Architecture}
+                \scriptsize
+                The Python function solves 3D asymptotic kinematics:
+                \begin{enumerate}\setlength{\itemsep}{1.5pt}
+                    \item Subtracts Earth's velocity to yield $\mathbf{v}_\infty$.
+                    \item Computes characteristic energy $C_3 = \|\mathbf{v}_\infty\|^2$.
+                    \item Determines asymptote angles: $\delta = \arcsin(S_z)$, $\alpha = \operatorname{atan2}(S_y, S_x)$.
+                    \item Evaluates the \textbf{Inclination Trap} ($i_{\text{park}} \ge |\delta|$).
+                    \item Calculates coplanar launch azimuths $\beta_{\text{launch}} = \pm \arccos(\cos i / \cos \phi_L)$.
+                    \item Computes $\Delta v_{\text{TMI}}$ from circular parking orbit $r_p$.
+                \end{enumerate}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.50\textwidth}
+\begin{lstlisting}[style=pythoncode]
+import numpy as np
+
+def solve_3d_departure(v_lambert, v_planet, phi_L_deg, hp_km):
+    mu_earth = 398600.44; R_earth = 6378.14
+    v_inf = np.array(v_lambert) - np.array(v_planet)
+    v_inf_mag = np.linalg.norm(v_inf)
+    C3 = v_inf_mag**2
+    
+    # Asymptote Declination and Right Ascension
+    S = v_inf / v_inf_mag
+    delta = np.arcsin(S[2])
+    alpha = np.arctan2(S[1], S[0])
+    
+    # Check Inclination Trap from direct launch (i = phi_L)
+    i_park = np.radians(phi_L_deg)
+    trap_violation = abs(delta) > i_park
+    
+    # Sizing Trans-Mars Injection
+    rp = R_earth + hp_km
+    v_park = np.sqrt(mu_earth / rp)
+    v_peri = np.sqrt(v_inf_mag**2 + 2 * mu_earth / rp)
+    dv_inj = v_peri - v_park
+    
+    # Launch Azimuth
+    cos_beta = np.cos(i_park) / np.cos(np.radians(phi_L_deg))
+    beta_deg = np.degrees(np.arccos(np.clip(cos_beta, -1, 1)))
+    
+    return {"C3": C3, "delta_deg": np.degrees(delta), 
+            "alpha_deg": np.degrees(alpha), "trap": trap_violation,
+            "dv_inj": dv_inj, "beta_launch": beta_deg}
+\end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 18: THE REALITY OF INTERPLANETARY FLIGHT
 % ==============================================================================
 \begin{frame}{The Reality of Interplanetary Flight: Beyond Hohmann}
     \begin{columns}[t]
@@ -737,7 +890,7 @@
                 \begin{itemize}\setlength{\itemsep}{1.2pt}
                     \item Planetary orbits are \textbf{eccentric} ($e_{\text{Mars}} = 0.0934$, $e_{\text{Mercury}} = 0.2056$).
                     \item Planetary orbits are \textbf{mutually inclined} ($i_{\text{Mars}} = 1.85^\circ$, $i_{\text{Mercury}} = 7.00^\circ$).
-                    \item A pure $180^\circ$ Hohmann transfer almost never exists!
+                    \item A pure $180^\circ$ Hohmann transfer rarely exists!
                     \item The required launch energy ($C_3$) and arrival speed ($v_{\infty,\text{arr}}$) change drastically with calendar dates.
                 \end{itemize}
             \end{block}
@@ -751,7 +904,7 @@
                 \begin{equation*}
                     (\mathbf{r}_1(t_{\text{dep}}), \, \mathbf{r}_2(t_{\text{arr}}), \, \Delta t) \xrightarrow{\text{Lambert}} (\mathbf{V}_1, \, \mathbf{V}_2)
                 \end{equation*}
-                \vspace{-0.15cm}
+                \vspace{-0.01cm}
                 Mapping the resulting $C_3$ values over a 2D departure/arrival grid reveals the trajectory landscape: \textbf{The Porkchop Plot}!
             \end{alertblock}
         \end{column}
@@ -759,7 +912,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 15: THE PORKCHOP PLOT
+% SLIDE 19: THE PORKCHOP PLOT
 % ==============================================================================
 \begin{frame}{Mapping the Energy Landscape: The Porkchop Plot}
     \begin{columns}[t]
@@ -782,25 +935,21 @@
                 \begin{tikzpicture}[scale=0.58]
                     \draw[fill=DarkSlate, rounded corners=5pt] (-2.6,-1.7) rectangle (2.6, 1.8);
                     
-                    % Axes
                     \draw[->, >=stealth, color=white, line width=0.8pt] (-2.2,-1.4) -- (2.3,-1.4) node[right, font=\tiny]{$t_{\text{dep}}$};
                     \draw[->, >=stealth, color=white, line width=0.8pt] (-2.2,-1.4) -- (-2.2,1.6) node[above, font=\tiny]{$t_{\text{arr}}$};
                     
-                    % Type I Valley
                     \draw[color=UdeAGold!80, line width=0.6pt] (-1.2,-0.1) ellipse (0.65cm and 0.95cm);
                     \draw[color=UdeAGreen!80, line width=0.8pt] (-1.2,-0.1) ellipse (0.40cm and 0.60cm);
                     \draw[color=cyan!80, line width=0.9pt] (-1.2,-0.1) ellipse (0.20cm and 0.30cm);
                     \node[color=cyan, font=\tiny] at (-1.2,-0.1) {$\bigstar$};
                     \node[color=white, font=\tiny] at (-1.2, 1.1) {Type I};
                     
-                    % Type II Valley
                     \draw[color=UdeAGold!80, line width=0.6pt] (0.9, 0.4) ellipse (0.75cm and 0.90cm);
                     \draw[color=UdeAGreen!80, line width=0.8pt] (0.9, 0.4) ellipse (0.45cm and 0.55cm);
                     \draw[color=cyan!80, line width=0.9pt] (0.9, 0.4) ellipse (0.22cm and 0.28cm);
                     \node[color=cyan, font=\tiny] at (0.9, 0.4) {$\bigstar$};
                     \node[color=white, font=\tiny] at (0.9, 1.45) {Type II};
                     
-                    % TOF Diagonal Line
                     \draw[dashed, color=AlertRed!90, line width=0.8pt] (-2.0, 0.3) -- (1.6, -1.2) node[midway, above, sloped, font=\tiny]{$TOF = 200\text{ d}$};
                 \end{tikzpicture}
             \end{block}
@@ -809,7 +958,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 16: PORKCHOP PLOT ALGORITHM
+% SLIDE 20: PORKCHOP PLOT ALGORITHM
 % ==============================================================================
 \begin{frame}{Launch Window Determination: The Porkchop Grid Algorithm}
     \begin{columns}[t]
@@ -848,7 +997,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 17: TYPE I VS TYPE II TRAJECTORIES
+% SLIDE 21: TYPE I VS TYPE II TRAJECTORIES
 % ==============================================================================
 \begin{frame}{Trajectory Topologies: Type I vs. Type II Transfers}
     \begin{columns}[t]
@@ -887,7 +1036,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 18: COMPUTATIONAL ENGINE: SOLVING LAMBERT'S PROBLEM
+% SLIDE 22: COMPUTATIONAL ENGINE: SOLVING LAMBERT'S PROBLEM
 % ==============================================================================
 \begin{frame}{Computational Engine: Solving Lambert's BVP via Izzo's Algorithm}
     \begin{columns}[t]
@@ -942,7 +1091,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 19: EPHEMERIS BACKBONE: NASA SPICE KERNEL ARCHITECTURE
+% SLIDE 23: EPHEMERIS BACKBONE: NASA SPICE KERNEL ARCHITECTURE
 % ==============================================================================
 \begin{frame}[fragile]{Ephemeris Backbone: NASA SPICE Kernel Architecture}
     \begin{columns}[t]
@@ -985,37 +1134,33 @@ dep_end   = spy.utc2et("1978-05-01T00:00:00")
 \end{frame}
 
 % ==============================================================================
-% SLIDE 20: DIMENSIONALITY REDUCTION: SLICING THE 3D SEARCH SPACE
+% SLIDE 24: DIMENSIONALITY REDUCTION (REVISED COMPACT MATH)
 % ==============================================================================
 \begin{frame}[fragile]{Dimensionality Reduction: Slicing the Multi-Planet Search Space}
     \begin{columns}[t]
-        \begin{column}{0.54\textwidth}
+        \begin{column}{0.52\textwidth}
             \begin{block}{The Multi-Planet Dimension Dilemma}
                 \scriptsize
                 An Earth $\to$ Jupiter $\to$ Saturn trajectory spans 3 independent dates:
-                \vspace{-0.05cm}
-                \begin{equation*}
-                    \mathbf{T} = [t_{\text{Earth}}, \; t_{\text{Jupiter}}, \; t_{\text{Saturn}}]^T \in \mathbb{R}^3
-                \end{equation*}
-                \vspace{-0.15cm}
-                A brute-force 3D grid ($100^3$ points) requires $10^6$ double-Lambert evaluations, which is computationally expensive.
+                \par\vspace{2pt}
+                {\centering $\mathbf{T} = [t_{\text{Earth}}, \; t_{\text{Jupiter}}, \; t_{\text{Saturn}}]^T \in \mathbb{R}^3$\par}
+                \vspace{2pt}
+                A brute-force 3D grid ($100^3$) demands $10^6$ double-Lambert calls.
             \end{block}
             \vspace{-0.08cm}
             \begin{alertblock}{Strategy: Freezing Jupiter--Saturn TOF}
                 \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1pt}
+                \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\topsep}{0pt}
                     \item Slices the 3D tensor into a 2D Opportunity Map:
-                    \vspace{-0.05cm}
-                    \begin{equation*}
-                        t_{\text{Saturn}} = t_{\text{Jupiter}} + \Delta t_{\text{fixed}} \quad (\Delta t_{\text{fixed}} = 2.0\text{ years})
-                    \end{equation*}
-                    \vspace{-0.15cm}
-                    \item Non-physical combinations ($t_{\text{Jupiter}} \le t_{\text{Earth}}$) are skipped with \texttt{continue}, populated as \texttt{np.nan}.
+                    \par\vspace{1pt}
+                    {\centering $t_{\text{Saturn}} = t_{\text{Jupiter}} + \Delta t_{\text{fixed}} \quad (\Delta t_{\text{fixed}} = 2.0\text{ yr})$\par}
+                    \vspace{1pt}
+                    \item Skips non-physical pairs ($t_{\text{Jupiter}} \le t_{\text{Earth}}$) via \texttt{continue}, storing \texttt{np.nan}.
                 \end{itemize}
             \end{alertblock}
         \end{column}
 
-        \begin{column}{0.44\textwidth}
+        \begin{column}{0.46\textwidth}
 \begin{lstlisting}[style=pythoncode]
 # Freeze Jupiter-Saturn cruise (2 Years)
 fixed_tof_sec = 2 * 365 * 86400
@@ -1038,7 +1183,7 @@ dv_penalty_grid = np.full((100, 100), np.nan)
 \end{frame}
 
 % ==============================================================================
-% SLIDE 21: THE DOUBLE-LEG LAMBERT LOOP & MATCHING PENALTY
+% SLIDE 25: THE DOUBLE-LEG LAMBERT LOOP & MATCHING PENALTY
 % ==============================================================================
 \begin{frame}[fragile]{The Double-Leg Lambert Loop and \texorpdfstring{$\Delta V$}{Delta-V} Flyby Matching Penalty}
     \begin{columns}[t]
@@ -1063,31 +1208,24 @@ dv_penalty_grid = np.full((100, 100), np.nan)
         \begin{column}{0.48\textwidth}
 \begin{lstlisting}[style=pythoncode]
 # --- LEG 1: Earth to Jupiter ---
-pos_E, _ = spy.spkpos('EARTH', t_earth,
-                      'J2000', 'NONE', 'SSB')
-pos_J, _ = spy.spkpos('JUPITER BARYCENTER',
-                      t_jup, 'J2000', 'NONE', 'SSB')
-sol_1 = list(izzo.lambert(mu_sun_u,
-             pos_E*u.km, pos_J*u.km, tof_1*u.s))
+pos_E, _ = spy.spkpos('EARTH', t_earth, 'J2000', 'NONE', 'SSB')
+pos_J, _ = spy.spkpos('JUPITER BARYCENTER', t_jup, 'J2000', 'NONE', 'SSB')
+sol_1 = list(izzo.lambert(mu_sun_u, pos_E*u.km, pos_J*u.km, tof_1*u.s))
 v1_E, v1_J = sol_1[0]
 
 # Heliocentric Planet Velocity
-st_J, _ = spy.spkezr('JUPITER BARYCENTER',
-                     t_jup, 'J2000', 'NONE', 'SUN')
+st_J, _ = spy.spkezr('JUPITER BARYCENTER', t_jup, 'J2000', 'NONE', 'SUN')
 vel_J = st_J[3:6]
 v_inf_in = v1_J.to_value(u.km/u.s) - vel_J
 
 # --- LEG 2: Jupiter to Saturn ---
-pos_S, _ = spy.spkpos('SATURN BARYCENTER',
-                      t_sat, 'J2000', 'NONE', 'SSB')
-sol_2 = list(izzo.lambert(mu_sun_u,
-             pos_J*u.km, pos_S*u.km, fixed_tof_u))
+pos_S, _ = spy.spkpos('SATURN BARYCENTER', t_sat, 'J2000', 'NONE', 'SSB')
+sol_2 = list(izzo.lambert(mu_sun_u, pos_J*u.km, pos_S*u.km, fixed_tof_u))
 v2_J, v2_S = sol_2[0]
 v_inf_out = v2_J.to_value(u.km/u.s) - vel_J
 
 # --- POWERED FLYBY PENALTY ---
-dv = np.linalg.norm(v_inf_out) - \
-     np.linalg.norm(v_inf_in)
+dv = np.linalg.norm(v_inf_out) - np.linalg.norm(v_inf_in)
 dv_penalty_grid[i, j] = abs(dv)
 \end{lstlisting}
         \end{column}
@@ -1095,7 +1233,7 @@ dv_penalty_grid[i, j] = abs(dv)
 \end{frame}
 
 % ==============================================================================
-% SLIDE 22: OPTIMAL WINDOW EXTRACTION & OPPORTUNITY MAP TOPOLOGY
+% SLIDE 26: OPTIMAL WINDOW EXTRACTION & OPPORTUNITY MAP TOPOLOGY
 % ==============================================================================
 \begin{frame}[fragile]{Optimal Window Extraction and Opportunity Map Visualization}
     \begin{columns}[t]
@@ -1121,231 +1259,25 @@ dv_penalty_grid[i, j] = abs(dv)
 # 1. Extract 2D Optimal Minimum Indices
 min_penalty = np.nanmin(dv_penalty_grid)
 flat_index  = np.nanargmin(dv_penalty_grid)
-min_i, min_j = np.unravel_index(flat_index,
-                                dv_penalty_grid.shape)
+min_i, min_j = np.unravel_index(flat_index, dv_penalty_grid.shape)
 
 best_earth = spy.et2utc(earth_dates[min_j], 'C', 0)
 best_jup   = spy.et2utc(jup_dates[min_i], 'C', 0)
 
 # 2. Render Contour Opportunity Map
-earth_dt = [datetime.datetime.strptime(
-    spy.et2utc(t, 'ISOC', 0),
-    "%Y-%m-%dT%H:%M:%S") for t in earth_dates]
-jup_dt   = [datetime.datetime.strptime(
-    spy.et2utc(t, 'ISOC', 0),
-    "%Y-%m-%dT%H:%M:%S") for t in jup_dates]
+earth_dt = [datetime.datetime.strptime(spy.et2utc(t, 'ISOC', 0), "%Y-%m-%dT%H:%M:%S") for t in earth_dates]
+jup_dt   = [datetime.datetime.strptime(spy.et2utc(t, 'ISOC', 0), "%Y-%m-%dT%H:%M:%S") for t in jup_dates]
 
 X, Y = np.meshgrid(earth_dt, jup_dt)
-plt.contourf(X, Y, dv_penalty_grid,
-    levels=np.linspace(0, 10, 20), cmap='viridis')
-plt.plot(earth_dt[min_j], jup_dt[min_i],
-    marker='*', color='red', markersize=12)
+plt.contourf(X, Y, dv_penalty_grid, levels=np.linspace(0, 10, 20), cmap='viridis')
+plt.plot(earth_dt[min_j], jup_dt[min_i], marker='*', color='red', markersize=12)
 \end{lstlisting}
         \end{column}
     \end{columns}
 \end{frame}
 
 % ==============================================================================
-% SLIDE 23: PHASE 2 — HELIOCENTRIC CRUISE & VECTOR PATCHING
-% ==============================================================================
-\begin{frame}{Phase 2: Heliocentric Cruise and Vector Patching}
-    \begin{columns}[t]
-        \begin{column}{0.50\textwidth}
-            \begin{block}{Heliocentric Cruise Mechanics}
-                \scriptsize
-                At Earth SOI exit, the spacecraft enters heliocentric space. The initial transfer velocity $\mathbf{V}_{\text{tx},1}$ is the vector sum:
-                \vspace{-0.08cm}
-                \begin{equation*}
-                    \mathbf{V}_{\text{tx},1} = \mathbf{V}_{\text{planet},1} + \mathbf{v}_{\infty,\text{dep}}
-                \end{equation*}
-                \vspace{-0.15cm}
-                \begin{itemize}\setlength{\itemsep}{1.5pt}
-                    \item \textbf{Prograde $\mathbf{v}_\infty$:} Raises aphelion ($R_a > R_1$) toward outer planets (Mars, Jupiter).
-                    \item \textbf{Retrograde $\mathbf{v}_\infty$:} Lowers perihelion ($R_p < R_1$) toward inner planets (Venus, Mercury).
-                \end{itemize}
-                \par\vspace{2pt}
-                \textbf{Arrival Patch Condition at Target ($R_2$):}
-                \vspace{-0.08cm}
-                \begin{equation*}
-                    \mathbf{v}_{\infty,\text{arr}} = \mathbf{V}_{\text{tx},2} - \mathbf{V}_{\text{planet},2}
-                \end{equation*}
-            \end{block}
-        \end{column}
-
-        \begin{column}{0.47\textwidth}
-            \begin{block}{Phase 2 Heliocentric Transfer Arc}
-                \centering
-                \begin{tikzpicture}[scale=0.64]
-                    \draw[thick, fill=yellow!80] (0,0) circle (0.32cm);
-                    \node[below=0.35cm, font=\tiny] at (0,0) {Sun ($\mu_\odot$)};
-                    
-                    \draw[thick, color=blue!60] (0,0) circle (1.3cm);
-                    \node[color=blue!80, font=\tiny] at (-1.55, 0.5) {Orbit 1};
-                    
-                    \draw[thick, color=orange!80] (0,0) circle (2.3cm);
-                    \node[color=orange!90, font=\tiny] at (1.65, 1.8) {Orbit 2};
-                    
-                    \draw[thick, color=UdeAGreen, line width=1.1pt] (-1.3,0) arc (180:0:1.8cm and 1.55cm);
-                    \node[color=UdeAGreen, font=\tiny] at (0.0, 1.75) {Transfer Arc};
-                    
-                    \filldraw[color=blue!80] (-1.3,0) circle (2.0pt);
-                    \node[below left, font=\tiny] at (-1.3,0) {Departure};
-                    \draw[thick, ->, >=stealth, color=Charcoal] (-1.3,0) -- (-1.3,0.95) node[above, font=\tiny]{$\mathbf{V}_{\text{tx},1}$};
-                    
-                    \filldraw[color=orange!80] (2.3,0) circle (2.0pt);
-                    \node[above right, font=\tiny] at (2.3,0) {Arrival};
-                    \draw[thick, ->, >=stealth, color=Charcoal] (2.3,0) -- (2.3,-0.75) node[below, font=\tiny]{$\mathbf{V}_{\text{tx},2}$};
-                \end{tikzpicture}
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% ==============================================================================
-% SLIDE 24: PHASE 3 — PLANETOCENTRIC ARRIVAL & CAPTURE
-% ==============================================================================
-\begin{frame}{Phase 3: Planetocentric Arrival, Capture and Insertion}
-    \begin{columns}[t]
-        \begin{column}{0.50\textwidth}
-            \begin{block}{Arrival Hyperbola and Orbit Insertion}
-                \scriptsize
-                \begin{enumerate}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{1pt}
-                    \item Spacecraft enters target SOI along hyperbolic arrival asymptote with excess speed $\mathbf{v}_{\infty,\text{arr}}$.
-                    \item Periapsis speed at closest approach $r_{p,2}$:
-                    \vspace{-0.08cm}
-                    \begin{equation*}
-                        v_{p,\text{hyp}} = \sqrt{v_{\infty,\text{arr}}^2 + \frac{2\mu_2}{r_{p,2}}}
-                    \end{equation*}
-                    \vspace{-0.15cm}
-                    \item \textbf{Orbit Insertion Burn ($\Delta v_{\text{cap}}$):} Retrograde burn at periapsis captures probe into circular orbit ($v_c = \sqrt{\mu_2/r_{p,2}}$):
-                    \vspace{-0.08cm}
-                    \begin{equation*}
-                        \Delta v_{\text{cap}} = \sqrt{v_{\infty,\text{arr}}^2 + \frac{2\mu_2}{r_{p,2}}} - \sqrt{\frac{\mu_2}{r_{p,2}}}
-                    \end{equation*}
-                \end{enumerate}
-            \end{block}
-        \end{column}
-
-        \begin{column}{0.47\textwidth}
-            \begin{block}{Phase 3 Vector Geometry}
-                \centering
-                \begin{tikzpicture}[scale=0.64]
-                    \draw[dashed, color=gray, line width=0.8pt] (0,0) circle (2.1cm);
-                    \node[color=gray, font=\tiny] at (-1.1, 1.85) {Target SOI ($r_{\text{SOI}}$)};
-                    
-                    \draw[thick, fill=orange!50] (0,0) circle (0.35cm) node[below=0.35cm, font=\tiny]{Planet ($\mu_2$)};
-                    \draw[thick, ->, >=stealth, color=Charcoal] (0,0) -- (0,1.25);
-                    \node[left, font=\tiny] at (0, 0.9) {$\mathbf{v}_{\text{planet}}$};
-                    
-                    \draw[thick, color=UdeAGold, line width=0.9pt] (0,0) ellipse (0.75cm and 0.55cm);
-                    \node[color=UdeAGold!90!black, font=\tiny] at (-1.2, -0.45) {Captured Orbit};
-                    
-                    \draw[thick, color=UdeAGreen, line width=1.1pt] (1.3, -2.3) to[out=95, in=-90] (0.8, 0.0) to[out=90, in=0] (0, 0.55);
-                    
-                    \filldraw[color=AlertRed] (0, 0.55) circle (1.8pt);
-                    \node[right=2pt, color=AlertRed, font=\tiny] at (0, 0.60) {$\Delta v_{\text{cap}}$};
-                    
-                    \draw[thick, ->, >=stealth, color=AlertRed, line width=1.0pt] (1.3, -2.5) -- (1.3, -1.4) node[midway, right, font=\tiny]{$\mathbf{v}_{\infty,\text{arr}}$};
-                \end{tikzpicture}
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% ==============================================================================
-% SLIDE 25: THE INCLINATION TRAP
-% ==============================================================================
-\begin{frame}{The Launch Geometry Boundary: The "Inclination Trap"}
-    \begin{columns}[t]
-        \begin{column}{0.50\textwidth}
-            \begin{alertblock}{The Mathematical Constraint: $i \ge |\delta|$}
-                \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1.5pt}
-                    \item Parking orbit reaches maximum latitude $\phi_{\max} = i$.
-                    \item For departure burn $\Delta \mathbf{v}_{\text{inj}}$ to be executed \textbf{in-plane} (zero out-of-plane penalty):
-                    \vspace{-0.05cm}
-                    \begin{equation*}
-                        \sin i = \cos \delta \sin(\beta_{\text{inertial}}) \implies i \ge |\delta|
-                    \end{equation*}
-                    \vspace{-0.15cm}
-                    \item If $i < |\delta|$ (\textbf{The Inclination Trap}), no coplanar injection exists!
-                    \item Forces costly non-coplanar wedge burn:
-                    \vspace{-0.05cm}
-                    \begin{equation*}
-                        \Delta v_{\text{penalty}} \approx 2 v_{\text{park}} \sin\left(\frac{\Delta \psi}{2}\right)
-                    \end{equation*}
-                \end{itemize}
-            \end{alertblock}
-        \end{column}
-
-        \begin{column}{0.47\textwidth}
-            \begin{block}{Launch Azimuth $\beta_{\text{launch}}$}
-                \scriptsize
-                From launch latitude $\phi_L$ into inclination $i$:
-                \vspace{-0.05cm}
-                \begin{equation*}
-                    \cos \beta = \frac{\cos i}{\cos \phi_L}
-                \end{equation*}
-                \centering
-                \begin{tikzpicture}[scale=0.80]
-                    \draw[thick, color=Charcoal] (0,0) circle (1.2cm);
-                    \draw[dashed, color=gray] (-1.5,0) -- (1.5,0) node[right, font=\tiny]{Equator};
-                    \draw[thick, color=UdeAGreen, rotate=35] (-1.2,0) -- (1.2,0) node[right, font=\tiny]{Plane ($i$)};
-                    \draw[thick, ->, >=stealth, color=AlertRed, line width=0.9pt] (0,0) -- (0.95,0.95) node[above right, font=\tiny]{$\hat{\mathbf{S}} (\delta)$};
-                    \draw[dashed, color=AlertRed] (0.95,0.95) -- (0.95,0) node[midway, right, font=\tiny]{$\delta$};
-                \end{tikzpicture}
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% ==============================================================================
-% SLIDE 26: WORKED EXAMPLE 1 (EARTH TO MARS)
-% ==============================================================================
-\begin{frame}{Worked Example 1: Earth-to-Mars Departure Geometry}
-    \begin{exampleblock}{Analytical Trajectory Benchmark}
-        \scriptsize
-        Lambert: $\mathbf{v}_{\text{Lambert}} = [32.45, 12.10, 4.85]\text{ km/s}$, Earth: $\mathbf{v}_{\oplus} = [29.78, 0.00, 0.00]\text{ km/s}$. \\
-        $h_p = 250\text{ km}$ ($R_{\oplus} = 6378\text{ km}, \mu_{\oplus} = 398600.44\text{ km}^3/\text{s}^2$). Launch site: $\phi_L = 28.5^\circ$.
-    \end{exampleblock}
-
-    \vspace{-0.15cm}
-
-    \begin{columns}[t]
-        \begin{column}{0.48\textwidth}
-            \scriptsize
-            \textbf{Step 1: Hyperbolic Excess Vector ($\mathbf{v}_\infty$)}
-            \begin{align*}
-                \mathbf{v}_\infty &= \mathbf{v}_{\text{Lambert}} - \mathbf{v}_{\oplus} = [2.67, 12.10, 4.85]\text{ km/s} \\
-                v_\infty &= \sqrt{2.67^2 + 12.10^2 + 4.85^2} = \mathbf{13.31}\text{ km/s} \\
-                C_3 &= v_\infty^2 = \mathbf{177.27}\text{ km}^2/\text{s}^2
-            \end{align*}
-            \vspace{-0.15cm}
-            \textbf{Step 2: Asymptote Declination and RA}
-            \begin{equation*}
-                \delta = \arcsin(4.85/13.31) = +\mathbf{21.37}^\circ, \quad \alpha = \mathbf{77.56}^\circ
-            \end{equation*}
-        \end{column}
-
-        \begin{column}{0.48\textwidth}
-            \scriptsize
-            \textbf{Step 3: Check Inclination Trap}
-            \begin{equation*}
-                i_{\text{park}} = 28.5^\circ \ge |\delta| = 21.37^\circ \quad \textcolor{UdeAGreen}{\textbf{[PASS]}}
-            \end{equation*}
-            \textbf{Step 4: Trans-Mars Injection $\Delta v_{\text{TMI}}$}
-            \begin{align*}
-                r_p &= 6378 + 250 = 6628\text{ km} \\
-                v_{\text{park}} &= \sqrt{\mu/r_p} = 7.755\text{ km/s} \\
-                v_{\text{periapsis}} &= \sqrt{v_\infty^2 + 2\mu/r_p} = 17.247\text{ km/s} \\
-                \Delta v_{\text{TMI}} &= 17.247 - 7.755 = \mathbf{9.492}\text{ km/s}
-            \end{align*}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% ==============================================================================
-% SLIDE 27: GRAVITY ASSISTS
+% SLIDE 27: WEEK 6 GRAVITY ASSISTS
 % ==============================================================================
 \begin{frame}{Week 6: Planetary Gravity Assists --- SOI Momentum Exchange}
     \begin{columns}[t]
@@ -1483,7 +1415,59 @@ plt.plot(earth_dt[min_j], jup_dt[min_i],
 \end{frame}
 
 % ==============================================================================
-% SLIDE 30: HISTORICAL MULTI-FLYBY MISSIONS
+% SLIDE 30: PYTHON CODE: GRAVITY ASSIST & OBERTH KINEMATICS
+% ==============================================================================
+\begin{frame}[fragile]{Python Implementation: Gravity Assist and Oberth Kinematics}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Flyby Vector Kinematics}
+                \scriptsize
+                The Python function solves:
+                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                    \item Turning angle $\delta_{\text{turn}} = 2 \arcsin(1 / (1 + r_p v_\infty^2 / \mu_p))$.
+                    \item Net heliocentric impulse $\|\Delta \mathbf{V}_\odot\| = 2 v_\infty \sin(\delta_{\text{turn}}/2)$.
+                    \item Periapsis burn Oberth amplification:
+                    \begin{equation*}
+                        v_{\infty,\text{out}} = \sqrt{(v_p + \Delta v_p)^2 - 2\mu_p / r_p}
+                    \end{equation*}
+                    \item Quantifies equivalent chemical propellant mass saved via Tsiolkovsky equation.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.50\textwidth}
+\begin{lstlisting}[style=pythoncode]
+import numpy as np
+
+def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
+    # Hyperbolic parameters
+    e = 1.0 + (rp_km * v_inf_in**2) / mu_planet
+    turn_angle_rad = 2.0 * np.arcsin(1.0 / e)
+    
+    # Heliocentric impulse (ballistic flyby)
+    dV_helio = 2.0 * v_inf_in * np.sin(turn_angle_rad / 2.0)
+    
+    # Periapsis velocity before burn
+    vp_in = np.sqrt(v_inf_in**2 + (2.0 * mu_planet) / rp_km)
+    
+    # Powered Oberth flyby
+    vp_out = vp_in + dv_p
+    v_inf_out = np.sqrt(vp_out**2 - (2.0 * mu_planet) / rp_km)
+    
+    return {
+        "eccentricity": e,
+        "delta_turn_deg": np.degrees(turn_angle_rad),
+        "dV_helio_boost": dV_helio,
+        "vp_km_s": vp_in,
+        "v_inf_out": v_inf_out
+    }
+\end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 31: HISTORICAL MULTI-FLYBY MISSIONS
 % ==============================================================================
 \begin{frame}{Historical Gravity Assists: Expanding Solar System Reach}
     \begin{columns}[t]
@@ -1515,76 +1499,365 @@ plt.plot(earth_dt[min_j], jup_dt[min_i],
 \end{frame}
 
 % ==============================================================================
-% SLIDE 31: NUMERICAL BOUNDARY SOLVERS & THE DIFFERENTIAL CORRECTOR
+% SLIDE 32: B-PLANE FOUNDATIONS
 % ==============================================================================
-\begin{frame}{Numerical Boundary Solvers: The Shooting Method and Differential Corrector}
+\begin{frame}{Week 7: The B-Plane Targeting Framework --- Foundations}
     \begin{columns}[t]
-        \begin{column}{0.53\textwidth}
-            \begin{block}{Two-Point Boundary Value Problem (TPBVP)}
-                \fontsize{5.8pt}{6.8pt}\selectfont
-                Interplanetary trajectory optimization is fundamentally a boundary value problem:
-                \begin{itemize}\setlength{\itemsep}{0.5pt}\setlength{\topsep}{0.5pt}
-                    \item \textbf{Control Vector ($\mathbf{X} \in \mathbb{R}^n$):} Unknown parameters (burn components $\Delta V_x, \Delta V_y, \Delta V_z$).
-                    \item \textbf{Goal Vector ($\mathbf{Y} \in \mathbb{R}^m$):} Constrained arrival states ($B\cdot T, B\cdot R$, altitude $r_p$).
+        \begin{column}{0.54\textwidth}
+            \begin{block}{Why Direct Targeting Fails in Deep Space}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1pt}
+                    \item Propagating to fixed $t_f$ is ill-conditioned: a 1-second timing error causes $>30\text{ km}$ miss distance.
+                    \item \textbf{Solution:} B-Plane target disk passes through body center, perpendicular to incoming asymptote $\mathbf{v}_\infty$.
                 \end{itemize}
             \end{block}
-            \vspace{-0.12cm}
-            \begin{block}{Newton-Raphson Shooting and the Jacobian ($\mathbf{J}$)}
-                \fontsize{5.8pt}{6.8pt}\selectfont
-                The Differential Corrector (DC) linearizes state transitions around the trajectory via the sensitivity Jacobian matrix:
-                \vspace{-0.05cm}
+            \begin{block}{Orthonormal Basis $(\hat{\mathbf{S}}, \hat{\mathbf{T}}, \hat{\mathbf{R}})$}
+                \scriptsize
                 \begin{equation*}
-                    \mathbf{J} = \begin{bmatrix}
-                        \frac{\partial Y_1}{\partial X_1} & \cdots & \frac{\partial Y_1}{\partial X_n} \\[-2pt]
-                        \vdots & \ddots & \vdots \\[-2pt]
-                        \frac{\partial Y_m}{\partial X_1} & \cdots & \frac{\partial Y_m}{\partial X_n}
-                    \end{bmatrix}, \quad 
-                    J_{ij} \approx \frac{\Delta Y_i}{\Delta X_j}
+                    \hat{\mathbf{S}} = \frac{\mathbf{v}_\infty}{\|\mathbf{v}_\infty\|}, \quad
+                    \hat{\mathbf{T}} = \frac{\hat{\mathbf{S}} \times \hat{\mathbf{k}}}{\|\hat{\mathbf{S}} \times \hat{\mathbf{k}}\|}, \quad
+                    \hat{\mathbf{R}} = \hat{\mathbf{S}} \times \hat{\mathbf{T}}
                 \end{equation*}
-                \vspace{-0.12cm}
-                \begin{itemize}\setlength{\itemsep}{0.5pt}\setlength{\topsep}{0.5pt}
-                    \item Parameter update step: $\mathbf{X}_{k+1} = \mathbf{X}_k - \mathbf{J}^{-1} \left(\mathbf{Y}(\mathbf{X}_k) - \mathbf{Y}^*\right)$
-                    \item Requires $n+1$ forward trajectory integrations per iteration.
-                \end{itemize}
+                where $\hat{\mathbf{k}}$ is reference normal (e.g., Ecliptic North).
             \end{block}
         \end{column}
 
-        \begin{column}{0.44\textwidth}
-            \begin{block}{The Forward Shooting Mechanism}
+        \begin{column}{0.43\textwidth}
+            \begin{block}{B-Plane Geometry}
                 \centering
-                \vspace{0.02cm}
-                \begin{tikzpicture}[scale=0.55]
-                    % Departure Node
-                    \filldraw[color=SpiceBlue] (-2.2, -1.0) circle (2.5pt) node[below left, font=\tiny]{Earth ($t_0$)};
-                    
-                    % Target Planet & Goal
-                    \draw[dashed, color=gray] (1.8, 1.2) circle (0.75cm);
-                    \filldraw[color=orange!80] (1.8, 1.2) circle (3.5pt) node[below right, font=\tiny]{Target};
-                    \filldraw[color=UdeAGreen] (1.2, 1.4) circle (2.2pt) node[above left, font=\tiny]{$\mathbf{Y}^*$ (Goal)};
-                    
-                    % Trajectory 0 (Nominal Miss)
-                    \draw[thick, color=AlertRed, dashed] (-2.2, -1.0) to[out=25, in=-120] (0.0, 0.4) to[out=60, in=-140] (1.9, -0.2);
-                    \filldraw[color=AlertRed] (1.9, -0.2) circle (1.8pt) node[right, font=\tiny]{$\mathbf{Y}(\mathbf{X}_0)$ [Miss]};
-                    
-                    % Perturbed Trajectory
-                    \draw[thick, color=UdeAGold, dotted] (-2.2, -1.0) to[out=32, in=-115] (0.1, 0.7) to[out=65, in=-135] (1.7, 0.5);
-                    \filldraw[color=UdeAGold!90!black] (1.7, 0.5) circle (1.6pt) node[right, font=\tiny]{Perturbed};
-                    
-                    % Converged Trajectory
-                    \draw[thick, color=UdeAGreen, line width=1.1pt] (-2.2, -1.0) to[out=38, in=-110] (0.0, 0.9) to[out=70, in=-120] (1.2, 1.4);
-                    \node[color=UdeAGreen, font=\tiny\bfseries] at (-0.7, 0.8) {Converged ($\mathbf{X}^*$)};
+                \begin{tikzpicture}[scale=0.62]
+                    \draw[thick, fill=LightBg] (0,0) circle (2.8cm);
+                    \draw[thick, ->, >=stealth, color=Charcoal] (-2.8,0) -- (2.8,0) node[right, font=\tiny]{$\hat{\mathbf{T}}$};
+                    \draw[thick, ->, >=stealth, color=Charcoal] (0,2.8) -- (0,-2.8) node[below, font=\tiny]{$\hat{\mathbf{R}}$};
+                    \filldraw[color=UdeAGreen] (0,0) circle (2pt) node[below left, font=\tiny]{Target};
+                    \draw[thick, ->, >=stealth, color=AlertRed, line width=0.8pt] (0,0) -- (1.8,-1.6) node[midway, above right, font=\tiny]{$\mathbf{B}$};
+                    \draw[dashed, color=gray] (1.8,-1.6) -- (1.8,0) node[above, font=\tiny]{$B\cdot T$};
+                    \draw[dashed, color=gray] (1.8,-1.6) -- (0,-1.6) node[left, font=\tiny]{$B\cdot R$};
                 \end{tikzpicture}
             \end{block}
-            \vspace{-0.12cm}
-            \begin{alertblock}{Iterative Convergence}
-                \fontsize{5.8pt}{6.8pt}\selectfont Execution loops until residual error $\|\mathbf{Y}(\mathbf{X}_k) - \mathbf{Y}^*\| \le \boldsymbol{\epsilon}_{\text{tol}}$.
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 33: B-PLANE PARAMETERS (REVISED FOR ZERO OVERFLOW)
+% ==============================================================================
+\begin{frame}{B-Plane Target Quantities and Impact Parameter Derivations}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Impact Parameter Vector $\mathbf{B}$}
+                \scriptsize
+                Miss vector on the B-plane:
+                \par\vspace{1pt}
+                {\centering $\mathbf{B} = (B \cdot T)\hat{\mathbf{T}} + (B \cdot R)\hat{\mathbf{R}}$\par}
+                \vspace{1pt}
+                where $B \cdot T = B \cos \theta_B$ and $B \cdot R = B \sin \theta_B$.
+                \par\vspace{3pt}
+                \textbf{Impact Parameter Magnitude ($B = \Vert{}\mathbf{B}\Vert{}$):}
+                \par\vspace{1pt}
+                {\centering $\displaystyle B = r_p \sqrt{1 + \frac{2\mu_p}{r_p v_\infty^2}} = \frac{\mu_p}{v_\infty^2}\sqrt{e^2 - 1}$\par}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Linearized State Transition Mapping}
+                \scriptsize
+                For mid-course TCM burn $\Delta \mathbf{v}_{\text{TCM}}$ at epoch $t_{\text{TCM}}$:
+                \par\vspace{1pt}
+                {\centering $\displaystyle \begin{bmatrix} \Delta(B \cdot T) \\ \Delta(B \cdot R) \\ \Delta \text{TIF} \end{bmatrix} = \left[ \frac{\partial \mathbf{B}}{\partial \mathbf{r}(t_f)} \boldsymbol{\Phi}_{r v}(t_f, t_{\text{TCM}}) \right] \Delta \mathbf{v}_{\text{TCM}}$\par}
+                \vspace{1pt}
+                where $\text{TIF}$ is Time to Intercept and $\boldsymbol{\Phi}_{rv}$ is the STM partition.
+                \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\topsep}{1pt}
+                    \item Inverting the sensitivity matrix yields exact 3-axis TCM commands.
+                \end{itemize}
             \end{alertblock}
         \end{column}
     \end{columns}
 \end{frame}
 
 % ==============================================================================
-% SLIDE 32: GMAT TARGET COMMAND & MISSION SEQUENCE ARCHITECTURE
+% SLIDE 34: WORKED EXAMPLE: B-PLANE TARGET SIZING
+% ==============================================================================
+\begin{frame}{Worked Example: B-Plane Target Vector Sizing at Mars}
+    \begin{exampleblock}{Mission Specification}
+        \scriptsize
+        A science probe approaches Mars ($\mu_M = 42828.37\text{ km}^3/\text{s}^2$, $R_M = 3396.2\text{ km}$) with $v_\infty = 3.50\text{ km/s}$[cite: 1, 15]. \\
+        Design a polar capture flyby with periapsis altitude $h_p = 300\text{ km}$ ($r_p = 3696.2\text{ km}$) and zero out-of-plane azimuth ($\theta_B = 270^\circ$).
+    \end{exampleblock}
+
+    \vspace{-0.15cm}
+
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \scriptsize
+            \textbf{Step 1: Hyperbolic Eccentricity ($e$)}
+            \begin{align*}
+                e &= 1 + \frac{r_p v_\infty^2}{\mu_M} = 1 + \frac{(3696.2)(3.50)^2}{42828.37} = \mathbf{2.057}
+            \end{align*}
+            \textbf{Step 2: Impact Parameter Magnitude ($B$)}
+            \begin{align*}
+                B &= r_p \sqrt{1 + \frac{2\mu_M}{r_p v_\infty^2}} = 3696.2 \sqrt{1 + \frac{2(42828.37)}{(3696.2)(12.25)}} \\
+                &= 3696.2 \sqrt{1 + 1.891} = 3696.2(1.700) = \mathbf{6284.8\text{ km}}
+            \end{align*}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \scriptsize
+            \textbf{Step 3: Target Coordinates on the B-Plane}
+            \begin{align*}
+                B\cdot T &= B \cos(270^\circ) = \mathbf{0.0\text{ km}} \\
+                B\cdot R &= B \sin(270^\circ) = \mathbf{-6284.8\text{ km}}
+            \end{align*}
+            \textbf{Step 4: Forensic Insight for GMAT Targeter}
+            \begin{itemize}\setlength{\itemsep}{1pt}
+                \item Pure polar arrival: All miss vector projected along the $-\hat{\mathbf{R}}$ axis.
+                \item Direct inputs for GMAT:
+                \begin{itemize}
+                    \item \texttt{MarsInertial.BdotT = 0.0}
+                    \item \texttt{MarsInertial.BdotR = -6284.8}
+                \end{itemize}
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE: IVP VS. BVP IN ASTRODYNAMICS (CORRECTED FIT)
+% ==============================================================================
+\begin{frame}{The Astrodynamic Duality: Initial Value vs. Boundary Value Problems}
+    \begin{columns}[t]
+        \begin{column}{0.54\textwidth}
+            \begin{block}{Initial Value Problem (IVP: Forward Simulation)}
+                \scriptsize
+                Given the full state at epoch $t_0$, determine downstream motion:
+                \par\vspace{1pt}
+                {\centering $\mathbf{x}(t_0) = [\mathbf{r}_0^T, \mathbf{v}_0^T]^T \xrightarrow{\text{Integrate}} \dot{\mathbf{x}} = \mathbf{f}(\mathbf{x}, t) \to \mathbf{x}(t)$\par}
+                \vspace{2pt}
+                \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\topsep}{0pt}\setlength{\parsep}{0pt}
+                    \item Deterministic, fast, and stable (standard RK4/78 solvers).
+                    \item \textbf{Operational flaw:} Required initial velocity $\mathbf{v}_0$ is unknown a priori.
+                \end{itemize}
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{block}{Boundary Value Problem (BVP: The Targeter)}
+                \scriptsize
+                Constraints are partitioned across distinct temporal endpoints:
+                \par\vspace{1pt}
+                {\centering $\mathbf{r}(t_0) = \mathbf{r}_{\text{launch}} \quad \text{and} \quad \mathbf{r}(t_f) = \mathbf{r}_{\text{target}} \quad (\text{or } \mathbf{B}^*)$\par}
+                \vspace{2pt}
+                \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\topsep}{0pt}\setlength{\parsep}{0pt}
+                    \item \textbf{Core Question:} \textit{What initial $\mathbf{v}_0$ (or $\Delta \mathbf{V}$) connects both endpoints?}
+                    \item Non-linear: cannot be integrated in a single forward pass.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.43\textwidth}
+            \begin{block}{Endpoint Constraint Geometry}
+                \centering
+                \vspace{0.05cm}
+                \begin{tikzpicture}[scale=0.72, >=stealth]
+                    % Origin / Earth
+                    \filldraw[color=SpiceBlue] (-2.0, -1.0) circle (3pt);
+                    \node[below left, font=\scriptsize\bfseries, color=DarkSlate] at (-2.0, -1.0) {$\mathbf{r}(t_0)$};
+                    \node[below=6pt, font=\tiny, color=gray] at (-2.0, -1.0) {Departure Boundary};
+
+                    % Target / Destination
+                    \filldraw[color=AlertRed] (1.8, 1.2) circle (3pt);
+                    \node[above right, font=\scriptsize\bfseries, color=DarkSlate] at (1.8, 1.2) {$\mathbf{r}(t_f)$};
+                    \node[above=6pt, font=\tiny, color=gray] at (1.8, 1.2) {Arrival Boundary};
+
+                    % Forward IVP guesses (Misses)
+                    \draw[thick, color=gray!50, dashed, ->] (-2.0, -1.0) to[out=55, in=-160] (0.5, 1.6);
+                    \draw[thick, color=gray!50, dashed, ->] (-2.0, -1.0) to[out=10, in=-120] (1.8, -0.6);
+                    \node[font=\tiny, color=gray] at (0.3, -0.5) {Blind IVPs (Misses)};
+
+                    % The Connecting BVP Arc
+                    \draw[very thick, color=UdeAGreen, ->] (-2.0, -1.0) to[out=35, in=-135] (1.8, 1.2);
+                    \node[above=2pt, sloped, font=\tiny\bfseries, color=UdeAGreen] at (-0.2, 0.45) {BVP Solution Arc};
+
+                    % Unknown Velocity Vector
+                    \draw[thick, color=UdeAGold, ->, line width=1.1pt] (-2.0, -1.0) -- (-1.1, -0.45);
+                    \node[below right=1pt, font=\tiny\bfseries, color=UdeAGold!90!black] at (-1.35, -0.7) {$\mathbf{v}_0 = ?$ (Unknown)};
+                \end{tikzpicture}
+            \end{block}
+
+            \vspace{-0.1cm}
+
+            \begin{alertblock}{The Astrodynamic Dilemma}
+                \scriptsize
+                Missions are dictated by \textbf{where we must arrive}, not by where an arbitrary velocity vector happens to drop us.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE: WHY BVPS ARE INESCAPABLE IN REAL TRAJECTORIES
+% ==============================================================================
+\begin{frame}{Why Boundary Value Problems are Inescapable in Deep-Space Flight}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{1. Astronomical Independence of Planetary Motion}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                    \item Earth and target bodies travel on independent, eccentric, inclined heliocentric orbits.
+                    \item Launch calendar and arrival science windows fix the \textbf{position endpoints} $(\mathbf{r}_1, \mathbf{r}_2)$ and flight duration $\Delta t$.
+                    \item The velocity vector $\mathbf{v}_1$ is a free dependent variable that must be calculated to satisfy Kepler's boundary equation.
+                \end{itemize}
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{block}{2. The Non-Integrability Barrier ($N$-Body Universe)}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                    \item Classical Lambert algorithms solve the idealized 2-body BVP.
+                    \item Real flight entails third-body gravity (Sun, Jupiter, Moon), non-spherical geopotentials ($J_2, C_{nm}$), and solar radiation pressure.
+                    \item The operational equations of motion have \textbf{no closed-form analytical solution}; endpoint matching requires numerical BVPs.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{3. Critical Terminal Entry Corridors}
+                \scriptsize
+                Targeting margins at interplanetary arrival are zero:
+                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                    \item \textbf{Atmospheric Entry (e.g., Mars 2020):} Flight path angle corridor is narrow ($\gamma \pm 0.10^\circ$) to avoid burnup or skip-out.
+                    \item \textbf{Planetary Capture:} Retrograde $\Delta v_{\text{cap}}$ requires periapsis precision within tens of kilometers.
+                    \item \textbf{Gravity Assists:} Turning angle $\delta_{\text{turn}}$ depends non-linearly on hyperbola flyby altitude $r_p$.
+                \end{itemize}
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{alertblock}{The Mathematical Mandate}
+                \scriptsize
+                Because forward intuition cannot invert non-linear gravitational dynamics, navigators must formulate:
+                \vspace{-0.05cm}
+                \begin{equation*}
+                    \mathbf{F}(\mathbf{v}_0) = \mathbf{r}(t_f; \mathbf{v}_0) - \mathbf{r}_{\text{target}}(t_f) = \mathbf{0}
+                \end{equation*}
+                \vspace{-0.01cm}
+                This root-finding condition necessitates \textbf{shooting solvers and differential correctors}.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 35: NUMERICAL BOUNDARY SOLVERS (ENLARGED FORWARD SHOOTING DIAGRAM)
+% ==============================================================================
+\begin{frame}{Numerical Boundary Solvers: The Shooting Method Architecture}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Two-Point Boundary Value Problem (TPBVP)}
+                \scriptsize
+                Interplanetary trajectory design is formulated as a boundary value problem:
+                \begin{itemize}\setlength{\itemsep}{2pt}\setlength{\topsep}{1pt}
+                    \item \textbf{Control Vector ($\mathbf{X} \in \mathbb{R}^n$):} Unknown initial/maneuver parameters (e.g., burn components $\Delta V_x, \Delta V_y, \Delta V_z$).
+                    \item \textbf{Goal Vector ($\mathbf{Y} \in \mathbb{R}^m$):} Constrained terminal conditions (e.g., $B\cdot T, B\cdot R$, arrival epoch $t_f$).
+                \end{itemize}
+            \end{block}
+
+            \vspace{-0.1cm}
+
+            \begin{alertblock}{Iterative Convergence Criterion}
+                \scriptsize
+                Trajectories shoot forward in time until miss distance converges:
+                \par\vspace{2pt}
+                {\centering $\|\mathbf{Y}(\mathbf{X}_k) - \mathbf{Y}^*\| \le \boldsymbol{\epsilon}_{\text{tol}}$\par}
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.50\textwidth}
+            \begin{block}{The Forward Shooting Mechanism}
+                \centering
+                \vspace{0.15cm}
+                \begin{tikzpicture}[scale=0.98, >=stealth]
+                    % Departure Node (Earth)
+                    \filldraw[color=SpiceBlue] (-2.2, -1.2) circle (3.2pt);
+                    \node[below left, font=\scriptsize\bfseries, color=DarkSlate] at (-2.2, -1.2) {Earth ($t_0$)};
+                    
+                    % Target Body & Capture Region
+                    \draw[dashed, color=gray!70, line width=0.8pt] (1.7, 1.4) circle (0.95cm);
+                    \filldraw[color=orange!85] (1.7, 1.4) circle (4.2pt) node[below right=2pt, font=\scriptsize\bfseries, color=DarkSlate]{Target};
+                    
+                    % Goal Point Y*
+                    \filldraw[color=UdeAGreen] (1.0, 1.6) circle (2.8pt);
+                    \node[above left, font=\scriptsize\bfseries, color=UdeAGreen] at (1.0, 1.6) {$\mathbf{Y}^*$ (Goal)};
+                    
+                    % Trajectory 0: Initial Nominal Miss
+                    \draw[thick, color=AlertRed, dashed, line width=1.1pt] (-2.2, -1.2) to[out=25, in=-125] (0.0, 0.3) to[out=55, in=-155] (1.8, -0.3);
+                    \filldraw[color=AlertRed] (1.8, -0.3) circle (2.2pt);
+                    \node[right, font=\scriptsize\bfseries, color=AlertRed] at (1.8, -0.3) {$\mathbf{Y}(\mathbf{X}_0)$ [Miss]};
+                    
+                    % Trajectory 1: Perturbed Gradient Step
+                    \draw[thick, color=UdeAGold!95!black, dotted, line width=1.1pt] (-2.2, -1.2) to[out=32, in=-118] (0.1, 0.7) to[out=62, in=-140] (1.6, 0.6);
+                    \filldraw[color=UdeAGold!95!black] (1.6, 0.6) circle (2.0pt);
+                    \node[right, font=\tiny\bfseries, color=UdeAGold!90!black] at (1.6, 0.6) {Perturbed ($\mathbf{X}_0 + \delta \mathbf{X}$)};
+                    
+                    % Trajectory 2: Converged Solution
+                    \draw[very thick, color=UdeAGreen, line width=1.4pt] (-2.2, -1.2) to[out=40, in=-110] (0.0, 1.0) to[out=70, in=-120] (1.0, 1.6);
+                    \node[color=UdeAGreen, font=\scriptsize\bfseries, rotate=38] at (-0.85, 0.95) {Converged ($\mathbf{X}^*$)};
+                \end{tikzpicture}
+                \vspace{0.15cm}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 36: DIFFERENTIAL CORRECTOR (SPLIT PART 2: JACOBIAN & UPDATE)
+% ==============================================================================
+\begin{frame}{The Differential Corrector: Newton-Raphson Jacobian Formulation}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Linearizing State Transitions: The Jacobian ($\mathbf{J}$)}
+                \scriptsize
+                The Differential Corrector builds the sensitivity matrix $\mathbf{J}$ via finite difference perturbations:
+                \vspace{-0.05cm}
+                \begin{equation*}
+                    \mathbf{J} = \begin{bmatrix}
+                        \frac{\partial Y_1}{\partial X_1} & \cdots & \frac{\partial Y_1}{\partial X_n} \\
+                        \vdots & \ddots & \vdots \\
+                        \frac{\partial Y_m}{\partial X_1} & \cdots & \frac{\partial Y_m}{\partial X_n}
+                    \end{bmatrix}, \quad 
+                    J_{ij} \approx \frac{Y_i(\mathbf{X} + \delta X_j \hat{\mathbf{e}}_j) - Y_i(\mathbf{X})}{\delta X_j}
+                \end{equation*}
+                \vspace{-0.15cm}
+                \begin{itemize}\setlength{\itemsep}{1pt}
+                    \item Each Jacobian evaluation requires $n+1$ forward trajectory numerical integrations.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \begin{block}{Newton-Raphson Parameter Step}
+                \scriptsize
+                For square problems ($m = n$), the parameter update vector is:
+                \par\vspace{1pt}
+                {\centering $\mathbf{X}_{k+1} = \mathbf{X}_k - \mathbf{J}^{-1} \left(\mathbf{Y}(\mathbf{X}_k) - \mathbf{Y}^*\right)$\par}
+                \vspace{2pt}
+                For over-determined problems ($n > m$), GMAT employs pseudo-inverse minimum-norm updates:
+                \par\vspace{1pt}
+                {\centering $\Delta \mathbf{X} = -\mathbf{J}^T (\mathbf{J} \mathbf{J}^T)^{-1} \left(\mathbf{Y} - \mathbf{Y}^*\right)$\par}
+            \end{block}
+
+            \vspace{-0.1cm}
+
+            \begin{alertblock}{Condition Number Check}
+                \scriptsize If $\det(\mathbf{J}) \approx 0$, the targeter is singular. Control inputs must have non-zero gradient projections onto goals.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 37: GMAT TARGET COMMAND ARCHITECTURE
 % ==============================================================================
 \begin{frame}[fragile]{NASA GMAT Target Sequence: Command Architecture}
     \begin{columns}[t]
@@ -1631,7 +1904,7 @@ EndTarget;
 \end{frame}
 
 % ==============================================================================
-% SLIDE 33: FORENSIC DC CONVERGENCE & TUNING RULES
+% SLIDE 38: FORENSIC DC CONVERGENCE & TUNING RULES
 % ==============================================================================
 \begin{frame}{Forensic DC Convergence: Numerical Conditioning and Tuning Rules}
     \begin{columns}[t]
@@ -1644,7 +1917,7 @@ EndTarget;
                         \item \textit{Too Large ($>10^{-2}$):} Incurs non-linear truncation error; derivatives become inaccurate.
                         \item \textit{Too Small ($<10^{-7}$):} Integrator numerical noise dominates difference quotient, corrupting the gradient.
                     \end{itemize}
-                    \item \textbf{\texttt{MaxStep}:} Dampens the Newton-Raphson update vector $\|\Delta \mathbf{X}\| \le \text{MaxStep}$. Prevents non-linear divergence during early iterations.
+                    \item \textbf{\texttt{MaxStep}:} Dampens the Newton-Raphson update vector $\Vert{}\Delta \mathbf{X}\Vert{} \le \text{MaxStep}$. Prevents non-linear divergence during early iterations.
                     \item \textbf{\texttt{Tolerance}:} Must reflect real astrodynamic physics. Setting B-plane tolerance to $0.001\text{ km}$ across $400\times 10^6\text{ km}$ cruise is computationally ill-posed.
                 \end{itemize}
             \end{block}
@@ -1668,90 +1941,51 @@ EndTarget;
 \end{frame}
 
 % ==============================================================================
-% SLIDE 34: B-PLANE FOUNDATIONS
+% SLIDE 39: GMAT LAB EXERCISE: MARS CAPTURE TARGETER
 % ==============================================================================
-\begin{frame}{Week 7: The B-Plane Targeting Framework --- Foundations}
-    \begin{columns}[t]
-        \begin{column}{0.54\textwidth}
-            \begin{block}{Why Direct Targeting Fails in Deep Space}
-                \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1pt}
-                    \item Propagating to fixed $t_f$ is ill-conditioned: a 1-second timing error causes $>30\text{ km}$ miss distance.
-                    \item \textbf{Solution:} B-Plane target disk passes through body center, perpendicular to incoming asymptote $\mathbf{v}_\infty$.
-                \end{itemize}
-            \end{block}
-            \begin{block}{Orthonormal Basis $(\hat{\mathbf{S}}, \hat{\mathbf{T}}, \hat{\mathbf{R}})$}
-                \scriptsize
-                \begin{equation*}
-                    \hat{\mathbf{S}} = \frac{\mathbf{v}_\infty}{\|\mathbf{v}_\infty\|}, \quad
-                    \hat{\mathbf{T}} = \frac{\hat{\mathbf{S}} \times \hat{\mathbf{k}}}{\|\hat{\mathbf{S}} \times \hat{\mathbf{k}}\|}, \quad
-                    \hat{\mathbf{R}} = \hat{\mathbf{S}} \times \hat{\mathbf{T}}
-                \end{equation*}
-                where $\hat{\mathbf{k}}$ is reference normal (e.g., Ecliptic North).
-            \end{block}
-        \end{column}
-
-        \begin{column}{0.43\textwidth}
-            \begin{block}{B-Plane Geometry}
-                \centering
-                \begin{tikzpicture}[scale=0.62]
-                    \draw[thick, fill=LightBg] (0,0) circle (2.8cm);
-                    \draw[thick, ->, >=stealth, color=Charcoal] (-2.8,0) -- (2.8,0) node[right, font=\tiny]{$\hat{\mathbf{T}}$};
-                    \draw[thick, ->, >=stealth, color=Charcoal] (0,2.8) -- (0,-2.8) node[below, font=\tiny]{$\hat{\mathbf{R}}$};
-                    \filldraw[color=UdeAGreen] (0,0) circle (2pt) node[below left, font=\tiny]{Target};
-                    \draw[thick, ->, >=stealth, color=AlertRed, line width=0.8pt] (0,0) -- (1.8,-1.6) node[midway, above right, font=\tiny]{$\mathbf{B}$};
-                    \draw[dashed, color=gray] (1.8,-1.6) -- (1.8,0) node[above, font=\tiny]{$B\cdot T$};
-                    \draw[dashed, color=gray] (1.8,-1.6) -- (0,-1.6) node[left, font=\tiny]{$B\cdot R$};
-                \end{tikzpicture}
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% ==============================================================================
-% SLIDE 35: B-PLANE PARAMETERS
-% ==============================================================================
-\begin{frame}{B-Plane Target Quantities and Impact Parameter Derivations}
+\begin{frame}[fragile]{NASA GMAT Lab Exercise: Mars Orbit Insertion (MOI) Targeter}
     \begin{columns}[t]
         \begin{column}{0.48\textwidth}
-            \begin{block}{Impact Parameter Vector $\mathbf{B}$}
+            \begin{block}{Lab Mission Task}
                 \scriptsize
-                The miss vector $\mathbf{B}$ on the B-plane:
-                \begin{equation*}
-                    \mathbf{B} = (B \cdot T)\hat{\mathbf{T}} + (B \cdot R)\hat{\mathbf{R}}
-                \end{equation*}
-                \vspace{-0.15cm}
-                \begin{align*}
-                    B \cdot T &= \|\mathbf{B}\| \cos \theta_B, \quad B \cdot R = \|\mathbf{B}\| \sin \theta_B
-                \end{align*}
-                \vspace{-0.15cm}
-                \textbf{Impact Parameter Magnitude ($B = \|\mathbf{B}\|$):}
-                \begin{equation*}
-                    B = r_p \sqrt{1 + \frac{2\mu_p}{r_p v_\infty^2}} = \frac{\mu_p}{v_\infty^2}\sqrt{e^2 - 1}
-                \end{equation*}
-            \end{block}
-        \end{column}
-
-        \begin{column}{0.48\textwidth}
-            \begin{alertblock}{Linearized State Transition Mapping}
-                \scriptsize
-                For mid-course TCM burn $\Delta \mathbf{v}_{\text{TCM}}$ at epoch $t_{\text{TCM}}$:
-                \vspace{-0.05cm}
-                \begin{equation*}
-                    \begin{bmatrix} \Delta(B \cdot T) \\ \Delta(B \cdot R) \\ \Delta \text{TIF} \end{bmatrix} = \left[ \frac{\partial \mathbf{B}}{\partial \mathbf{r}(t_f)} \boldsymbol{\Phi}_{r v}(t_f, t_{\text{TCM}}) \right] \Delta \mathbf{v}_{\text{TCM}}
-                \end{equation*}
-                \vspace{-0.15cm}
-                where $\text{TIF}$ is Time to Intercept and $\boldsymbol{\Phi}_{rv}$ is the State Transition Matrix partition.
+                Configure a 2-stage GMAT Differential Corrector sequence:
                 \begin{itemize}\setlength{\itemsep}{1pt}
-                    \item Matrix inversion yields exact 3-axis TCM commands.
+                    \item \textbf{Stage 1 (Cruise TCM):} Vary $\Delta V_x, \Delta V_y, \Delta V_z$ to achieve $B\cdot T = 0\text{ km}$ and $B\cdot R = -6285\text{ km}$ at Mars arrival.
+                    \item \textbf{Stage 2 (MOI Capture Burn):} Vary retrograde impulsive burn $\Delta V_{\text{MOI}}$ at periapsis to achieve captured orbit eccentricity $e = 0.70$.
                 \end{itemize}
+            \end{block}
+            \begin{alertblock}{Validation Criteria}
+                \scriptsize
+                Verify in \texttt{OrbitView} that the probe captures into a stable closed ellipse without atmospheric entry ($r_p > 3520\text{ km}$).
             \end{alertblock}
         \end{column}
+
+        \begin{column}{0.50\textwidth}
+\begin{lstlisting}[style=gmatstyle]
+% STAGE 2: MARS CAPTURE INSERTION BURN
+Target 'Capture Mars Orbit' DC {SolveMode = Solve}
+    % Vary retrograde burn component along velocity vector
+    Vary 'Vary MOI' DC(MOI.Element1 = -1.2, ...
+         {Perturbation = 1e-4, Lower = -3.0, Upper = 0.0, MaxStep = 0.05})
+    
+    % Execute MOI Burn at Periapsis
+    Maneuver 'Apply MOI' MOI(MarsProbe);
+    
+    % Propagate one full orbit to confirm capture
+    Propagate 'Orbit One Rev' MarsProp(MarsProbe) ...
+         {MarsProbe.Mars.Apoapsis};
+         
+    % Goal: Eccentricity = 0.70
+    Achieve 'Target Eccentricity' ...
+         DC(MarsProbe.Mars.ECC = 0.70, {Tolerance = 0.001});
+EndTarget;
+\end{lstlisting}
+        \end{column}
     \end{columns}
 \end{frame}
 
 % ==============================================================================
-% SLIDE 36: MIDTERM SUMMARY
+% SLIDE 40: MIDTERM SUMMARY & TAKE-HOME CHALLENGE
 % ==============================================================================
 \begin{frame}{Module 2 Synthesis and Midterm Take-Home Challenge}
     \begin{columns}[t]
@@ -1760,7 +1994,7 @@ EndTarget;
                 \scriptsize
                 \begin{itemize}\setlength{\itemsep}{1.5pt}
                     \item \textbf{Asymptote:} $\delta = \arcsin(S_z)$, $\alpha = \operatorname{atan2}(S_y, S_x)$.
-                    \item \textbf{Feasibility:} $i \ge |\delta|$ avoids plane change penalty.
+                    \item \textbf{Feasibility:} $i \ge \vert{}\delta\vert{}$ avoids plane change penalty.
                     \item \textbf{Flyby Turn:} $\sin(\delta_{\text{turn}}/2) = (1 + r_p v_\infty^2/\mu_p)^{-1}$.
                     \item \textbf{B-Plane:} $\mathbf{B} = (B\cdot T)\hat{\mathbf{T}} + (B\cdot R)\hat{\mathbf{R}}$.
                     \item \textbf{Impact Parameter:} $B = \frac{\mu_p}{v_\infty^2}\sqrt{e^2 - 1}$.
@@ -1771,11 +2005,12 @@ EndTarget;
         \begin{column}{0.47\textwidth}
             \begin{exampleblock}{24-Hour Midterm Exam Challenge}
                 \scriptsize
-                \textbf{Task:} Multi-Stage Planetary Intercept.
+                \textbf{Task:} Multi-Stage Planetary Intercept[cite: 3, 15].
                 \begin{enumerate}\setlength{\itemsep}{1pt}
-                    \item Compute 3D Lambert departure from Earth ($h_p = 300\text{ km}$) to Venus.
-                    \item Size Venus gravity assist to redirect trajectory toward Mercury propellant-free.
-                    \item Target Mercury B-plane ($B\cdot T, B\cdot R$) for a $200\text{ km}$ polar capture.
+                    \item Compute 3D Lambert departure from Earth ($h_p = 300\text{ km}$) to Venus[cite: 3, 15].
+                    \item Size Venus gravity assist to redirect trajectory toward Mercury propellant-free[cite: 3, 15].
+                    \item Target Mercury B-plane ($B\cdot T, B\cdot R$) for a $200\text{ km}$ polar capture[cite: 3, 15].
+                    \item Validate full sequence numerically in NASA's GMAT[cite: 1, 15].
                 \end{enumerate}
             \end{exampleblock}
         \end{column}
@@ -1783,7 +2018,7 @@ EndTarget;
 \end{frame}
 
 % ==============================================================================
-% SLIDE 37: CONCLUSION
+% SLIDE 41: CONCLUSION
 % ==============================================================================
 \begin{frame}[plain]
     \begin{center}

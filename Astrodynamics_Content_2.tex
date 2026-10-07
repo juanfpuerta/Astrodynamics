@@ -66,6 +66,20 @@
     xrightmargin=2pt
 }
 
+\lstdefinestyle{gmatcompact}{
+    backgroundcolor=\color{LightBg},
+    basicstyle=\ttfamily\fontsize{4.5pt}{5.3pt}\selectfont\color{Charcoal},
+    keywordstyle=\bfseries\color{UdeAGreen},
+    commentstyle=\itshape\color{gray},
+    stringstyle=\color{UdeAGold!90!black},
+    frame=single,
+    rulecolor=\color{UdeAGreen},
+    breaklines=false,
+    showstringspaces=false,
+    xleftmargin=2pt,
+    xrightmargin=2pt
+}
+
 \lstdefinestyle{pythoncode}{
     backgroundcolor=\color{white},
     basicstyle=\ttfamily\fontsize{4.8pt}{5.6pt}\selectfont\color{Charcoal},
@@ -2355,6 +2369,72 @@ EndTarget;
     \end{columns}
 \end{frame}
 
+\begin{frame}{Solvers in Astrodynamics: Targeter (DC) vs. Optimizer (NLP)}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{1. Differential Corrector (Root-Finder)}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
+                    \item Solves a system of non-linear algebraic equations:
+                    \par\vspace{1pt}
+                    {\centering $\mathbf{F}(\mathbf{X}) = \mathbf{Y}(\mathbf{X}) - \mathbf{Y}^* = \mathbf{0}$\par}
+                    \item Uses shooting methods (Newton-Raphson / Broyden) to drive miss errors below tolerance ($\Vert{}\mathbf{F}\Vert{} \le \boldsymbol{\epsilon}$).
+                    \item \textbf{Operational Blindspot:} Halts at the \textbf{first feasible root} encountered, completely blind to total $\Delta V$ or propellant mass burned!
+                \end{itemize}
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{block}{2. Trajectory Optimizer (NLP)}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
+                    \item Explores the feasible constraint manifold:
+                    \par\vspace{1pt}
+                    {\centering $\min_{\mathbf{X}} J(\mathbf{X}) \quad \text{subject to} \quad \mathbf{g}(\mathbf{X}) = \mathbf{0}, \; \mathbf{h}(\mathbf{X}) \le \mathbf{0}$\par}
+                    \item Solves for Karush-Kuhn-Tucker (KKT) optimality.
+                    \item Treats excess control variables as \textbf{degrees of freedom} to minimize $\Delta V_{\text{tot}}$ or maximize payload mass delivered.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Geometry in Control Space}
+                \centering
+                \vspace{0.05cm}
+                \begin{tikzpicture}[scale=0.68, >=stealth]
+                    \draw[color=gray!50, dashed, line width=0.6pt] (0.5, 0.5) ellipse (2.5cm and 1.6cm);
+                    \draw[color=gray!75, dashed, line width=0.6pt] (0.5, 0.5) ellipse (1.8cm and 1.1cm);
+                    \draw[color=UdeAGreen!80, line width=0.8pt] (0.5, 0.5) ellipse (1.0cm and 0.6cm);
+                    \filldraw[color=UdeAGreen] (0.5, 0.5) circle (1.5pt) node[below, font=\tiny\bfseries]{Unconstrained Min};
+                    \node[above right, font=\tiny, color=gray] at (1.8, 1.4) {Cost Contours $J(\mathbf{X})$};
+
+                    \draw[very thick, color=SpiceBlue] (-2.2, -1.0) to[out=25, in=-140] (0.3, -0.1) to[out=40, in=-120] (2.2, 1.8);
+                    \node[below right, font=\tiny\bfseries, color=SpiceBlue] at (1.2, 1.2) {Feasible Path $\mathbf{g}(\mathbf{X}) = \mathbf{0}$};
+
+                    \filldraw[color=DarkSlate] (-1.8, 1.3) circle (2.2pt) node[above, font=\tiny\bfseries]{Initial Guess $\mathbf{X}_0$};
+
+                    \draw[thick, color=AlertRed, dashed, ->] (-1.8, 1.3) -- (-1.1, -0.65);
+                    \filldraw[color=AlertRed] (-1.1, -0.65) circle (2.2pt);
+                    \node[below left, font=\tiny\bfseries, color=AlertRed] at (-0.9, -0.7) {DC Solution ($J_{\text{DC}} \gg J^*$)};
+
+                    \draw[very thick, color=UdeAGold!95!black, ->] (-1.1, -0.65) to[out=25, in=-145] (0.28, -0.1);
+                    \filldraw[color=UdeAGold!90!black] (0.28, -0.1) circle (2.5pt);
+                    \node[above=2pt, font=\tiny\bfseries, color=UdeAGold!90!black] at (0.3, 0.0) {Optimal $\mathbf{X}^*$ ($\nabla J \parallel \nabla g$)};
+                \end{tikzpicture}
+            \end{block}
+
+            \vspace{-0.1cm}
+
+            \begin{alertblock}{Operational Paradigm}
+                \scriptsize
+                A Targeter answers: \textit{"Can we hit the target?"} \\
+                An Optimizer answers: \textit{"Which of all trajectories that hit the target consumes the least propellant?"}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+
 % ==============================================================================
 % SLIDE 48: THE CONTROL SPACE DILEMMA: WHY THE TARGETER WASTES FUEL
 % ==============================================================================
@@ -2392,6 +2472,59 @@ EndTarget;
                 \scriptsize
                 An Optimizer projects cost gradient $\nabla J$ onto the nullspace $\mathcal{N}(\mathbf{J})$, actively driving all unneeded burn components to \textbf{zero}!
             \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{When to Use: Decision Criteria and Solver Selection}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Use a Differential Corrector (Targeter) When:}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
+                    \item \textbf{Square Problems ($n = m$):} Control knobs match boundary goals (e.g., vary 2 burn components for 2 B-plane coordinates).
+                    \item \textbf{Analytical Seed Available:} Initial guess is already close to the solution (e.g., Lambert BVP, Hohmann transfer).
+                    \item \textbf{Strict Equalities:} No cost minimization needed, only satisfying exact boundary states ($B\cdot T = B\cdot T^*$).
+                \end{itemize}
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{block}{Use a Trajectory Optimizer (NLP) When:}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
+                    \item \textbf{Under-Determined Systems ($n > m$):} Extra degrees of freedom exist (e.g., 3 burn components for 1 inclination target).
+                    \item \textbf{Propellant Minimization:} Explicit cost function $J = \sum \Vert{}\Delta \mathbf{V}_k\Vert{}$ or depleted fuel mass $m_0 - m_f$.
+                    \item \textbf{Inequality Constraints:} Real boundaries ($r_p \ge R_{\text{safe}}$, $TOF \le TOF_{\max}$, thrust bounds $\Vert{}\Delta \mathbf{V}\Vert{} \le \Delta V_{\max}$).
+                    \item \textbf{Multi-Burn Transfers:} Sizing intermediate splits, powered flybys, or continuous steering profiles.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{GMAT Numerical Engines}
+                \fontsize{5.1pt}{6.1pt}\selectfont
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
+                    \item \textbf{Differential Correctors (`Target`):}
+                    \begin{itemize}\setlength{\itemsep}{0.3pt}
+                        \item \texttt{NewtonRaphson}: Finite differences ($n+1$ props/step).
+                        \item \texttt{Broyden} / \texttt{ModifiedBroyden}: Secant updates (1 prop/step).
+                    \end{itemize}
+                    \item \textbf{Nonlinear Optimizers (`Optimize`):}
+                    \begin{itemize}\setlength{\itemsep}{0.3pt}
+                        \item \texttt{Yukon}: Native NASA Goddard SQP solver (built-in).
+                        \item \texttt{VF13ad} / \texttt{SNOPT}: Industry-standard SQP plugins.
+                        \item \texttt{fmincon}: MATLAB optimization interface.
+                    \end{itemize}
+                \end{itemize}
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{alertblock}{The Under-Determined Trap}
+                \fontsize{5.2pt}{6.2pt}\selectfont
+                When $n > m$, DC uses a pseudo-inverse that minimizes step length $\Vert{}\Delta \mathbf{X}\Vert{}_2$ from the \textbf{arbitrary guess}, preserving parasitic, fuel-wasting burns!
+            \end{alertblock}
         \end{column}
     \end{columns}
 \end{frame}
@@ -2494,61 +2627,68 @@ EndTarget;
     \end{columns}
 \end{frame}
 
-% ==============================================================================
-% SLIDE 51: NASA GMAT SCRIPT IMPLEMENTATION: OPTIMIZING IMPULSIVE BURNS
-% ==============================================================================
-\begin{frame}[fragile]{NASA GMAT Implementation: Scripting Yukon SQP Optimization}
+\begin{frame}[fragile]{NASA GMAT Architecture: Target Sequence vs. Optimize Sequence}
     \begin{columns}[t]
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Solver Configuration (Preamble)}
-                \scriptsize
-                Yukon requires tolerance and Hessian algorithm definitions:
+        \begin{column}{0.47\textwidth}
+            \begin{block}{Command Architecture Comparison}
+                \centering
+                \fontsize{5.0pt}{5.8pt}\selectfont
+                \setlength{\tabcolsep}{1.6pt}
+                \begin{tabular}{lll}
+                    \toprule
+                    \textbf{Functional Role} & \textbf{Targeter (DC)} & \textbf{Optimizer (Yukon)} \\ \midrule
+                    \textbf{Loop Scope}      & \texttt{Target DC \{...\}}    & \texttt{Optimize Yukon \{...\}} \\
+                    \textbf{Control Knobs}   & \texttt{Vary DC(Burn.V1)}     & \texttt{Vary Yukon(Burn.V1, Bounds)} \\
+                    \textbf{Cost Function}   & \textit{None (Root finding)}  & \texttt{Minimize Yukon(Cost)} \\
+                    \textbf{Equalities}      & \texttt{Achieve DC(INC=45)}   & \texttt{NonlinearConstraint(INC=45)} \\
+                    \textbf{Inequalities}    & \textit{Unsupported}         & \texttt{NonlinearConstraint(hp>=300)} \\
+                    \textbf{Loop Exit}       & \texttt{EndTarget;}           & \texttt{EndOptimize;} \\ \bottomrule
+                \end{tabular}
             \end{block}
-\begin{lstlisting}[style=gmatstyle]
-Create Yukon Yukon1;
-Yukon1.ShowProgress         = true;
-Yukon1.MaximumIterations    = 200;
-Yukon1.MaximumFunctionEvals = 1000;
-Yukon1.FeasibilityTolerance = 0.0001;
-Yukon1.OptimalityTolerance  = 0.0001;
-Yukon1.FunctionTolerance    = 0.0001;
-Yukon1.HessianUpdateMethod  = SelfScaledBFGS;
 
-Create Variable Cost DeltaV_Opt;
-\end{lstlisting}
-            \begin{exampleblock}{Why Sum-of-Squares Cost?}
+            \vspace{-0.08cm}
+
+            \begin{exampleblock}{Numerical Best Practice for Yukon}
                 \scriptsize
-                Formulating cost as $J = V^2 + N^2 + B^2$ eliminates the derivative singularity of the Euclidean norm $\frac{d}{dx}(\sqrt{x^2}) = \frac{x}{|x|}$ at zero, guaranteeing smooth gradient descent!
+                Formulating cost as $J = V^2 + N^2 + B^2$ eliminates the derivative singularity of the Euclidean norm $\frac{d}{dx}(\sqrt{x^2}) = \frac{x}{\vert{}x\vert{}}$ at zero, guaranteeing smooth gradient descent!
             \end{exampleblock}
         \end{column}
 
-        \begin{column}{0.50\textwidth}
-\begin{lstlisting}[style=gmatstyle]
-% OPTIMIZATION SEQUENCE: MINIMUM-DELTA-V PLANE CHANGE
-Optimize Yukon1 {SolveMode = Solve, ExitMode = SaveAndContinue};
+        \begin{column}{0.51\textwidth}
+\begin{lstlisting}[style=gmatcompact]
+% OPTIMIZATION SEQUENCE IN NASA GMAT
+Optimize Yukon1 {SolveMode = Solve, ...
+    ExitMode = SaveAndContinue};
 
-    % 1. Vary 3 burn components with explicit box bounds
+    % 1. Vary controls with box bounds
     Vary Yukon1(Burn.Element1 = 0.4, ...
-        {Perturbation = 1e-4, Lower = -5.0, Upper = 5.0, MaxStep = 0.5});
+        {Perturbation = 1e-4, MaxStep = 0.5, ...
+         Lower = -5.0, Upper = 5.0});
     Vary Yukon1(Burn.Element2 = 1.8, ...
-        {Perturbation = 1e-4, Lower = -5.0, Upper = 5.0, MaxStep = 0.5});
+        {Perturbation = 1e-4, MaxStep = 0.5, ...
+         Lower = -5.0, Upper = 5.0});
     Vary Yukon1(Burn.Element3 = 0.3, ...
-        {Perturbation = 1e-4, Lower = -5.0, Upper = 5.0, MaxStep = 0.5});
+        {Perturbation = 1e-4, MaxStep = 0.5, ...
+         Lower = -5.0, Upper = 5.0});
 
     % 2. Minimize quadratic cost function J
-    Cost = Burn.Element1^2 + Burn.Element2^2 + Burn.Element3^2;
+    Cost = Burn.Element1^2 + Burn.Element2^2 ...
+           + Burn.Element3^2;
     Minimize Yukon1(Cost);
 
     % 3. Execute flight dynamics
-    Maneuver Burn(OptimizerSat);
-    Propagate DefaultProp(OptimizerSat) {OptimizerSat.ElapsedSecs = 1800};
+    Maneuver Burn(Sat);
+    Propagate DefaultProp(Sat) ...
+        {Sat.ElapsedSecs = 1800};
 
-    % 4. Enforce terminal inclination constraint
-    NonlinearConstraint Yukon1(OptimizerSat.EarthMJ2000Eq.INC = 45.0);
+    % 4. Enforce terminal constraint
+    NonlinearConstraint ...
+        Yukon1(Sat.EarthMJ2000Eq.INC = 45.0);
 
 EndOptimize;
 
-DeltaV_Opt = Sqrt(Burn.Element1^2 + Burn.Element2^2 + Burn.Element3^2);
+DeltaV_Opt = Sqrt(Burn.Element1^2 + ...
+    Burn.Element2^2 + Burn.Element3^2);
 \end{lstlisting}
         \end{column}
     \end{columns}
@@ -2562,16 +2702,16 @@ DeltaV_Opt = Sqrt(Burn.Element1^2 + Burn.Element2^2 + Burn.Element3^2);
         \begin{column}{0.54\textwidth}
             \begin{block}{Plane Change Benchmark ($r = 7000\text{ km}$, $i: 28.5^\circ \to 45.0^\circ$)}
                 \centering
-                \scriptsize
-                \setlength{\tabcolsep}{1.5pt}
+                \fontsize{5.0pt}{6.0pt}\selectfont
+                \setlength{\tabcolsep}{1.8pt}
                 \begin{tabular}{lcccc}
                     \toprule
-                    \textbf{Telemetry Metric} & \textbf{Initial Seed} & \textbf{Targeter (DC)} & \textbf{Optimizer (Yukon)} & \textbf{Analytical Ideal} \\ \midrule
-                    $\Delta V_V$ (Velocity)   & $+0.400\text{ km/s}$  & $+0.382\text{ km/s}$  & $\mathbf{0.000\text{ km/s}}$ & $0.000\text{ km/s}$ \\
-                    $\Delta V_N$ (Normal)     & $+1.800\text{ km/s}$  & $+2.148\text{ km/s}$  & $\mathbf{+2.171\text{ km/s}}$& $+2.171\text{ km/s}$ \\
-                    $\Delta V_B$ (Binormal)   & $+0.300\text{ km/s}$  & $+0.279\text{ km/s}$  & $\mathbf{0.000\text{ km/s}}$ & $0.000\text{ km/s}$ \\
-                    Total Impulse $\|\Delta \mathbf{V}\|$ & $1.868\text{ km/s}$ & $2.199\text{ km/s}$ & $\mathbf{2.171\text{ km/s}}$ & $\mathbf{2.171\text{ km/s}}$ \\
-                    Final Inclination ($i$)   & $28.50^\circ$         & $45.00^\circ$         & $45.00^\circ$                & $45.00^\circ$ \\
+                    \textbf{Metric} & \textbf{Initial Seed} & \textbf{Targeter (DC)} & \textbf{Optimizer (Yukon)} & \textbf{Analytical Ideal} \\ \midrule
+                    $\Delta V_V$ (Velocity)   & $+0.400\text{ km/s}$  & $+0.382\text{ km/s}$  & $\mathbf{0.000\text{ km/s}}$  & $0.000\text{ km/s}$ \\
+                    $\Delta V_N$ (Normal)     & $+1.800\text{ km/s}$  & $+2.148\text{ km/s}$  & $\mathbf{+2.171\text{ km/s}}$ & $+2.171\text{ km/s}$ \\
+                    $\Delta V_B$ (Binormal)   & $+0.300\text{ km/s}$  & $+0.279\text{ km/s}$  & $\mathbf{0.000\text{ km/s}}$  & $0.000\text{ km/s}$ \\
+                    Total Impulse $\Vert{}\Delta \mathbf{V}\Vert{}$ & $1.868\text{ km/s}$ & $2.199\text{ km/s}$ & $\mathbf{2.171\text{ km/s}}$ & $\mathbf{2.171\text{ km/s}}$ \\
+                    Final Inclination ($i$)   & $28.50^\circ$         & $45.00^\circ$         & $45.00^\circ$                 & $45.00^\circ$ \\
                     Semi-Major Axis ($a$)     & $7000.0\text{ km}$    & $\mathbf{7084.2\text{ km}}$ & $\mathbf{7000.0\text{ km}}$ & $7000.0\text{ km}$ \\ \bottomrule
                 \end{tabular}
             \end{block}
@@ -2590,7 +2730,7 @@ DeltaV_Opt = Sqrt(Burn.Element1^2 + Burn.Element2^2 + Burn.Element3^2);
         \begin{column}{0.44\textwidth}
             \begin{exampleblock}{Engineering Rules for Students}
                 \scriptsize
-                \begin{enumerate}\setlength{\itemsep}{2pt}
+                \begin{enumerate}\setlength{\itemsep}{1.5pt}
                     \item \textbf{Perturbation Step Sizing:} \\
                     Use $\delta X = 10^{-4}\text{--}10^{-3}$ for impulsive $\Delta V$ knobs in Yukon to avoid gradient truncation noise.
                     \item \textbf{The Two-Stage Warm Start:} \\

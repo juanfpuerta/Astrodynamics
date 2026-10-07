@@ -1,5 +1,7 @@
 \documentclass[aspectratio=169, 10pt]{beamer}
 \usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage[sfdefault]{roboto}
 \usepackage{amsmath, amssymb, bm, amsfonts}
 \usepackage{booktabs}
 \usepackage{listings}
@@ -32,7 +34,7 @@
 \setbeamercolor{block title alerted}{bg=AlertRed, fg=white}
 \setbeamercolor{block body alerted}{bg=white, fg=Charcoal}
 
-% Custom Header & Footer Setup with Lower-Right Logo
+% --- Custom Header & Footer Setup with Lower-Right Logo ---
 \setbeamertemplate{headline}{}
 \setbeamertemplate{footline}{%
     \leavevmode%
@@ -52,13 +54,13 @@
 % Code Listings Configuration
 \lstdefinestyle{gmatstyle}{
     backgroundcolor=\color{LightBg},
-    basicstyle=\ttfamily\fontsize{4.6pt}{5.4pt}\selectfont\color{Charcoal},
+    basicstyle=\ttfamily\fontsize{5.0pt}{5.8pt}\selectfont\color{Charcoal},
     keywordstyle=\bfseries\color{UdeAGreen},
     commentstyle=\itshape\color{gray},
     stringstyle=\color{UdeAGold!90!black},
     frame=single,
     rulecolor=\color{UdeAGreen},
-    breaklines=true,
+    breaklines=false,
     showstringspaces=false,
     xleftmargin=2pt,
     xrightmargin=2pt
@@ -66,7 +68,7 @@
 
 \lstdefinestyle{pythoncode}{
     backgroundcolor=\color{white},
-    basicstyle=\ttfamily\fontsize{4.4pt}{5.2pt}\selectfont\color{Charcoal},
+    basicstyle=\ttfamily\fontsize{4.8pt}{5.6pt}\selectfont\color{Charcoal},
     keywordstyle=\bfseries\color{UdeAGreen},
     commentstyle=\itshape\color{gray},
     stringstyle=\color{UdeAGold!90!black},
@@ -75,7 +77,7 @@
     numbersep=2pt,
     frame=single,
     rulecolor=\color{UdeAGreen!50},
-    breaklines=true,
+    breaklines=false,
     showstringspaces=false,
     tabsize=2,
     xleftmargin=2pt,
@@ -85,12 +87,14 @@
 \usetheme{Madrid}
 \usefonttheme{professionalfonts}
 
+% Positions logo in the upper right corner
 \logo{\vspace{-0.2cm}\hfill\includegraphics[width=1cm]{Images/UdeA+simplificado+Negro_Smaller.png}\hspace{0.1cm}}
 
+% Metadata & Title Page Logo
 \title[Astrodynamics Module 2]{\textbf{Module 2: 3D Interplanetary Trajectories and B-Plane Navigation}}
 \subtitle{Interplanetary Flight Mechanics}
-\author{\textbf{Prof. Juan Francisco Puerta Ibarra}}
-%\institute{Aerospace Engineering}
+\author{\textbf{Juan Francisco Puerta Ibarra}}
+\institute{Aerospace Engineering}
 \date{Semester 2026-2}
 \titlegraphic{\includegraphics[width=2.5cm,keepaspectratio]{Images/UdeA+simplificado+Negro_Smaller.png}}
 
@@ -107,62 +111,55 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 2: MODULE 2 ROADMAP (WITH ENLARGED TARGET DIAGRAM)
+% SLIDE 2: MODULE 2 ROADMAP
 % ==============================================================================
 \begin{frame}{Module 2: Architecture and Operational Roadmap}
-    \begin{columns}[t]
-        \begin{column}{0.68\textwidth}
+    \begin{columns}[T]
+        \begin{column}{0.64\textwidth}
             \begin{block}{From Planar Transfers to 3D Navigation}
-                \fontsize{5.8pt}{6.8pt}\selectfont
-                \begin{itemize}\setlength{\itemsep}{0.5pt}\setlength{\topsep}{1pt}\setlength{\parsep}{0pt}\setlength{\partopsep}{0pt}
+                \scriptsize % <-- CORRECTED TEXT SIZE
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{1pt}
                     \item \textbf{Week 5: 3D Patched Conics and Hyperbolic Asymptotes}
-                    \begin{itemize}\setlength{\itemsep}{0.2pt}\setlength{\topsep}{0pt}\setlength{\parsep}{0pt}
+                    \begin{itemize}\setlength{\itemsep}{0pt}
                         \item Expanding 2D Lambert transfers to 3D inertial space.
                         \item Asymptote ($\alpha, \delta$) and the \textbf{Inclination Trap} ($i \ge |\delta|$).
                         \item Python 3D departure kinematics and launch azimuth solvers.
                     \end{itemize}
                     \item \textbf{Computational Mission Design: SPICE-Driven Porkchop Plots}
-                    \begin{itemize}\setlength{\itemsep}{0.2pt}\setlength{\topsep}{0pt}\setlength{\parsep}{0pt}
+                    \begin{itemize}\setlength{\itemsep}{0pt}
                         \item Solving Lambert's boundary value problem via Izzo's algorithm.
                         \item Multi-planet dimensionality reduction and flyby $\Delta V$ matching.
                     \end{itemize}
                     \item \textbf{Week 6: Gravity Assists and Powered Flybys}
-                    \begin{itemize}\setlength{\itemsep}{0.2pt}\setlength{\topsep}{0pt}\setlength{\parsep}{0pt}
+                    \begin{itemize}\setlength{\itemsep}{0pt}
                         \item Planetary SOI momentum transfer; turn angle $\delta_{\text{turn}}(r_p)$.
                         \item Leading vs. Trailing encounters and deep-space Oberth burns.
                     \end{itemize}
                     \item \textbf{Week 7: The B-Plane Targeting Framework}
-                    \begin{itemize}\setlength{\itemsep}{0.2pt}\setlength{\topsep}{0pt}\setlength{\parsep}{0pt}
-                        \item $(\hat{\mathbf{S}}, \hat{\mathbf{T}}, \hat{\mathbf{R}})$ frame and impact parameter vector $\mathbf{B}$.
+                    \begin{itemize}\setlength{\itemsep}{0pt}
+                        \item ($\hat{\mathbf{S}}, \hat{\mathbf{T}}, \hat{\mathbf{R}}$) frame and impact parameter vector $\mathbf{B}$.
                         \item Multi-variable differential correctors in NASA's GMAT.
                     \end{itemize}
                 \end{itemize}
             \end{block}
         \end{column}
         
-        \begin{column}{0.30\textwidth}
+        \begin{column}{0.34\textwidth}
             \begin{alertblock}{Forensic Engineering Core}
                 \scriptsize
-                Planetary targeting cannot rely on point-coincidence root finders. We map state transition matrices to project miss distances onto invariant planetocentric target planes.
+                Planetary targeting cannot rely on point-coincidence root finders. We map state transition matrices to project miss distances onto invariant target planes.
             \end{alertblock}
-            \vspace{0.35cm}
+            \vspace{0.2cm}
             \centering
-            \begin{tikzpicture}[scale=0.85, >=stealth]
-                % Coordinate Axes
-                \draw[very thick, ->, color=UdeAGreen] (0,0) -- (3.3,0) node[right, font=\footnotesize]{$\hat{\mathbf{T}}$};
-                \draw[very thick, ->, color=UdeAGreen] (0,0) -- (0,-2.3) node[below, font=\footnotesize]{$\hat{\mathbf{R}}$};
-                
-                % Target Center of Mass
-                \filldraw[color=Charcoal] (0,0) circle (2.8pt);
+            \begin{tikzpicture}[scale=0.68, >=stealth]
+                \draw[very thick, ->, color=UdeAGreen] (0,0) -- (3.0,0) node[right, font=\scriptsize]{$\hat{\mathbf{T}}$};
+                \draw[very thick, ->, color=UdeAGreen] (0,0) -- (0,-2.0) node[below, font=\scriptsize]{$\hat{\mathbf{R}}$};
+                \filldraw[color=Charcoal] (0,0) circle (2.2pt);
                 \node[above left, font=\scriptsize\bfseries, color=Charcoal] at (0,0) {Target};
-                
-                % Impact Parameter Vector and Components
-                \draw[dashed, color=gray!90, line width=0.7pt] (2.3,-1.55) -- (2.3,0) node[above, font=\tiny, color=Charcoal]{$B\cdot T$};
-                \draw[dashed, color=gray!90, line width=0.7pt] (2.3,-1.55) -- (0,-1.55) node[left, font=\tiny, color=Charcoal]{$B\cdot R$};
-                \draw[very thick, ->, color=UdeAGold] (0,0) -- (2.3,-1.55) node[midway, above right, font=\footnotesize\bfseries]{$\mathbf{B}$};
-                
-                % Pierce Point Marker
-                \filldraw[color=AlertRed] (2.3,-1.55) circle (2.2pt);
+                \draw[dashed, color=gray!90, line width=0.7pt] (2.0,-1.3) -- (2.0,0) node[above, font=\tiny, color=Charcoal]{$B\cdot T$};
+                \draw[dashed, color=gray!90, line width=0.7pt] (2.0,-1.3) -- (0,-1.3) node[left, font=\tiny, color=Charcoal]{$B\cdot R$};
+                \draw[very thick, ->, color=UdeAGold] (0,0) -- (2.0,-1.3) node[midway, above right, font=\scriptsize\bfseries]{$\mathbf{B}$};
+                \filldraw[color=AlertRed] (2.0,-1.3) circle (2.2pt);
             \end{tikzpicture}
         \end{column}
     \end{columns}
@@ -181,7 +178,7 @@
                 \begin{equation*}
                     \frac{a_{\text{perturb, Sun}}}{a_{\text{central, planet}}} = \frac{a_{\text{perturb, planet}}}{a_{\text{central, Sun}}} \implies r_{\text{SOI}} = d \left(\frac{\mu_p}{\mu_\odot}\right)^{2/5}
                 \end{equation*}
-                \vspace{-0.15cm}
+                \vspace{-0.1cm}
                 where $d$ is the planetary orbital distance from the Sun.
             \end{block}
 
@@ -331,7 +328,7 @@
         Given $G = 6.67430 \times 10^{-20}\text{ km}^3/\text{kg}\cdot\text{s}^2$, $d_V = 1.0816 \times 10^8\text{ km}$, $\mu_\odot = 1.32712 \times 10^{11}\text{ km}^3/\text{s}^2$:
     \end{exampleblock}
 
-    \vspace{-0.15cm}
+    \vspace{-0.1cm}
 
     \begin{columns}[t]
         \begin{column}{0.48\textwidth}
@@ -355,11 +352,12 @@
             \scriptsize
             \textbf{Step 4: Laplace Sphere of Influence ($r_{\text{SOI}}$)}
             \begin{align*}
-                r_{\text{SOI}} &= d_V \left(\frac{\mu_V}{\mu_\odot}\right)^{2/5} = (1.0816 \times 10^8)\left(\frac{324858.6}{1.32712 \times 10^{11}}\right)^{2/5} \\
+                r_{\text{SOI}} &= d_V \left(\frac{\mu_V}{\mu_\odot}\right)^{2/5} \\
+                &= (1.0816 \times 10^8)\left(\frac{324858.6}{1.32712 \times 10^{11}}\right)^{2/5} \\
                 &= \mathbf{6.165} \times 10^5\text{ km} \approx \mathbf{101.9}\,R_V
             \end{align*}
 
-            \vspace{-0.2cm}
+            \vspace{-0.1cm}
             \begin{alertblock}{Precision Outcome}
                 \scriptsize
                 Direct Doppler tracking resolved $\mu_V$ to 7 significant figures, reducing mass uncertainty from $\sim 2\%$ down to $< 0.001\%$.
@@ -442,7 +440,7 @@
                     \item \textbf{Phase 1: Planetocentric Departure ($r < r_{\text{SOI},1}$)} \\
                     Central body: Earth ($\mu_1$). Hyperbolic escape from circular parking orbit.
                     \item \textbf{Phase 2: Heliocentric Transfer ($r_{\text{SOI},1} \le R \le r_{\text{SOI},2}$)} \\
-                    Central body: Sun ($\mu_\odot$). Keplerian transfer ellipse connecting departure and arrival planetary orbits.
+                    Central body: Sun ($\mu_\odot$). Keplerian transfer ellipse connecting departure and arrival orbits.
                     \item \textbf{Phase 3: Planetocentric Arrival ($r < r_{\text{SOI},2}$)} \\
                     Central body: Target planet ($\mu_2$). Hyperbolic encounter, capture burn, or planetary flyby.
                 \end{enumerate}
@@ -504,7 +502,7 @@
         \begin{column}{0.47\textwidth}
             \begin{block}{Phase 1 Vector Geometry}
                 \centering
-                \begin{tikzpicture}[scale=0.64]
+                \begin{tikzpicture}[scale=0.60]
                     \draw[dashed, color=gray, line width=0.8pt] (0,0) circle (2.1cm);
                     \node[color=gray, font=\tiny] at (1.1, 1.85) {Earth SOI ($r_{\text{SOI}}$)};
                     
@@ -552,7 +550,7 @@
         \begin{column}{0.45\textwidth}
             \begin{block}{Asymptote Angle Geometry ($\beta$)}
                 \centering
-                \begin{tikzpicture}[scale=0.64]
+                \begin{tikzpicture}[scale=0.60]
                     \draw[thick, fill=blue!25] (0,0) circle (0.40cm) node[font=\tiny]{Earth};
                     \draw[dashed, color=gray] (0,0) circle (0.80cm);
                     
@@ -614,7 +612,7 @@
             \begin{block}{Exhaust Energy Transfer Mechanism}
                 \centering
                 \vspace{0.05cm}
-                \begin{tikzpicture}[scale=0.68]
+                \begin{tikzpicture}[scale=0.60]
                     \draw[thick, color=gray!60] (-2.2, 1.8) to[out=-70, in=180] (0, -1.5) to[out=0, in=-110] (2.2, 1.8);
                     \node[above, font=\tiny, color=gray] at (0, 1.8) {Gravitational Potential Well};
 
@@ -764,7 +762,7 @@
                     \cos \beta = \frac{\cos i}{\cos \phi_L}
                 \end{equation*}
                 \centering
-                \begin{tikzpicture}[scale=0.80]
+                \begin{tikzpicture}[scale=0.75]
                     \draw[thick, color=Charcoal] (0,0) circle (1.2cm);
                     \draw[dashed, color=gray] (-1.5,0) -- (1.5,0) node[right, font=\tiny]{Equator};
                     \draw[thick, color=UdeAGreen, rotate=35] (-1.2,0) -- (1.2,0) node[right, font=\tiny]{Plane ($i$)};
@@ -932,7 +930,7 @@ def solve_3d_departure(v_lambert, v_planet, phi_L_deg, hp_km):
         \begin{column}{0.49\textwidth}
             \begin{block}{Porkchop Contour Schematic}
                 \centering
-                \begin{tikzpicture}[scale=0.58]
+                \begin{tikzpicture}[scale=0.55]
                     \draw[fill=DarkSlate, rounded corners=5pt] (-2.6,-1.7) rectangle (2.6, 1.8);
                     
                     \draw[->, >=stealth, color=white, line width=0.8pt] (-2.2,-1.4) -- (2.3,-1.4) node[right, font=\tiny]{$t_{\text{dep}}$};
@@ -964,7 +962,7 @@ def solve_3d_departure(v_lambert, v_planet, phi_L_deg, hp_km):
     \begin{columns}[t]
         \begin{column}{0.50\textwidth}
             \begin{block}{Steps 1 to 3: The Lambert Sweep Loop}
-                \fontsize{6.0pt}{7.0pt}\selectfont
+                \scriptsize
                 \begin{enumerate}\setlength{\itemsep}{1pt}\setlength{\topsep}{1pt}
                     \item \textbf{Define Constraints:} Select bodies, calendar spans ($t_{\text{dep}}, t_{\text{arr}}$), and launcher $C_3$ limits.
                     \item \textbf{Initialize 2D Grid:} Set calendar step size ($\Delta t = 2\text{ days}$) across departure and arrival axes.
@@ -981,7 +979,7 @@ def solve_3d_departure(v_lambert, v_planet, phi_L_deg, hp_km):
 
         \begin{column}{0.47\textwidth}
             \begin{block}{Steps 4 and 5: Window Selection}
-                \fontsize{6.0pt}{7.0pt}\selectfont
+                \scriptsize
                 \begin{enumerate}\setcounter{enumi}{3}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{1pt}
                     \item \textbf{Generate Contour Map:} Plot 2D isopower contours of $C_3$, filtering unfeasible domains ($C_3 > C_{3,\max}$).
                     \item \textbf{Identify Opportunity Valleys:}
@@ -1003,7 +1001,7 @@ def solve_3d_departure(v_lambert, v_planet, phi_L_deg, hp_km):
     \begin{columns}[t]
         \begin{column}{0.48\textwidth}
             \begin{block}{Type I Trajectories ($\Delta\nu < 180^\circ$)}
-                \fontsize{6.0pt}{7.0pt}\selectfont
+                \scriptsize
                 \begin{itemize}\setlength{\itemsep}{1.2pt}
                     \item True anomaly change is less than half an orbit ($\Delta\nu < 180^\circ$).
                     \item \textbf{Shorter Time of Flight:} Spacecraft reaches target before aphelion ($\sim 200\text{ days}$ for Mars).
@@ -1012,7 +1010,7 @@ def solve_3d_departure(v_lambert, v_planet, phi_L_deg, hp_km):
             \end{block}
             \vspace{-0.1cm}
             \begin{block}{Type II Trajectories ($\Delta\nu > 180^\circ$)}
-                \fontsize{6.0pt}{7.0pt}\selectfont
+                \scriptsize
                 \begin{itemize}\setlength{\itemsep}{1.2pt}
                     \item True anomaly change exceeds half an orbit ($\Delta\nu > 180^\circ$).
                     \item \textbf{Longer Time of Flight:} Spacecraft passes aphelion before intercepting the planet ($\sim 250\text{--}300\text{ days}$).
@@ -1066,7 +1064,7 @@ def solve_3d_departure(v_lambert, v_planet, phi_L_deg, hp_km):
         \begin{column}{0.44\textwidth}
             \begin{block}{Lambert Transfer Geometry}
                 \centering
-                \begin{tikzpicture}[scale=0.68]
+                \begin{tikzpicture}[scale=0.65]
                     \filldraw[color=yellow!90!orange] (0,0) circle (4pt) node[below left, font=\tiny, color=DarkSlate]{\textbf{Sun} ($\mu_\odot$)};
                     
                     \coordinate (R1) at (2.0, 0.3);
@@ -1134,7 +1132,7 @@ dep_end   = spy.utc2et("1978-05-01T00:00:00")
 \end{frame}
 
 % ==============================================================================
-% SLIDE 24: DIMENSIONALITY REDUCTION (REVISED COMPACT MATH)
+% SLIDE 24: DIMENSIONALITY REDUCTION
 % ==============================================================================
 \begin{frame}[fragile]{Dimensionality Reduction: Slicing the Multi-Planet Search Space}
     \begin{columns}[t]
@@ -1183,7 +1181,7 @@ dv_penalty_grid = np.full((100, 100), np.nan)
 \end{frame}
 
 % ==============================================================================
-% SLIDE 25: THE DOUBLE-LEG LAMBERT LOOP & MATCHING PENALTY
+% SLIDE 25: THE DOUBLE-LEG LAMBERT LOOP
 % ==============================================================================
 \begin{frame}[fragile]{The Double-Leg Lambert Loop and \texorpdfstring{$\Delta V$}{Delta-V} Flyby Matching Penalty}
     \begin{columns}[t]
@@ -1233,7 +1231,7 @@ dv_penalty_grid[i, j] = abs(dv)
 \end{frame}
 
 % ==============================================================================
-% SLIDE 26: OPTIMAL WINDOW EXTRACTION & OPPORTUNITY MAP TOPOLOGY
+% SLIDE 26: OPTIMAL WINDOW EXTRACTION & OPPORTUNITY MAP
 % ==============================================================================
 \begin{frame}[fragile]{Optimal Window Extraction and Opportunity Map Visualization}
     \begin{columns}[t]
@@ -1540,7 +1538,7 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
 \end{frame}
 
 % ==============================================================================
-% SLIDE 33: B-PLANE PARAMETERS (REVISED FOR ZERO OVERFLOW)
+% SLIDE 33: B-PLANE PARAMETERS
 % ==============================================================================
 \begin{frame}{B-Plane Target Quantities and Impact Parameter Derivations}
     \begin{columns}[t]
@@ -1581,7 +1579,7 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
 \begin{frame}{Worked Example: B-Plane Target Vector Sizing at Mars}
     \begin{exampleblock}{Mission Specification}
         \scriptsize
-        A science probe approaches Mars ($\mu_M = 42828.37\text{ km}^3/\text{s}^2$, $R_M = 3396.2\text{ km}$) with $v_\infty = 3.50\text{ km/s}$[cite: 1, 15]. \\
+        A science probe approaches Mars ($\mu_M = 42828.37\text{ km}^3/\text{s}^2$, $R_M = 3396.2\text{ km}$) with $v_\infty = 3.50\text{ km/s}$. \\
         Design a polar capture flyby with periapsis altitude $h_p = 300\text{ km}$ ($r_p = 3696.2\text{ km}$) and zero out-of-plane azimuth ($\theta_B = 270^\circ$).
     \end{exampleblock}
 
@@ -1622,7 +1620,7 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
 \end{frame}
 
 % ==============================================================================
-% SLIDE: IVP VS. BVP IN ASTRODYNAMICS (CORRECTED FIT)
+% SLIDE 35: IVP VS. BVP IN ASTRODYNAMICS
 % ==============================================================================
 \begin{frame}{The Astrodynamic Duality: Initial Value vs. Boundary Value Problems}
     \begin{columns}[t]
@@ -1695,7 +1693,7 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
 \end{frame}
 
 % ==============================================================================
-% SLIDE: WHY BVPS ARE INESCAPABLE IN REAL TRAJECTORIES
+% SLIDE 36: WHY BVPS ARE INESCAPABLE IN REAL TRAJECTORIES
 % ==============================================================================
 \begin{frame}{Why Boundary Value Problems are Inescapable in Deep-Space Flight}
     \begin{columns}[t]
@@ -1749,7 +1747,7 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
 \end{frame}
 
 % ==============================================================================
-% SLIDE 35: NUMERICAL BOUNDARY SOLVERS (ENLARGED FORWARD SHOOTING DIAGRAM)
+% SLIDE 37: NUMERICAL BOUNDARY SOLVERS
 % ==============================================================================
 \begin{frame}{Numerical Boundary Solvers: The Shooting Method Architecture}
     \begin{columns}[t]
@@ -1811,7 +1809,7 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
 \end{frame}
 
 % ==============================================================================
-% SLIDE 36: DIFFERENTIAL CORRECTOR (SPLIT PART 2: JACOBIAN & UPDATE)
+% SLIDE 38: DIFFERENTIAL CORRECTOR (SPLIT PART 2: JACOBIAN & UPDATE)
 % ==============================================================================
 \begin{frame}{The Differential Corrector: Newton-Raphson Jacobian Formulation}
     \begin{columns}[t]
@@ -1857,14 +1855,14 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
 \end{frame}
 
 % ==============================================================================
-% SLIDE A: NEWTON-RAPHSON IN GMAT DIFFERENTIAL CORRECTOR
+% SLIDE 39: NEWTON-RAPHSON IN GMAT DIFFERENTIAL CORRECTOR
 % ==============================================================================
 \begin{frame}{GMAT Differential Corrector: Full Newton-Raphson Algorithm}
     \begin{columns}[t]
         \begin{column}{0.52\textwidth}
             \begin{block}{Exact Gradient Re-evaluation Principle}
                 \scriptsize
-                The standard \texttt{NewtonRaphson} algorithm reconstructs the full sensitivity Jacobian $\mathbf{J}_k \in \mathbb{R}^{m \times n}$ at \textbf{every iteration} $k$ via finite differences[cite: 9]:
+                The standard \texttt{NewtonRaphson} algorithm reconstructs the full sensitivity Jacobian $\mathbf{J}_k \in \mathbb{R}^{m \times n}$ at \textbf{every iteration} $k$ via finite differences:
                 \par\vspace{2pt}
                 {\centering $\displaystyle J_{ij} \approx \frac{Y_i(\mathbf{X}_k + \delta X_j \hat{\mathbf{e}}_j) - Y_i(\mathbf{X}_k)}{\delta X_j}$\par}
                 \vspace{2pt}
@@ -1872,7 +1870,7 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
                     \item Parameter update step:
                     \par\vspace{1pt}
                     {\centering $\displaystyle \Delta \mathbf{X}_k = -\mathbf{J}_k^{-1} \left(\mathbf{Y}(\mathbf{X}_k) - \mathbf{Y}^*\right)$\par}
-                    \item Guarantees local \textbf{quadratic convergence} ($\|\mathbf{e}_{k+1}\| \propto \|\mathbf{e}_k\|^2$) near the root.
+                    \item Guarantees local \textbf{quadratic convergence} ($\Vert{}\mathbf{e}_{k+1}\Vert{} \propto \Vert{}\mathbf{e}_k\Vert{}^2$) near the root.
                     \item Reaches convergence in the fewest number of solver iterations (typically 2--4 iterations).
                 \end{itemize}
             \end{block}
@@ -1892,7 +1890,7 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
             \begin{block}{Newton-Raphson Iteration Cost}
                 \centering
                 \vspace{0.1cm}
-                \begin{tikzpicture}[scale=0.72, >=stealth]
+                \begin{tikzpicture}[scale=0.65, >=stealth]
                     % Step k box
                     \draw[thick, fill=DarkSlate, rounded corners=3pt] (-2.2, 1.8) rectangle (2.2, 0.7);
                     \node[color=white, font=\tiny\bfseries] at (0, 1.4) {Iteration $k$: State $\mathbf{X}_k$};
@@ -1919,21 +1917,21 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
 
             \begin{exampleblock}{Recommended Use in GMAT}
                 \scriptsize
-                Best for simple transfers ($n \le 3$), highly non-linear orbital regimes, or when initial guesses are poor[cite: 3].
+                Best for simple transfers ($n \le 3$), highly non-linear orbital regimes, or when initial guesses are poor.
             \end{exampleblock}
         \end{column}
     \end{columns}
 \end{frame}
 
 % ==============================================================================
-% SLIDE B: BROYDEN'S QUASI-NEWTON METHOD IN GMAT
+% SLIDE 40: BROYDEN'S QUASI-NEWTON METHOD IN GMAT
 % ==============================================================================
 \begin{frame}{GMAT Differential Corrector: Broyden's Quasi-Newton Method}
     \begin{columns}[t]
         \begin{column}{0.53\textwidth}
             \begin{block}{Rank-1 Secant Matrix Update Principle}
                 \scriptsize
-                The \texttt{Broyden} algorithm replaces expensive derivative flights with a multi-dimensional secant approximation[cite: 9]:
+                The \texttt{Broyden} algorithm replaces expensive derivative flights with a multi-dimensional secant approximation:
                 \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
                     \item \textbf{Iteration $k = 0$:} Computes initial $\mathbf{B}_0 \approx \mathbf{J}_0$ using finite-difference perturbation passes ($n+1$ propagations).
                     \item \textbf{Iterations $k \ge 1$:} Uses trajectory telemetry from the previous step to update $\mathbf{B}_k$ with \textbf{zero perturbation flights}:
@@ -1959,7 +1957,7 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
             \begin{block}{Broyden Secant Efficiency}
                 \centering
                 \vspace{0.1cm}
-                \begin{tikzpicture}[scale=0.72, >=stealth]
+                \begin{tikzpicture}[scale=0.65, >=stealth]
                     % Step 0
                     \draw[thick, fill=DarkSlate, rounded corners=3pt] (-2.2, 1.8) rectangle (2.2, 0.9);
                     \node[color=white, font=\tiny\bfseries] at (0, 1.5) {Step $k=0$ (Seed Jacobian)};
@@ -1981,21 +1979,21 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
 
             \begin{alertblock}{Operational Caveat in GMAT}
                 \scriptsize
-                GMAT must invert $\mathbf{B}_k$ at each iteration[cite: 9]. If dynamics are non-linear or steps are orthogonal, $\mathbf{B}_k$ can become ill-conditioned ($\det(\mathbf{B}_k) \approx 0$), causing matrix inversion failure[cite: 3].
+                GMAT must invert $\mathbf{B}_k$ at each iteration. If dynamics are non-linear or steps are orthogonal, $\mathbf{B}_k$ can become ill-conditioned ($\det(\mathbf{B}_k) \approx 0$), causing matrix inversion failure.
             \end{alertblock}
         \end{column}
     \end{columns}
 \end{frame}
 
 % ==============================================================================
-% SLIDE C: MODIFIED BROYDEN & SOLVER SELECTION MATRIX
+% SLIDE 41: MODIFIED BROYDEN & SOLVER SELECTION MATRIX
 % ==============================================================================
 \begin{frame}{Modified Broyden and GMAT Solver Selection Matrix}
     \begin{columns}[t]
         \begin{column}{0.48\textwidth}
             \begin{block}{Modified Broyden: Direct Inverse Update}
                 \scriptsize
-                The \texttt{ModifiedBroyden} algorithm updates the \textbf{inverse Jacobian} $\mathbf{H}_k \equiv \mathbf{B}_k^{-1}$ directly using the Sherman-Morrison theorem[cite: 9]:
+                The \texttt{ModifiedBroyden} algorithm updates the \textbf{inverse Jacobian} $\mathbf{H}_k \equiv \mathbf{B}_k^{-1}$ directly using the Sherman-Morrison theorem:
                 \par\vspace{1pt}
                 {\centering $\displaystyle \mathbf{H}_{k+1} = \mathbf{H}_k + \frac{\left(\Delta \mathbf{X}_k - \mathbf{H}_k \Delta \mathbf{F}_k\right) \Delta \mathbf{X}_k^T \mathbf{H}_k}{\Delta \mathbf{X}_k^T \mathbf{H}_k \Delta \mathbf{F}_k}$\par}
                 \vspace{2pt}
@@ -2004,7 +2002,7 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
                     \par\vspace{1pt}
                     {\centering $\displaystyle \Delta \mathbf{X}_k = -\mathbf{H}_k \left(\mathbf{Y}(\mathbf{X}_k) - \mathbf{Y}^*\right)$\par}
                     \item \textbf{1 propagation per step} for all $k \ge 1$.
-                    \item Completely eliminates singular matrix inversion crashes in GMAT[cite: 3].
+                    \item Completely eliminates singular matrix inversion crashes in GMAT.
                 \end{itemize}
             \end{block}
         \end{column}
@@ -2013,7 +2011,7 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
             \begin{block}{GMAT Differential Corrector Decision Matrix}
                 \centering
                 \scriptsize
-                \setlength{\tabcolsep}{2.5pt}
+                \setlength{\tabcolsep}{2.0pt}
                 \begin{tabular}{lccc}
                     \toprule
                     \textbf{Metric} & \textbf{Newton-Raphson} & \textbf{Broyden} & \textbf{Mod-Broyden} \\ \midrule
@@ -2039,7 +2037,70 @@ def compute_gravity_assist(mu_planet, R_planet, rp_km, v_inf_in, dv_p=0.0):
 \end{frame}
 
 % ==============================================================================
-% SLIDE 37: GMAT TARGET COMMAND ARCHITECTURE
+% SLIDE 42: PYTHON SETUP: MIDTERM PLANETARY INTERCEPT CHALLENGE
+% ==============================================================================
+\begin{frame}[fragile]{Midterm Challenge: Python Problem Setup and B-Plane Goals}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Initial Conditions and Ephemeris}
+                \scriptsize
+                To initiate the Earth-Venus-Mercury sequence, we define the search space using SPICE kernels:
+                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                    \item \textbf{Earth Departure:} Initial parking orbit radius $r_p = R_{\oplus} + 300\text{ km}$.
+                    \item \textbf{Venus Flyby:} Intermediate waypoint requiring an unpowered gravity assist.
+                    \item \textbf{Mercury Arrival:} Final intercept phase.
+                \end{itemize}
+            \end{block}
+            \vspace{-0.1cm}
+            \begin{alertblock}{Mission Goals and Boundary Conditions}
+                \scriptsize
+                \begin{enumerate}\setlength{\itemsep}{1.5pt}
+                    \item \textbf{Leg 1 (Earth $\to$ Venus):} Solve Lambert BVP. Compute departure $C_3$ and $\mathbf{v}_{\infty,\text{in}}$ at Venus.
+                    \item \textbf{Leg 2 (Venus $\to$ Mercury):} Solve Lambert BVP. Compute outbound $\mathbf{v}_{\infty,\text{out}}$ at Venus.
+                    \item \textbf{Flyby Feasibility:} Enforce $\|\mathbf{v}_{\infty,\text{in}}\| \approx \|\mathbf{v}_{\infty,\text{out}}\|$ and $r_{p,\text{Venus}} \ge R_{\text{Venus}} + 250\text{ km}$.
+                    \item \textbf{Mercury Capture:} Size B-plane vector for a polar orbit ($\theta_B = \pm 90^\circ$ or $270^\circ$) at $h_p = 200\text{ km}$.
+                \end{enumerate}
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.50\textwidth}
+\begin{lstlisting}[style=pythoncode]
+import numpy as np
+import spiceypy as spy
+from poliastro.iod import izzo
+from astropy import units as u
+
+# 1. Load Kernels & Define Epochs
+spy.furnsh("de442.bsp")
+spy.furnsh("naif0012.tls")
+mu_sun = spy.bodvrd('SUN', 'GM', 1)[1][0] * u.km**3 / u.s**2
+
+# Search Bounds for Launch Window (e.g. 2028-2029)
+t_earth = spy.utc2et("2028-10-01T00:00:00")
+t_venus = spy.utc2et("2029-03-15T00:00:00")
+t_merc  = spy.utc2et("2029-07-20T00:00:00")
+
+# 2. Extract Planetary Ephemerides
+pos_E, _ = spy.spkpos('EARTH', t_earth, 'J2000', 'NONE', 'SUN')
+pos_V, _ = spy.spkpos('VENUS', t_venus, 'J2000', 'NONE', 'SUN')
+pos_M, _ = spy.spkpos('MERCURY', t_merc, 'J2000', 'NONE', 'SUN')
+
+# 3. Double Lambert Formulation
+v1_E, v1_V = izzo.lambert(mu_sun, pos_E * u.km, pos_V * u.km, (t_venus - t_earth) * u.s)[0]
+v2_V, v2_M = izzo.lambert(mu_sun, pos_V * u.km, pos_M * u.km, (t_merc - t_venus) * u.s)[0]
+
+# Flyby Matching Penalty Calculation
+vel_V = spy.spkezr('VENUS', t_venus, 'J2000', 'NONE', 'SUN')[0][3:6]
+v_inf_in  = np.linalg.norm(v1_V.value - vel_V)
+v_inf_out = np.linalg.norm(v2_V.value - vel_V)
+dv_penalty = abs(v_inf_out - v_inf_in)
+\end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 43: GMAT TARGET COMMAND ARCHITECTURE
 % ==============================================================================
 \begin{frame}[fragile]{NASA GMAT Target Sequence: Command Architecture}
     \begin{columns}[t]
@@ -2086,7 +2147,7 @@ EndTarget;
 \end{frame}
 
 % ==============================================================================
-% SLIDE 38: FORENSIC DC CONVERGENCE & TUNING RULES
+% SLIDE 44: FORENSIC DC CONVERGENCE & TUNING RULES
 % ==============================================================================
 \begin{frame}{Forensic DC Convergence: Numerical Conditioning and Tuning Rules}
     \begin{columns}[t]
@@ -2123,7 +2184,7 @@ EndTarget;
 \end{frame}
 
 % ==============================================================================
-% SLIDE 39: GMAT LAB EXERCISE: MARS CAPTURE TARGETER
+% SLIDE 45: GMAT LAB EXERCISE: MARS CAPTURE TARGETER
 % ==============================================================================
 \begin{frame}[fragile]{NASA GMAT Lab Exercise: Mars Orbit Insertion (MOI) Targeter}
     \begin{columns}[t]
@@ -2167,32 +2228,377 @@ EndTarget;
 \end{frame}
 
 % ==============================================================================
-% SLIDE 40: MIDTERM SUMMARY & TAKE-HOME CHALLENGE
+% SLIDE 46: THE ASTRODYNAMIC PARADIGM SHIFT: FEASIBILITY VS OPTIMALITY
 % ==============================================================================
-\begin{frame}{Module 2 Synthesis and Midterm Take-Home Challenge}
+\begin{frame}{The Astrodynamic Paradigm Shift: Feasibility vs. Optimality}
     \begin{columns}[t]
         \begin{column}{0.50\textwidth}
-            \begin{block}{Key Mathematical Formulations}
+            \begin{block}{1. Root-Finding (The Differential Corrector)}
                 \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1.5pt}
-                    \item \textbf{Asymptote:} $\delta = \arcsin(S_z)$, $\alpha = \operatorname{atan2}(S_y, S_x)$.
-                    \item \textbf{Feasibility:} $i \ge \vert{}\delta\vert{}$ avoids plane change penalty.
-                    \item \textbf{Flyby Turn:} $\sin(\delta_{\text{turn}}/2) = (1 + r_p v_\infty^2/\mu_p)^{-1}$.
-                    \item \textbf{B-Plane:} $\mathbf{B} = (B\cdot T)\hat{\mathbf{T}} + (B\cdot R)\hat{\mathbf{R}}$.
-                    \item \textbf{Impact Parameter:} $B = \frac{\mu_p}{v_\infty^2}\sqrt{e^2 - 1}$.
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
+                    \item Solves a system of non-linear equations:
+                    \par\vspace{1pt}
+                    {\centering $\mathbf{F}(\mathbf{X}) = \mathbf{Y}(\mathbf{X}) - \mathbf{Y}^* = \mathbf{0}$\par}
+                    \item Drives miss residuals below tolerance: $\|\mathbf{F}\| \le \boldsymbol{\epsilon}$.
+                    \item \textbf{Operational Blindspot:} Terminates at the \textbf{first feasible root} encountered, completely agnostic to propellant mass burned ($\Delta m$) or total $\Delta V$ spent!
+                \end{itemize}
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{block}{2. Trajectory Optimization (NLP)}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
+                    \item Searches across the entire feasible constraint manifold:
+                    \par\vspace{1pt}
+                    {\centering $\min_{\mathbf{X}} J(\mathbf{X}) \quad \text{subject to} \quad \mathbf{g}(\mathbf{X}) = \mathbf{0}, \; \mathbf{h}(\mathbf{X}) \le \mathbf{0}$\par}
+                    \item Treats excess control variables as \textbf{degrees of freedom} to minimize $\Delta V_{\text{tot}}$ or maximize payload mass delivered.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Geometry in Control Space}
+                \centering
+                \vspace{0.05cm}
+                \begin{tikzpicture}[scale=0.68, >=stealth]
+                    % Iso-cost contours (ellipses)
+                    \draw[color=gray!50, dashed, line width=0.6pt] (0.5, 0.5) ellipse (2.5cm and 1.6cm);
+                    \draw[color=gray!75, dashed, line width=0.6pt] (0.5, 0.5) ellipse (1.8cm and 1.1cm);
+                    \draw[color=UdeAGreen!80, line width=0.8pt] (0.5, 0.5) ellipse (1.0cm and 0.6cm);
+                    \filldraw[color=UdeAGreen] (0.5, 0.5) circle (1.5pt) node[below, font=\tiny\bfseries]{Unconstrained Min};
+                    \node[above right, font=\tiny, color=gray] at (1.8, 1.4) {Cost Contours $J(\mathbf{X})$};
+
+                    % Constraint Manifold g(X) = 0
+                    \draw[very thick, color=SpiceBlue] (-2.2, -1.0) to[out=25, in=-140] (0.3, -0.1) to[out=40, in=-120] (2.2, 1.8);
+                    \node[below right, font=\tiny\bfseries, color=SpiceBlue] at (1.2, 1.2) {Feasible Path $\mathbf{g}(\mathbf{X}) = \mathbf{0}$};
+
+                    % Initial Guess X0
+                    \filldraw[color=DarkSlate] (-1.8, 1.3) circle (2.2pt) node[above, font=\tiny\bfseries]{Initial Guess $\mathbf{X}_0$};
+
+                    % Targeter path (drops straight onto constraint, high cost)
+                    \draw[thick, color=AlertRed, dashed, ->] (-1.8, 1.3) -- (-1.1, -0.65);
+                    \filldraw[color=AlertRed] (-1.1, -0.65) circle (2.2pt);
+                    \node[below left, font=\tiny\bfseries, color=AlertRed] at (-0.9, -0.7) {DC Solution ($J_{\text{DC}} \gg J^*$)};
+
+                    % Optimizer path (slides along constraint to tangent)
+                    \draw[very thick, color=UdeAGold!95!black, ->] (-1.1, -0.65) to[out=25, in=-145] (0.28, -0.1);
+                    \filldraw[color=UdeAGold!90!black] (0.28, -0.1) circle (2.5pt);
+                    \node[above=2pt, font=\tiny\bfseries, color=UdeAGold!90!black] at (0.3, 0.0) {Optimal $\mathbf{X}^*$ ($\nabla J \parallel \nabla g$)};
+                \end{tikzpicture}
+            \end{block}
+
+            \vspace{-0.1cm}
+
+            \begin{alertblock}{Operational Reality}
+                \scriptsize
+                A Targeter answers: \textit{"Can we reach Mars?"} \\
+                An Optimizer answers: \textit{"Can we reach Mars with enough fuel left to survive orbit insertion?"}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 47: MATHEMATICAL FORMULATION: TRAJECTORY OPTIMIZATION AS AN NLP
+% ==============================================================================
+\begin{frame}{Mathematical Formulation: Trajectory Optimization as an NLP}
+    \begin{columns}[t]
+        \begin{column}{0.51\textwidth}
+            \begin{block}{Parameter Non-Linear Programming (NLP)}
+                \scriptsize
+                Continuous optimal control is discretized into parameter vector $\mathbf{X} \in \mathbb{R}^n$:
+                \par\vspace{1pt}
+                {\centering $\mathbf{X} = \begin{bmatrix} \Delta \mathbf{V}_1^T, & t_{\text{burn},1}, & \Delta \mathbf{V}_2^T, & t_{\text{burn},2}, & \dots, & r_{p,\text{flyby}} \end{bmatrix}^T$\par}
+                \vspace{2pt}
+                \textbf{Objective Function Minimization:}
+                \par\vspace{1pt}
+                {\centering $\displaystyle \min_{\mathbf{X}} J(\mathbf{X}) = \sum_{k=1}^N \|\Delta \mathbf{V}_k\| \quad \text{or} \quad \min_{\mathbf{X}} \left( m_0 - m_f(\mathbf{X}) \right)$\par}
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{block}{Partitioned Constraint Vectors}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.2pt}
+                    \item \textbf{Equality Constraints ($\mathbf{g}(\mathbf{X}) = \mathbf{0} \in \mathbb{R}^{m\_{\text{eq}}}$):}
+                    Terminal B-plane coordinates: $B\cdot T = B\cdot T^*$, $B\cdot R = B\cdot R^*$, arrival epoch $t_f = t_f^*$.
+                    \item \textbf{Inequality Constraints ($\mathbf{h}(\mathbf{X}) \le \mathbf{0} \in \mathbb{R}^{m\_{\text{ineq}}}$):}
+                    Safe flyby radius: $r_p \ge R_p + h_{\text{atm}}$, flight time: $TOF \le TOF_{\max}$, engine thrust bounds: $\Vert{}\Delta \mathbf{V}_k\Vert{} \le \Delta V_{\max}$.
                 \end{itemize}
             \end{block}
         \end{column}
 
         \begin{column}{0.47\textwidth}
-            \begin{exampleblock}{24-Hour Midterm Exam Challenge}
+            \begin{alertblock}{Karush-Kuhn-Tucker (KKT) Necessary Conditions}
                 \scriptsize
-                \textbf{Task:} Multi-Stage Planetary Intercept[cite: 3, 15].
-                \begin{enumerate}\setlength{\itemsep}{1pt}
-                    \item Compute 3D Lambert departure from Earth ($h_p = 300\text{ km}$) to Venus[cite: 3, 15].
-                    \item Size Venus gravity assist to redirect trajectory toward Mercury propellant-free[cite: 3, 15].
-                    \item Target Mercury B-plane ($B\cdot T, B\cdot R$) for a $200\text{ km}$ polar capture[cite: 3, 15].
-                    \item Validate full sequence numerically in NASA's GMAT[cite: 1, 15].
+                Define the augmented Lagrangian function:
+                \par\vspace{1pt}
+                {\centering $\displaystyle \mathcal{L}(\mathbf{X}, \boldsymbol{\lambda}, \boldsymbol{\mu}) = J(\mathbf{X}) + \boldsymbol{\lambda}^T \mathbf{g}(\mathbf{X}) + \boldsymbol{\mu}^T \mathbf{h}(\mathbf{X})$\par}
+                \vspace{2pt}
+                At the optimal trajectory $\mathbf{X}^*$, there exist multipliers such that:
+                \begin{enumerate}\setlength{\itemsep}{1.5pt}
+                    \item \textbf{Stationarity:} $\nabla_{\mathbf{X}} \mathcal{L} = \nabla J(\mathbf{X}^*) + \nabla \mathbf{g}^T \boldsymbol{\lambda} + \nabla \mathbf{h}^T \boldsymbol{\mu} = \mathbf{0}$
+                    \item \textbf{Primal Feasibility:} $\mathbf{g}(\mathbf{X}^*) = \mathbf{0}$ and $\mathbf{h}(\mathbf{X}^*) \le \mathbf{0}$
+                    \item \textbf{Dual Feasibility:} $\boldsymbol{\mu} \ge \mathbf{0}$
+                    \item \textbf{Complementary Slackness:} $\mu_j h_j(\mathbf{X}^*) = 0 \quad \forall j$
+                \end{enumerate}
+            \end{alertblock}
+
+            \vspace{-0.08cm}
+
+            \begin{exampleblock}{Physical Interpretation}
+                \scriptsize
+                At the optimal point, the propellant gradient force $-\nabla J$ is exactly balanced by the normal forces exerted by active orbital constraints.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 48: THE CONTROL SPACE DILEMMA: WHY THE TARGETER WASTES FUEL
+% ==============================================================================
+\begin{frame}{The Control Space Dilemma: Why the Targeter Wastes Fuel}
+    \begin{columns}[t]
+        \begin{column}{0.51\textwidth}
+            \begin{block}{The Under-Determined Trap ($n > m$)}
+                \scriptsize
+                In real missions, we have more control knobs than constraints:
+                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                    \item \textbf{Example:} 3 impulsive components $(\Delta V_x, \Delta V_y, \Delta V_z)$ varied to achieve 1 inclination target ($i = 45^\circ$).
+                    \item The sensitivity Jacobian $\mathbf{J} \in \mathbb{R}^{1 \times 3}$ is wide ($n > m$).
+                    \item The Differential Corrector takes a right pseudo-inverse step:
+                    \par\vspace{1pt}
+                    {\centering $\displaystyle \Delta \mathbf{X}_{\text{DC}} = -\mathbf{J}^T \left(\mathbf{J} \mathbf{J}^T\right)^{-1} \left(\mathbf{Y}(\mathbf{X}) - \mathbf{Y}^*\right)$\par}
+                    \vspace{1pt}
+                    \item \textbf{The Fatal Property:} Minimizes $\Vert{}\Delta \mathbf{X}\Vert{}_2 = \Vert{}\mathbf{X}_{k+1} - \mathbf{X}_k\Vert{}_2$ (the step distance from the \textbf{arbitrary initial guess}), \textbf{not} the physical $\Delta V$!
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \begin{alertblock}{Nullspace Contamination}
+                \scriptsize
+                The control space contains an $(n - m)$-dimensional nullspace $\mathcal{N}(\mathbf{J})$ where constraints are unaffected:
+                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                    \item If the student provides an initial guess with in-plane velocity ($V$), the Targeter preserves it because $\partial i / \partial V \approx 0$.
+                    \item \textbf{Result:} Wasted cross-axis propellant that inadvertently alters the semi-major axis ($a$) or eccentricity ($e$) without the Targeter caring!
+                \end{itemize}
+            \end{alertblock}
+
+            \vspace{-0.08cm}
+
+            \begin{exampleblock}{The Optimizer Remedy}
+                \scriptsize
+                An Optimizer projects cost gradient $\nabla J$ onto the nullspace $\mathcal{N}(\mathbf{J})$, actively driving all unneeded burn components to \textbf{zero}!
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE: NUMERICAL ENGINES: SEQUENTIAL QUADRATIC PROGRAMMING (SQP) & YUKON
+% ==============================================================================
+\begin{frame}{Numerical Engines: Sequential Quadratic Programming (SQP) and Yukon}
+    \begin{columns}[t]
+        \begin{column}{0.52\textwidth}
+            \begin{block}{Sequential Quadratic Programming (SQP) Mechanics}
+                \scriptsize
+                SQP is the workhorse algorithm for non-linear trajectory optimization:
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{2pt}
+                    \item At each major iteration $k$, models the NLP as a local \textbf{Quadratic Programming (QP) subproblem}:
+                    \par\vspace{2pt}
+                    {\centering $\displaystyle \min_{\mathbf{d}} \left( \frac{1}{2} \mathbf{d}^T \mathbf{B}_k \mathbf{d} + \nabla J(\mathbf{X}_k)^T \mathbf{d} \right)$\par}
+                    \vspace{2pt}
+                    subject to linearized constraints:
+                    \par\vspace{2pt}
+                    {\centering $\displaystyle \nabla \mathbf{g}(\mathbf{X}_k)^T \mathbf{d} + \mathbf{g}(\mathbf{X}_k) = \mathbf{0}, \quad \nabla \mathbf{h}(\mathbf{X}_k)^T \mathbf{d} + \mathbf{h}(\mathbf{X}_k) \le \mathbf{0}$\par}
+                    \vspace{2pt}
+                    \item $\mathbf{B}_k \approx \nabla_{\mathbf{X}\mathbf{X}}^2 \mathcal{L}$: Positive-definite quasi-Newton Hessian approximation updated via \textbf{Self-Scaled BFGS}.
+                    \item Determines search direction $\mathbf{d}_k$ and performs a merit function line search to guarantee global convergence.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Trajectory Solvers in NASA GMAT}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{2pt}
+                    \item \textbf{Yukon (Native GMAT SQP):} \\
+                    Developed in-house at NASA Goddard. Built directly into the core binary. Requires no external licenses or toolboxes!
+                    \item \textbf{VF13ad (Plugin):} \\
+                    Classical Harwell Subroutine Library SQP solver; robust for medium-scale impulsive transfer problems.
+                    \item \textbf{SNOPT (Plugin):} \\
+                    Sparse Nonlinear Optimizer (Gill, Murray, Saunders). The aerospace industry standard for multi-phase planetary flybys.
+                    \item \textbf{fmincon (MATLAB Engine):} \\
+                    Interfaces GMAT directly with MATLAB optimization toolboxes.
+                \end{itemize}
+            \end{block}
+
+            \vspace{-0.15cm}
+
+            \begin{alertblock}{Dual Convergence Criteria}
+                \scriptsize
+                Yukon monitors two tolerances simultaneously:
+                \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\topsep}{1pt}
+                    \item \texttt{FeasibilityTolerance}: $\|\mathbf{g}\| \le \epsilon_f$ (Constraints met)
+                    \item \texttt{OptimalityTolerance}: $\|\nabla_{\mathbf{X}} \mathcal{L}\| \le \epsilon_o$ (Minimum found)
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 50: NASA GMAT OPTIMIZER SEQUENCE: COMMAND ARCHITECTURE
+% ==============================================================================
+\begin{frame}{NASA GMAT Optimizer Sequence: Command Architecture}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{The Five Pillars of the Optimize Block}
+                \scriptsize
+                \begin{enumerate}\setlength{\itemsep}{2pt}\setlength{\topsep}{1pt}
+                    \item \textbf{\texttt{Optimize}:} Opens the NLP loop and binds the optimization engine (\texttt{Yukon1}).
+                    \item \textbf{\texttt{Vary}:} Declares control parameters $\mathbf{X}$, initial seeds, perturbation steps, and \textbf{explicit physical box bounds} (\texttt{Lower}, \texttt{Upper}).
+                    \item \textbf{Dynamic Propagation:} Executes impulsive burns (\texttt{Maneuver}) and numerical integration (\texttt{Propagate}).
+                    \item \textbf{\texttt{Minimize} / \texttt{Maximize}:} Binds the objective cost scalar ($J = \Delta V_{\text{tot}}^2$).
+                    \item \textbf{\texttt{NonlinearConstraint}:} Enforces boundary conditions (supports $=$, $\le$, $\ge$).
+                \end{enumerate}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Command Architecture: Targeter vs. Optimizer}
+                \centering
+                \scriptsize
+                \setlength{\tabcolsep}{2pt}
+                \begin{tabular}{lll}
+                    \toprule
+                    \textbf{Functional Role} & \textbf{Target Sequence (DC)} & \textbf{Optimize Sequence (Yukon)} \\ \midrule
+                    \textbf{Loop Scope}      & \texttt{Target DC \{...\}}    & \texttt{Optimize Yukon \{...\}} \\
+                    \textbf{Control Knobs}   & \texttt{Vary DC(Burn.V1)}     & \texttt{Vary Yukon(Burn.V1, Bounds)} \\
+                    \textbf{Cost Function}   & \textit{None (Root finding)}  & \texttt{Minimize Yukon(Cost)} \\
+                    \textbf{Equalities}      & \texttt{Achieve DC(INC=45)}   & \texttt{NonlinearConstraint(INC=45)} \\
+                    \textbf{Inequalities}    & \textit{Unsupported}          & \texttt{NonlinearConstraint(hp>=300)} \\
+                    \textbf{Loop Exit}       & \texttt{EndTarget;}           & \texttt{EndOptimize;} \\ \bottomrule
+                \end{tabular}
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{alertblock}{Syntactic Difference: Achieve vs. Constraint}
+                \scriptsize
+                While \texttt{Achieve} strictly halts when an equality is met, \texttt{NonlinearConstraint} provides the SQP subproblem with gradient projections to slide toward lower cost along active constraint boundaries.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 51: NASA GMAT SCRIPT IMPLEMENTATION: OPTIMIZING IMPULSIVE BURNS
+% ==============================================================================
+\begin{frame}[fragile]{NASA GMAT Implementation: Scripting Yukon SQP Optimization}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Solver Configuration (Preamble)}
+                \scriptsize
+                Yukon requires tolerance and Hessian algorithm definitions:
+            \end{block}
+\begin{lstlisting}[style=gmatstyle]
+Create Yukon Yukon1;
+Yukon1.ShowProgress         = true;
+Yukon1.MaximumIterations    = 200;
+Yukon1.MaximumFunctionEvals = 1000;
+Yukon1.FeasibilityTolerance = 0.0001;
+Yukon1.OptimalityTolerance  = 0.0001;
+Yukon1.FunctionTolerance    = 0.0001;
+Yukon1.HessianUpdateMethod  = SelfScaledBFGS;
+
+Create Variable Cost DeltaV_Opt;
+\end{lstlisting}
+            \begin{exampleblock}{Why Sum-of-Squares Cost?}
+                \scriptsize
+                Formulating cost as $J = V^2 + N^2 + B^2$ eliminates the derivative singularity of the Euclidean norm $\frac{d}{dx}(\sqrt{x^2}) = \frac{x}{|x|}$ at zero, guaranteeing smooth gradient descent!
+            \end{exampleblock}
+        \end{column}
+
+        \begin{column}{0.50\textwidth}
+\begin{lstlisting}[style=gmatstyle]
+% OPTIMIZATION SEQUENCE: MINIMUM-DELTA-V PLANE CHANGE
+Optimize Yukon1 {SolveMode = Solve, ExitMode = SaveAndContinue};
+
+    % 1. Vary 3 burn components with explicit box bounds
+    Vary Yukon1(Burn.Element1 = 0.4, ...
+        {Perturbation = 1e-4, Lower = -5.0, Upper = 5.0, MaxStep = 0.5});
+    Vary Yukon1(Burn.Element2 = 1.8, ...
+        {Perturbation = 1e-4, Lower = -5.0, Upper = 5.0, MaxStep = 0.5});
+    Vary Yukon1(Burn.Element3 = 0.3, ...
+        {Perturbation = 1e-4, Lower = -5.0, Upper = 5.0, MaxStep = 0.5});
+
+    % 2. Minimize quadratic cost function J
+    Cost = Burn.Element1^2 + Burn.Element2^2 + Burn.Element3^2;
+    Minimize Yukon1(Cost);
+
+    % 3. Execute flight dynamics
+    Maneuver Burn(OptimizerSat);
+    Propagate DefaultProp(OptimizerSat) {OptimizerSat.ElapsedSecs = 1800};
+
+    % 4. Enforce terminal inclination constraint
+    NonlinearConstraint Yukon1(OptimizerSat.EarthMJ2000Eq.INC = 45.0);
+
+EndOptimize;
+
+DeltaV_Opt = Sqrt(Burn.Element1^2 + Burn.Element2^2 + Burn.Element3^2);
+\end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 52: FORENSIC BENCHMARK: TARGETER (DC) VS. OPTIMIZER (YUKON)
+% ==============================================================================
+\begin{frame}{Forensic Benchmark: Targeter (DC) vs. Optimizer (Yukon)}
+    \begin{columns}[t]
+        \begin{column}{0.54\textwidth}
+            \begin{block}{Plane Change Benchmark ($r = 7000\text{ km}$, $i: 28.5^\circ \to 45.0^\circ$)}
+                \centering
+                \scriptsize
+                \setlength{\tabcolsep}{1.5pt}
+                \begin{tabular}{lcccc}
+                    \toprule
+                    \textbf{Telemetry Metric} & \textbf{Initial Seed} & \textbf{Targeter (DC)} & \textbf{Optimizer (Yukon)} & \textbf{Analytical Ideal} \\ \midrule
+                    $\Delta V_V$ (Velocity)   & $+0.400\text{ km/s}$  & $+0.382\text{ km/s}$  & $\mathbf{0.000\text{ km/s}}$ & $0.000\text{ km/s}$ \\
+                    $\Delta V_N$ (Normal)     & $+1.800\text{ km/s}$  & $+2.148\text{ km/s}$  & $\mathbf{+2.171\text{ km/s}}$& $+2.171\text{ km/s}$ \\
+                    $\Delta V_B$ (Binormal)   & $+0.300\text{ km/s}$  & $+0.279\text{ km/s}$  & $\mathbf{0.000\text{ km/s}}$ & $0.000\text{ km/s}$ \\
+                    Total Impulse $\|\Delta \mathbf{V}\|$ & $1.868\text{ km/s}$ & $2.199\text{ km/s}$ & $\mathbf{2.171\text{ km/s}}$ & $\mathbf{2.171\text{ km/s}}$ \\
+                    Final Inclination ($i$)   & $28.50^\circ$         & $45.00^\circ$         & $45.00^\circ$                & $45.00^\circ$ \\
+                    Semi-Major Axis ($a$)     & $7000.0\text{ km}$    & $\mathbf{7084.2\text{ km}}$ & $\mathbf{7000.0\text{ km}}$ & $7000.0\text{ km}$ \\ \bottomrule
+                \end{tabular}
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{alertblock}{Forensic Post-Mortem}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1pt}
+                    \item \textbf{Targeter Pathology:} Met the $45.0^\circ$ target, but wasted \textbf{$28\text{ m/s}$} of propellant and corrupted orbit semi-major axis by $+84.2\text{ km}$ due to residual in-plane burns!
+                    \item \textbf{Yukon Performance:} Explored the nullspace and drove parasitic components strictly to zero, recovering the pure normal burn with zero orbit corruption.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.44\textwidth}
+            \begin{exampleblock}{Engineering Rules for Students}
+                \scriptsize
+                \begin{enumerate}\setlength{\itemsep}{2pt}
+                    \item \textbf{Perturbation Step Sizing:} \\
+                    Use $\delta X = 10^{-4}\text{--}10^{-3}$ for impulsive $\Delta V$ knobs in Yukon to avoid gradient truncation noise.
+                    \item \textbf{The Two-Stage Warm Start:} \\
+                    Trajectory NLP landscapes are non-convex with many local minima.
+                    \par\vspace{1pt}
+                    \textit{Flight Practice:} First run a coarse Targeter (DC) to find a feasible flight arc, then pass those converged states as initial guesses into Yukon for fuel minimization!
+                    \item \textbf{Inequality Slackness:} \\
+                    Use \texttt{NonlinearConstraint} for physical limits ($r_p \ge R_{\text{safe}}$) instead of forcing rigid target points.
                 \end{enumerate}
             \end{exampleblock}
         \end{column}
@@ -2200,7 +2606,57 @@ EndTarget;
 \end{frame}
 
 % ==============================================================================
-% SLIDE 41: CONCLUSION
+% SLIDE 53: MODULE 2 FINAL SYNTHESIS & TRANSITION TO CONTINUOUS LOW-THRUST
+% ==============================================================================
+\begin{frame}{Module 2 Final Synthesis: From Targeting to Optimal Navigation}
+    \begin{columns}[t]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{The Complete 3D Interplanetary Navigation Stack}
+                \scriptsize
+                \begin{enumerate}\setlength{\itemsep}{2.5pt}\setlength{\topsep}{1pt}
+                    \item \textbf{Global Search (SPICE Lambert Sweeps):} \\
+                    Generates Porkchop plots to discover optimal launch dates ($C_3$) and arrival windows ($v_\infty$).
+                    \item \textbf{Kinematic Sizing (Patched Conics):} \\
+                    Computes asymptote angles ($\alpha, \delta$), checks the Inclination Trap ($i \ge \vert{}\delta\vert{}$), and sizes gravity assists ($\delta_{\text{turn}}$).
+                    \item \textbf{Target Plane Guidance (B-Plane):} \\
+                    Maps terminal miss parameters onto invariant coordinates ($B\cdot T, B\cdot R$) to isolate arrival geometry from time of flight.
+                    \item \textbf{Multi-Variable Solvers (GMAT DC vs. Yukon):} \\
+                    Replaces two-body conics with full $N$-body numerical integration, using Differential Correctors for targeting and Yukon SQP for fuel minimization.
+                \end{enumerate}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \begin{block}{Module Architecture Wrap-Up}
+                \centering
+                \vspace{0.1cm}
+                \begin{tikzpicture}[scale=0.65, >=stealth]
+                    \node[draw, thick, fill=DarkSlate, text=white, rounded corners=3pt, font=\scriptsize\bfseries, minimum width=4.0cm, align=center] (SPICE) at (0, 2.4) {1. SPICE Porkchop Sweeps \\ \textit{Global Date and Energy Corridors}};
+                    
+                    \node[draw, thick, fill=UdeAGreen, text=white, rounded corners=3pt, font=\scriptsize\bfseries, minimum width=4.0cm, align=center] (BPLANE) at (0, 1.2) {2. B-Plane Target Formulation \\ \textit{Invariant Aiming Disc Parameters}};
+                    
+                    \node[draw, thick, fill=SpiceBlue, text=white, rounded corners=3pt, font=\scriptsize\bfseries, minimum width=4.0cm, align=center] (DC) at (0, 0.0) {3. Differential Corrector \\ \textit{Coarse Feasibility Shooting ($F(X)=0$)}};
+                    
+                    \node[draw, thick, fill=UdeAGold, text=DarkSlate, rounded corners=3pt, font=\scriptsize\bfseries, minimum width=4.0cm, align=center] (YUKON) at (0, -1.2) {4. Yukon SQP Trajectory Optimization \\ \textit{Minimum Propellant Trajectory ($\min J$)}};
+                    
+                    \draw[thick, ->] (SPICE) -- (BPLANE);
+                    \draw[thick, ->] (BPLANE) -- (DC);
+                    \draw[thick, ->] (DC) -- (YUKON);
+                \end{tikzpicture}
+            \end{block}
+
+            \vspace{-0.08cm}
+
+            \begin{alertblock}{Next Step: Continuous Low-Thrust}
+                \scriptsize
+                When maneuvers are continuous rather than impulsive, shooting methods fail. Next module: \textbf{Collocation and Pseudospectral Optimal Control via GMAT CSALT}.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 54: CONCLUSION
 % ==============================================================================
 \begin{frame}[plain]
     \begin{center}

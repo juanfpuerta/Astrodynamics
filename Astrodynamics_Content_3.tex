@@ -168,6 +168,142 @@
     \end{columns}
 \end{frame}
 
+% ------------------------------------------------------------------------------
+% SLIDE 3.1: IMPULSIVE VS. LOW-THRUST COMPARISON MATRIX
+% ------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------
+% SLIDE 3.1: IMPULSIVE VS. LOW-THRUST COMPARISON MATRIX
+% ------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------
+% SLIDE 3.1: IMPULSIVE VS. LOW-THRUST COMPARISON MATRIX
+% ------------------------------------------------------------------------------
+\begin{frame}{Maneuver Architectures: Impulsive vs. Continuous Low-Thrust}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{The Physical Analogy}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Impulsive (The Cannon):} Energy is injected instantly at discrete points; vehicle coasts along unperturbed Keplerian conics.
+                    \item \textbf{Continuous (The Ramp):} A persistent whisper of thrust (mN to N) slowly unwinds or reshapes the orbit over weeks or months.
+                \end{itemize}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{alertblock}{The Core Mission Trade-Off}
+                \scriptsize
+                We trade \textbf{Time for Mass}:
+                \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\topsep}{0pt}
+                    \item Continuous thrust incurs high gravity losses ($\Delta V_{\text{spiral}} > \Delta V_{\text{Hohmann}}$).
+                    \item However, electric systems achieve $I_{\text{sp}} > 3{,}000\text{ s}$ ($10\times$ chemical), drastically reducing propellant fraction.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Architectural Comparison Matrix}
+                \scriptsize
+                \centering
+                \renewcommand{\arraystretch}{1.1}
+                \begin{tabular}{lcc}
+                    \toprule
+                    \textbf{Metric} & \textbf{Impulsive} & \textbf{Low-Thrust} \\
+                    \midrule
+                    Propulsion & Chemical & Electric / SEP \\
+                    Thrust ($T$) & $10^2 - 10^6\text{ N}$ & $10^{-3} - 10^0\text{ N}$ \\
+                    $I_{\text{sp}}$ & $300 - 450\text{ s}$ & $1{,}500 - 5{,}000\text{ s}$ \\
+                    Burn Time & Seconds to min & Weeks to months \\
+                    Path Geometry & Conic + Coast & Continuous Spiral \\
+                    Gravity Loss & Minimal (Oberth) & Substantial \\
+                    Dry Payload & Bounded by fuel & Maximized \\
+                    \bottomrule
+                \end{tabular}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 3.2: MATHEMATICAL FORMULATION & STATE-SPACE DIVERGENCE
+% ------------------------------------------------------------------------------
+\begin{frame}{Dynamic Formulation: Conic Jumps vs. 7D State Integration}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Impulsive Formulation ($\mathbb{R}^6$ Conic Jumps)}
+                \scriptsize
+                Maneuvers are modeled as point velocity discontinuities:
+                \par\vspace{1pt}
+                {\centering $\mathbf{r}^+ = \mathbf{r}^-, \quad \mathbf{v}^+ = \mathbf{v}^- + \Delta \mathbf{v}$ \par}
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Position Invariance:} $\Delta t \to 0$ assumes orbital position is frozen during firing.
+                    \item \textbf{Decoupled Mass Step:} Mass is subtracted discretely via the Tsiolkovsky equation after each burn:
+                    \par\vspace{1pt}
+                    {\centering $\Delta m = m_0 \left[1 - \exp\left(-\frac{\Delta v}{I_{\text{sp}} g_0}\right)\right]$ \par}
+                    \item Propagator takes massive steps during unpowered coast arcs.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Continuous Low-Thrust Dynamics ($\mathbb{R}^7$ EOM)}
+                \scriptsize
+                Position changes significantly while thrusting; mass becomes a dynamic coordinate:
+                \par\vspace{1pt}
+                {\centering $\mathbf{Y}(t) = [\mathbf{r}^T, \; \mathbf{v}^T, \; m]^T \in \mathbb{R}^7$ \par}
+                \vspace{-2pt}
+                \begin{equation*}
+                    \frac{d\mathbf{Y}}{dt} = \begin{bmatrix} 
+                        \mathbf{v} \\ 
+                        -\frac{\mu}{r^3}\mathbf{r} + \frac{\mathbf{T}(t)}{m(t)} + \mathbf{a}_{\text{pert}} \\ 
+                        -\frac{\|\mathbf{T}(t)\|}{I_{\text{sp}} g_0} 
+                    \end{bmatrix}
+                \end{equation*}
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Acceleration Coupling:} Constant $T$ causes acceleration $a(t) = T/m(t)$ to rise continuously.
+                    \item \textbf{Adaptive Step Reduction:} Numerical engines must shrink step sizes across thousands of revolutions.
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 3.3: MISSION DESIGN TOOLCHAIN DIVERGENCE
+% ------------------------------------------------------------------------------
+\begin{frame}{Flight Mechanics Toolchain: Targeters vs. Optimizers}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Impulsive Mission Workflow}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Boundary Value Engine:} Lambert's problem connects departure and arrival positions over fixed transfer times.
+                    \item \textbf{Porkchop Map Exploration:} Fast scans over launch and arrival windows calculate $C_3$ and $\Delta V$ contours.
+                    \item \textbf{Differential Correctors:} Local Newton-Raphson shooting methods iteratively converge on target B-plane coordinates.
+                \end{itemize}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{alertblock}{Why Simple Targeters Fail in Low-Thrust}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item Continuous burns span hundreds to thousands of orbits.
+                    \item Sensitivities become highly cyclical and non-linear, causing differential correctors to easily diverge or encounter singular Jacobians.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Low-Thrust Mission Workflow}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Continuous Steering Laws:} Solves for a continuous thrust orientation vector history $\hat{\mathbf{u}}(t)$.
+                    \item \textbf{Pontryagin's Minimum Principle (PMP):} Formulates the Hamiltonian $\mathcal{H}$ with costate tracking:
+                    \par\vspace{1pt}
+                    {\centering $\hat{\mathbf{u}}^*(t) = -\frac{\boldsymbol{\lambda}_v}{\|\boldsymbol{\lambda}_v\|} \quad (\text{Primer Vector Steering})$ \par}
+                    \item \textbf{Nonlinear Programming (NLP):} Deploys direct collocation or optimizers (e.g., SNOPT, IPOPT) to minimize propellant under path constraints.
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
 % --- SLIDE 3.2: 7D STATE EXPANSION ---
 \begin{frame}{Finite Maneuvers: Dynamic Equations and 7D State Vector}
     \begin{columns}[T]
@@ -249,52 +385,71 @@
 \end{frame}
 
 % --- SLIDE 3.4: EDELBAUM STEERING ---
+% --- SLIDE: EDELBAUM'S OPTIMAL STEERING (ZERO OVERFLOW) ---
 \begin{frame}{Non-Coplanar Transfers: Edelbaum's Optimal Steering}
     \begin{columns}[T]
-        \begin{column}{0.54\textwidth}
+        % --- Left Column: Mechanics & Continuous Penalty ---
+        \begin{column}{0.53\textwidth}
             \begin{block}{Simultaneous Altitude Raise and Inclination Change}
                 \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{1pt}
-                    \item Sequential low-thrust maneuvers (spiraling out, then executing pure out-of-plane nodal burns) are severely inefficient.
-                    \item \textbf{Edelbaum (1961):} Derived the closed-form velocity increment for simultaneous continuous transfers between circular orbits:
-                    \begin{equation}
-                        \Delta V = \sqrt{v_1^2 + v_2^2 - 2v_1 v_2 \cos\left(\frac{\pi}{2}\Delta i\right)}
-                    \end{equation}
-                    \item $v_1, v_2$: Initial and final circular velocities; $\Delta i$: plane change in radians.
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item Sequential maneuvers (spiraling out, then executing nodal burns) are severely inefficient for electric propulsion.
+                    \item \textbf{Edelbaum (1961):} Closed-form analytical $\Delta V$ for simultaneous continuous transfer between circular orbits:
+                    \par\vspace{1.5pt}
+                    {\centering $\displaystyle \Delta V = \sqrt{v_1^2 + v_2^2 - 2v_1 v_2 \cos\left(\frac{\pi}{2}\Delta i\right)}$ \par}
+                    \vspace{1.5pt}
+                    \item $v_1, v_2$: Circular velocities; $\Delta i$: plane change in radians.
                 \end{itemize}
             \end{block}
-            \vspace{-0.1cm}
-            \begin{exampleblock}{The Continuous Thrust Penalty Factor ($\pi/2$)}
+
+            \vspace{-0.22cm}
+
+            \begin{block}{The Continuous Thrust Penalty Factor ($\pi/2$)}
                 \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1.5pt}
-                    \item Impulsive burns change inclination at nodes with 100\% geometric efficiency.
-                    \item Continuous thrust fires over the entire orbit. At $90^\circ$ from nodes, normal thrust produces zero inclination change and wastes propellant.
-                    \item Averaged orbit efficiency is $2/\pi$, flipping to a $\Delta V$ penalty factor of $\frac{\pi}{2} \approx 1.57$ inside the cosine argument.
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item Impulsive burns change inclination at nodes with $100\%$ geometric efficiency.
+                    \item Continuous thrust fires over entire orbits; at $90^\circ$ from nodes, normal thrust produces zero plane change.
+                    \item Orbit-averaged efficiency is $2/\pi$, yielding the $\Delta V$ penalty factor $\frac{\pi}{2} \approx 1.57$ inside the cosine argument.
                 \end{itemize}
-            \end{exampleblock}
+            \end{block}
         \end{column}
 
-        \begin{column}{0.44\textwidth}
+        % --- Right Column: Yaw Synergy & Vector Geometry ---
+        \begin{column}{0.45\textwidth}
             \begin{alertblock}{The Synergy of Yaw Steering}
                 \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1.5pt}
-                    \item Tilting the thrust vector out-of-plane by yaw angle $\beta$ yields normal acceleration while retaining tangential drive.
-                    \item \textbf{Small Angle Power:} Tilting by $\beta = 5^\circ$ introduces out-of-plane force while preserving:
-                    $$\cos(5^\circ) = 0.996 \implies 99.6\%\text{ forward thrust}$$
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item Tilting thrust out-of-plane by yaw angle $\beta$ yields normal acceleration while retaining tangential drive.
+                    \item \textbf{Small Angle Power:} Tilting by $\beta = 5^\circ$ yields out-of-plane force while preserving:
+                    \par\vspace{1pt}
+                    {\centering $\cos(5^\circ) = 0.996 \implies 99.6\%\text{ forward thrust}$ \par}
                 \end{itemize}
             \end{alertblock}
+
+            \vspace{-0.05cm}
             \centering
-            \begin{tikzpicture}[scale=0.9, >=stealth]
-                \draw[thick, ->, color=DarkSlate] (0,0) -- (3.2,0) node[midway, below, font=\scriptsize] {$v_1$};
-                \draw[thick, ->, color=DarkSlate] (0,0) -- (2.2, 1.8) node[midway, above left, font=\scriptsize] {$v_2$};
-                \draw[very thick, ->, color=AlertRed] (3.2,0) -- (2.2, 1.8) node[midway, right, font=\scriptsize\bfseries] {$\Delta V$};
-                \draw[dashed, color=UdeAGold, thick] (0.7,0) arc (0:39:0.7);
-                \node[font=\tiny, color=Charcoal] at (1.1,0.25) {$\frac{\pi}{2}\Delta i$};
+            \begin{tikzpicture}[scale=0.82, >=stealth]
+                % Base v1
+                \draw[thick, ->, color=DarkSlate] (0,0) -- (3.2,0) node[midway, below=2pt, font=\scriptsize] {$v_1$};
+                % Vector v2
+                \draw[thick, ->, color=DarkSlate] (0,0) -- (2.2, 1.65) node[midway, above left=1pt, font=\scriptsize] {$v_2$};
+                % Delta V Vector
+                \draw[very thick, ->, color=AlertRed] (3.2,0) -- (2.2, 1.65) node[midway, right=3pt, font=\scriptsize\bfseries] {$\Delta V$};
+                % Angle Arc
+                \draw[dashed, color=UdeAGold, thick] (0.8,0) arc (0:37:0.8);
+                \node[font=\tiny, color=Charcoal] at (1.15,0.24) {$\frac{\pi}{2}\Delta i$};
             \end{tikzpicture}
-            \par\smallskip
+            \par\vspace{1pt}
             \scriptsize \textcolor{Charcoal}{\textit{Geometric equivalence to the Law of Cosines.}}
         \end{column}
     \end{columns}
+\end{frame}
+
+\begin{frame}{Low-Thrust Concepts and Definitions}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.80\textwidth]{Images/LT_1.png}
+    \end{figure}
 \end{frame}
 
 % --- SLIDE 3.5: PYTHON IMPLEMENTATION ---

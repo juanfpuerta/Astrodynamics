@@ -304,11 +304,197 @@
     \end{columns}
 \end{frame}
 
+% ------------------------------------------------------------------------------
+% SLIDE 5A: THE INFINITE CONTROL DILEMMA & PONTRYAGIN'S PRINCIPLE
+% ------------------------------------------------------------------------------
+\begin{frame}{Optimal Control: Why Low-Thrust Needs Pontryagin (PMP)}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{From 3 Numbers to an Infinite Function}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Impulsive Burn (Static):} Optimizer only solves for 3 discrete numbers $(\Delta v_x, \Delta v_y, \Delta v_z)$ at a fixed instant $t_0$.
+                    \item \textbf{Low-Thrust Burn (Continuous):} Engine fires for months. We must find a continuous 3D unit steering vector function $\hat{\mathbf{u}}(t)$ at \textit{every instant} $t \in [t_0, t_f]$.
+                    \item Searching over an infinite-dimensional space of curves requires \textbf{Optimal Control Theory}.
+                \end{itemize}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{exampleblock}{What are Costates $\boldsymbol{\lambda}(t)$?}
+                \scriptsize
+                Every physical state $\mathbf{Y} = [\mathbf{r}, \mathbf{v}, m]^T$ is paired with a shadow \textbf{costate vector} $\boldsymbol{\lambda} = [\boldsymbol{\lambda}_r, \boldsymbol{\lambda}_v, \lambda_m]^T$ that acts as a \textit{sensitivity compass}, measuring how state changes today impact final fuel cost.
+            \end{exampleblock}
+        \end{column}
+
+        \begin{column}{0.49\textwidth}
+            \begin{block}{The Control Hamiltonian ($\mathcal{H}$)}
+                \scriptsize
+                Pontryagin combined the instantaneous cost $L$ and the 7D equations of motion ($\dot{\mathbf{Y}}$) into a single scalar scoreboard called the \textbf{Hamiltonian}:
+                \par\vspace{2pt}
+                {\centering $\displaystyle \mathcal{H} = L + \boldsymbol{\lambda}_r \cdot \mathbf{v} + \boldsymbol{\lambda}_v \cdot \left(\mathbf{a}_{\text{grav}} + \frac{T}{m}\hat{\mathbf{u}}(t)\right) - \lambda_m \frac{T}{I_{\text{sp}} g_0}$ \par}
+                \vspace{2pt}
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item $\boldsymbol{\lambda}_r \in \mathbb{R}^3$: Position sensitivity costate.
+                    \item $\boldsymbol{\lambda}_v \in \mathbb{R}^3$: Velocity sensitivity costate.
+                    \item $\lambda_m \in \mathbb{R}^1$: Mass sensitivity costate.
+                \end{itemize}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{alertblock}{Pontryagin's Minimum Principle (PMP)}
+                \scriptsize
+                To minimize total propellant over the entire multi-month mission, the optimal thrust direction $\hat{\mathbf{u}}^*(t)$ must minimize $\mathcal{H}$ \textbf{at every single instant $t$}:
+                \par\vspace{1pt}
+                {\centering $\displaystyle \hat{\mathbf{u}}^*(t) = \arg\min_{\Vert{}\hat{\mathbf{u}}\Vert{}=1} \mathcal{H}(\mathbf{Y}, \boldsymbol{\lambda}, \hat{\mathbf{u}}, t)$ \par}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 5B: LAWDEN'S PRIMER VECTOR & OPTIMAL STEERING GEOMETRY
+% ------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------
+% SLIDE 5B: LAWDEN'S PRIMER VECTOR & OPTIMAL STEERING GEOMETRY (IMPROVED GRAPH)
+% ------------------------------------------------------------------------------
+\begin{frame}{Primer Vector Steering: Deriving the Optimal Thrust Law}
+    \begin{columns}[T]
+        \begin{column}{0.51\textwidth}
+            \begin{block}{Minimizing the Dot Product in $\mathcal{H}$}
+                \scriptsize
+                \begin{enumerate}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
+                    \item In the Hamiltonian $\mathcal{H}$, the thrust pointing vector $\hat{\mathbf{u}}(t)$ appears in only one term:
+                    \par\vspace{1pt}
+                    {\centering $\displaystyle \mathcal{H}_{\text{thrust}} = \frac{T}{m}\left(\boldsymbol{\lambda}_v \cdot \hat{\mathbf{u}}\right) = \frac{T}{m}\|\boldsymbol{\lambda}_v\| \|\hat{\mathbf{u}}\| \cos\theta$ \par}
+                    \vspace{1pt}
+                    \item Since $T/m > 0$ and $\|\hat{\mathbf{u}}\| = 1$, $\mathcal{H}$ is minimized when $\cos\theta = -1$ ($\theta = 180^\circ$).
+                    \item Therefore, $\hat{\mathbf{u}}^*(t)$ must point \textbf{directly opposite} to the velocity costate $\boldsymbol{\lambda}_v(t)$:
+                    \par\vspace{1.5pt}
+                    {\centering $\displaystyle \hat{\mathbf{u}}^*(t) = -\frac{\boldsymbol{\lambda}_v(t)}{\|\boldsymbol{\lambda}_v(t)\|} = \frac{\mathbf{p}(t)}{\|\mathbf{p}(t)\|}$ \par}
+                \end{enumerate}
+            \end{block}
+            \vspace{-0.18cm}
+            \begin{exampleblock}{Lawden's Primer Vector $\mathbf{p}(t) = -\boldsymbol{\lambda}_v(t)$}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\topsep}{0pt}
+                    \item Coined by Derek Lawden: $\mathbf{p}(t) = -\boldsymbol{\lambda}_v(t)$ dictates the exact 3D optimal thrust orientation at any second.
+                    \item Costates evolve via Euler-Lagrange ODEs: $\dot{\boldsymbol{\lambda}}_r = -\frac{\partial \mathcal{H}}{\partial \mathbf{r}}$ and $\dot{\boldsymbol{\lambda}}_v = -\frac{\partial \mathcal{H}}{\partial \mathbf{v}} = -\boldsymbol{\lambda}_r$.
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+
+        \begin{column}{0.47\textwidth}
+            \begin{block}{Primer Vector Alignment Geometry}
+                \centering
+                \vspace{0.02cm}
+                \begin{tikzpicture}[scale=0.84, >=Stealth]
+                    % Dark slate background container
+                    \draw[fill=DarkSlate, rounded corners=6pt, draw=Charcoal!60] (-3.25, -2.05) rectangle (3.25, 2.05);
+                    
+                    % Gently curved Spiral Orbit Path passing through origin
+                    \draw[dashed, color=gray!60, line width=0.9pt] 
+                        (-2.85, -0.68) .. controls (-1.3, -0.24) and (-0.5, -0.08) .. (0,0) 
+                        .. controls (0.8, 0.13) and (1.8, 0.24) .. (2.95, 0.30);
+                    \node[color=gray!75, font=\tiny] at (2.05, -0.18) {Spiral Orbit Path};
+
+                    % Tangential Velocity Vector v(t) (at ~9 deg)
+                    \draw[thick, ->, color=SpiceBlue!90!white, line width=1.2pt] (0,0) -- (2.20, 0.35) 
+                        node[right, font=\scriptsize\bfseries, color=SpiceBlue!90!white] {$\mathbf{v}(t)$};
+
+                    % Velocity Costate Vector lambda_v(t) (pointing at 222 deg)
+                    \draw[very thick, ->, color=AlertRed!90!white, line width=1.5pt] (0,0) -- (-1.55, -1.40);
+                    \node[color=AlertRed!85!white, font=\scriptsize\bfseries, align=center] at (-2.15, -1.05) 
+                        {$\boldsymbol{\lambda}_v(t)$\\[-2pt]{\tiny (Velocity Costate)}};
+
+                    % Primer Vector p(t) = -lambda_v(t) (pointing at 42 deg)
+                    \draw[very thick, ->, color=UdeAGold, line width=1.6pt] (0,0) -- (1.68, 1.51);
+                    \node[color=UdeAGold, font=\scriptsize\bfseries] at (1.05, 1.74) {$\mathbf{p}(t) = -\boldsymbol{\lambda}_v(t)$};
+
+                    % Optimal Unit Thrust Vector u*(t) (collinear with p(t) at 42 deg)
+                    \draw[very thick, ->, color=UdeAGreen!55!white, line width=1.9pt] (0,0) -- (0.95, 0.86);
+                    \node[color=UdeAGreen!55!white, font=\scriptsize\bfseries] at (1.65, 0.88) {$\hat{\mathbf{u}}^*(t)$};
+
+                    % 180 deg Angle Arc in open upper-left quadrant
+                    \draw[dotted, color=white, line width=1.0pt, <->] (42:0.58) arc (42:222:0.58);
+                    \node[color=white, font=\scriptsize\bfseries, fill=DarkSlate, inner sep=1.5pt] at (-0.82, 0.72) {$\theta = 180^\circ$};
+
+                    % Bottom Optimality Condition Badge
+                    \node[color=cyan!85!white, font=\tiny\bfseries, fill=DarkSlate!80!black, draw=cyan!45!black, rounded corners=3pt, inner sep=2.5pt] 
+                        at (0.45, -1.65) {$\cos(180^\circ) = -1 \implies \min \mathcal{H}$};
+
+                    % Spacecraft Center Point
+                    \filldraw[color=white, draw=DarkSlate, line width=0.6pt] (0,0) circle (2.4pt);
+                \end{tikzpicture}
+            \end{block}
+            \vspace{-0.18cm}
+            \begin{alertblock}{Bang-Bang Switching Function}
+                \scriptsize
+                PMP also determines \textit{when to coast}: if the switching function $S(t) = \frac{\|\boldsymbol{\lambda}_v\|}{m} - \frac{\lambda_m}{I_{\text{sp}}g_0} < 0$, the thruster turns off ($T = 0$).
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 5C: INDIRECT (PMP) VS. DIRECT (NLP) IN MISSION DESIGN
+% ------------------------------------------------------------------------------
+\begin{frame}{Solving Low-Thrust Trajectories: Indirect PMP vs. Direct NLP}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{1. Indirect Methods (PMP + Costates)}
+                \scriptsize
+                \textit{``Optimize First, Then Discretize''}
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item Combines the 7 physical states ($\mathbf{Y}$) and 7 shadow costates ($\boldsymbol{\lambda}$) into a \textbf{14D Two-Point Boundary Value Problem (TPBVP)}.
+                    \item \textbf{Pros:} Mathematically exact; captures smooth analytical steering laws ($\hat{\mathbf{u}}^* = -\boldsymbol{\lambda}_v/\|\boldsymbol{\lambda}_v\|$).
+                    \item \textbf{Cons:} Costates $\boldsymbol{\lambda}(t_0)$ have no intuitive physical units and a tiny radius of convergence.
+                \end{itemize}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{exampleblock}{2. Direct Methods (NLP / Collocation)}
+                \scriptsize
+                \textit{``Discretize First, Then Optimize''}
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item Chops the trajectory into $N$ discrete time segments (nodes) and parameterizes thrust angles $(\alpha_k, \beta_k)$ directly.
+                    \item Solved via large-scale \textbf{Nonlinear Programming (NLP)} engines (\texttt{SNOPT}, \texttt{IPOPT}, \texttt{VF13ad}).
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Architecture Comparison for GMAT and Python}
+                \scriptsize
+                \centering
+                \renewcommand{\arraystretch}{1.15}
+                \begin{tabular}{lcc}
+                    \toprule
+                    \textbf{Feature} & \textbf{Indirect (PMP)} & \textbf{Direct (NLP)} \\
+                    \midrule
+                    Control Law & Primer Vector $\mathbf{p}(t)$ & Nodal Angles $\mathbf{u}_k$ \\
+                    Variables & $\mathbf{Y}(t_0), \boldsymbol{\lambda}(t_0) \in \mathbb{R}^{14}$ & cientos of nodes \\
+                    Initial Guess & Extremely sensitive & Robust / Intuitive \\
+                    Path Constraints & Hard to enforce & Easy (bounds) \\
+                    GMAT / Tools & Custom Python ODE & \texttt{SNOPT} / \texttt{VF13ad} \\
+                    \bottomrule
+                \end{tabular}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{alertblock}{How NASA GMAT Implements This}
+                \scriptsize
+                In GMAT, we replace \texttt{Target} (\texttt{DifferentialCorrector}) with an \textbf{\texttt{Optimize}} sequence (\texttt{VF13ad} or \texttt{SNOPT}):
+                \begin{itemize}\setlength{\itemsep}{0.5pt}\setlength{\topsep}{0pt}
+                    \item \textbf{\texttt{Vary}:} Thrust pointing angles and finite burn durations.
+                    \item \textbf{\texttt{NonlinearConstraint}:} Target orbital elements ($a_f, i_f, e_f$).
+                    \item \textbf{\texttt{Minimize}:} Total propellant consumed ($\Delta m$) or burn time.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
 % --- SLIDE 3.2: 7D STATE EXPANSION ---
 \begin{frame}{Finite Maneuvers: Dynamic Equations and 7D State Vector}
     \begin{columns}[T]
         \begin{column}{0.54\textwidth}
-            \begin{block}{Translational Dynamics \& Mass Depletion}
+            \begin{block}{Translational Dynamics and Mass Depletion}
                 \scriptsize
                 Under finite thrust, vehicle mass depletes continuously as propellant is expelled, coupling vehicle acceleration directly to time:
                 \begin{equation}

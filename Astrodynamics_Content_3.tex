@@ -32,13 +32,13 @@
 \setbeamercolor{block title alerted}{bg=AlertRed, fg=white}
 \setbeamercolor{block body alerted}{bg=white, fg=Charcoal}
 
-% --- Custom Header & Footer Setup with Lower-Right Logo (Protected fallback) ---
+% Custom Header & Footer Setup with Lower-Right Logo (Protected fallback)
 \setbeamertemplate{headline}{}
 \setbeamertemplate{footline}{%
     \leavevmode%
     \hbox{%
         \begin{beamercolorbox}[wd=0.70\paperwidth,ht=2.8ex,dp=1.2ex,leftskip=.3cm]{palette primary}%
-            \footnotesize Universidad de Antioquia -- Faculty of Engineering \hfill Module 2: Low-Thrust Trajectories
+            \footnotesize Universidad de Antioquia -- Faculty of Engineering \hfill Module 3: Low-Thrust Trajectories
         \end{beamercolorbox}%
         \begin{beamercolorbox}[wd=0.30\paperwidth,ht=2.8ex,dp=1.2ex,rightskip=.3cm]{palette primary}%
             \hfill \insertframenumber/\inserttotalframenumber\hspace{0.25cm}%
@@ -56,7 +56,7 @@
 % Code Listings Configuration
 \lstdefinestyle{gmatstyle}{
     backgroundcolor=\color{LightBg},
-    basicstyle=\ttfamily\fontsize{5.0pt}{5.8pt}\selectfont\color{Charcoal},
+    basicstyle=\ttfamily\fontsize{4.6pt}{5.4pt}\selectfont\color{Charcoal},
     keywordstyle=\bfseries\color{UdeAGreen},
     commentstyle=\itshape\color{gray},
     stringstyle=\color{UdeAGold!90!black},
@@ -89,7 +89,6 @@
 \usetheme{Madrid}
 \usefonttheme{professionalfonts}
 
-% Positions logo in the upper right corner (Protected fallback)
 \logo{%
     \vspace{-0.2cm}\hfill%
     \IfFileExists{Images/UdeA+simplificado+Negro_Smaller.png}{%
@@ -98,11 +97,10 @@
     \hspace{0.1cm}%
 }
 
-% Metadata & Title Page
-\title[Astrodynamics Module 2]{\textbf{Module 3: Low-Thrust Spacecraft Maneuvers}}
-\subtitle{Interplanetary Flight Dynamics}
+\title[Astrodynamics Module 3]{\textbf{Module 3: Low-Thrust Spacecraft Maneuvers}}
+\subtitle{Continuous Flight Dynamics, Electric Propulsion, and Trajectory Optimization}
 \author{\textbf{Juan Francisco Puerta Ibarra}}
-\institute{Aerospace Engineering}
+\institute{Department of Aerospace Engineering --- Faculty of Engineering \\ Universidad de Antioquia (UdeA)}
 \date{Semester 2026-2}
 \titlegraphic{%
     \IfFileExists{Images/UdeA+simplificado+Negro_Smaller.png}{%
@@ -118,11 +116,13 @@
 \begin{frame}[plain]
     \titlepage
     \begin{center}
-        \scriptsize \textcolor{DarkSlate}{\textit{Analytical Flight Mechanics, Numerical Propagation, and GMAT Targeting}}
+        \scriptsize \textcolor{DarkSlate}{\textit{Analytical Flight Mechanics, Electric Propulsion Physics, and NASA GMAT Optimization}}
     \end{center}
 \end{frame}
 
-% --- SLIDE 3.1: IMPULSIVE VS. FINITE REALITY ---
+% ==============================================================================
+% SLIDE 1: CONTINUOUS THRUST: THE PARADIGM SHIFT
+% ==============================================================================
 \begin{frame}{Continuous Thrust Trajectories: The Paradigm Shift}
     \begin{columns}[T]
         \begin{column}{0.49\textwidth}
@@ -168,15 +168,9 @@
     \end{columns}
 \end{frame}
 
-% ------------------------------------------------------------------------------
-% SLIDE 3.1: IMPULSIVE VS. LOW-THRUST COMPARISON MATRIX
-% ------------------------------------------------------------------------------
-% ------------------------------------------------------------------------------
-% SLIDE 3.1: IMPULSIVE VS. LOW-THRUST COMPARISON MATRIX
-% ------------------------------------------------------------------------------
-% ------------------------------------------------------------------------------
-% SLIDE 3.1: IMPULSIVE VS. LOW-THRUST COMPARISON MATRIX
-% ------------------------------------------------------------------------------
+% ==============================================================================
+% SLIDE 2: COMPARISON MATRIX
+% ==============================================================================
 \begin{frame}{Maneuver Architectures: Impulsive vs. Continuous Low-Thrust}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
@@ -221,9 +215,9 @@
     \end{columns}
 \end{frame}
 
-% ------------------------------------------------------------------------------
-% SLIDE 3.2: MATHEMATICAL FORMULATION & STATE-SPACE DIVERGENCE
-% ------------------------------------------------------------------------------
+% ==============================================================================
+% SLIDE 3: DYNAMIC FORMULATION: CONIC JUMPS VS 7D EOM
+% ==============================================================================
 \begin{frame}{Dynamic Formulation: Conic Jumps vs. 7D State Integration}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
@@ -265,9 +259,9 @@
     \end{columns}
 \end{frame}
 
-% ------------------------------------------------------------------------------
-% SLIDE 3.3: MISSION DESIGN TOOLCHAIN DIVERGENCE
-% ------------------------------------------------------------------------------
+% ==============================================================================
+% SLIDE 4: TOOLCHAIN DIVERGENCE: TARGETERS VS OPTIMIZERS
+% ==============================================================================
 \begin{frame}{Flight Mechanics Toolchain: Targeters vs. Optimizers}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
@@ -304,9 +298,9 @@
     \end{columns}
 \end{frame}
 
-% ------------------------------------------------------------------------------
-% SLIDE 5A: THE INFINITE CONTROL DILEMMA & PONTRYAGIN'S PRINCIPLE
-% ------------------------------------------------------------------------------
+% ==============================================================================
+% SLIDE 5A: PONTRYAGIN'S MINIMUM PRINCIPLE
+% ==============================================================================
 \begin{frame}{Optimal Control: Why Low-Thrust Needs Pontryagin (PMP)}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
@@ -343,18 +337,15 @@
                 \scriptsize
                 To minimize total propellant over the entire multi-month mission, the optimal thrust direction $\hat{\mathbf{u}}^*(t)$ must minimize $\mathcal{H}$ \textbf{at every single instant $t$}:
                 \par\vspace{1pt}
-                {\centering $\displaystyle \hat{\mathbf{u}}^*(t) = \arg\min_{\Vert{}\hat{\mathbf{u}}\Vert{}=1} \mathcal{H}(\mathbf{Y}, \boldsymbol{\lambda}, \hat{\mathbf{u}}, t)$ \par}
+                {\centering $\displaystyle \hat{\mathbf{u}}^*(t) = \arg\min_{\|\hat{\mathbf{u}}\|=1} \mathcal{H}(\mathbf{Y}, \boldsymbol{\lambda}, \hat{\mathbf{u}}, t)$ \par}
             \end{alertblock}
         \end{column}
     \end{columns}
 \end{frame}
 
-% ------------------------------------------------------------------------------
-% SLIDE 5B: LAWDEN'S PRIMER VECTOR & OPTIMAL STEERING GEOMETRY
-% ------------------------------------------------------------------------------
-% ------------------------------------------------------------------------------
-% SLIDE 5B: LAWDEN'S PRIMER VECTOR & OPTIMAL STEERING GEOMETRY (IMPROVED GRAPH)
-% ------------------------------------------------------------------------------
+% ==============================================================================
+% SLIDE 5B: PRIMER VECTOR STEERING
+% ==============================================================================
 \begin{frame}{Primer Vector Steering: Deriving the Optimal Thrust Law}
     \begin{columns}[T]
         \begin{column}{0.51\textwidth}
@@ -386,41 +377,32 @@
                 \centering
                 \vspace{0.02cm}
                 \begin{tikzpicture}[scale=0.84, >=Stealth]
-                    % Dark slate background container
                     \draw[fill=DarkSlate, rounded corners=6pt, draw=Charcoal!60] (-3.25, -2.05) rectangle (3.25, 2.05);
                     
-                    % Gently curved Spiral Orbit Path passing through origin
                     \draw[dashed, color=gray!60, line width=0.9pt] 
                         (-2.85, -0.68) .. controls (-1.3, -0.24) and (-0.5, -0.08) .. (0,0) 
                         .. controls (0.8, 0.13) and (1.8, 0.24) .. (2.95, 0.30);
                     \node[color=gray!75, font=\tiny] at (2.05, -0.18) {Spiral Orbit Path};
 
-                    % Tangential Velocity Vector v(t) (at ~9 deg)
                     \draw[thick, ->, color=SpiceBlue!90!white, line width=1.2pt] (0,0) -- (2.20, 0.35) 
                         node[right, font=\scriptsize\bfseries, color=SpiceBlue!90!white] {$\mathbf{v}(t)$};
 
-                    % Velocity Costate Vector lambda_v(t) (pointing at 222 deg)
                     \draw[very thick, ->, color=AlertRed!90!white, line width=1.5pt] (0,0) -- (-1.55, -1.40);
                     \node[color=AlertRed!85!white, font=\scriptsize\bfseries, align=center] at (-2.15, -1.05) 
                         {$\boldsymbol{\lambda}_v(t)$\\[-2pt]{\tiny (Velocity Costate)}};
 
-                    % Primer Vector p(t) = -lambda_v(t) (pointing at 42 deg)
                     \draw[very thick, ->, color=UdeAGold, line width=1.6pt] (0,0) -- (1.68, 1.51);
                     \node[color=UdeAGold, font=\scriptsize\bfseries] at (1.05, 1.74) {$\mathbf{p}(t) = -\boldsymbol{\lambda}_v(t)$};
 
-                    % Optimal Unit Thrust Vector u*(t) (collinear with p(t) at 42 deg)
                     \draw[very thick, ->, color=UdeAGreen!55!white, line width=1.9pt] (0,0) -- (0.95, 0.86);
                     \node[color=UdeAGreen!55!white, font=\scriptsize\bfseries] at (1.65, 0.88) {$\hat{\mathbf{u}}^*(t)$};
 
-                    % 180 deg Angle Arc in open upper-left quadrant
                     \draw[dotted, color=white, line width=1.0pt, <->] (42:0.58) arc (42:222:0.58);
                     \node[color=white, font=\scriptsize\bfseries, fill=DarkSlate, inner sep=1.5pt] at (-0.82, 0.72) {$\theta = 180^\circ$};
 
-                    % Bottom Optimality Condition Badge
                     \node[color=cyan!85!white, font=\tiny\bfseries, fill=DarkSlate!80!black, draw=cyan!45!black, rounded corners=3pt, inner sep=2.5pt] 
                         at (0.45, -1.65) {$\cos(180^\circ) = -1 \implies \min \mathcal{H}$};
 
-                    % Spacecraft Center Point
                     \filldraw[color=white, draw=DarkSlate, line width=0.6pt] (0,0) circle (2.4pt);
                 \end{tikzpicture}
             \end{block}
@@ -433,9 +415,9 @@
     \end{columns}
 \end{frame}
 
-% ------------------------------------------------------------------------------
-% SLIDE 5C: INDIRECT (PMP) VS. DIRECT (NLP) IN MISSION DESIGN
-% ------------------------------------------------------------------------------
+% ==============================================================================
+% SLIDE 5C: INDIRECT (PMP) VS DIRECT (NLP)
+% ==============================================================================
 \begin{frame}{Solving Low-Thrust Trajectories: Indirect PMP vs. Direct NLP}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
@@ -469,7 +451,7 @@
                     \textbf{Feature} & \textbf{Indirect (PMP)} & \textbf{Direct (NLP)} \\
                     \midrule
                     Control Law & Primer Vector $\mathbf{p}(t)$ & Nodal Angles $\mathbf{u}_k$ \\
-                    Variables & $\mathbf{Y}(t_0), \boldsymbol{\lambda}(t_0) \in \mathbb{R}^{14}$ & cientos of nodes \\
+                    Variables & $\mathbf{Y}(t_0), \boldsymbol{\lambda}(t_0) \in \mathbb{R}^{14}$ & hundreds of nodes \\
                     Initial Guess & Extremely sensitive & Robust / Intuitive \\
                     Path Constraints & Hard to enforce & Easy (bounds) \\
                     GMAT / Tools & Custom Python ODE & \texttt{SNOPT} / \texttt{VF13ad} \\
@@ -491,201 +473,130 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 5D: TAXONOMY OF LOW-THRUST OPTIMIZATION METHODS
+% SLIDE 5D: ELECTRIC PROPULSION PHYSICS
 % ==============================================================================
-\begin{frame}{Low-Thrust Trajectory Optimization: Methodological Taxonomy}
+\begin{frame}{Electric Propulsion Physics: Energy Decoupling \& The Power Law}
     \begin{columns}[T]
-        \begin{column}{0.48\textwidth}
-            \begin{block}{1. Indirect Methods (Calculus of Variations)}
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Decoupling Energy from Propellant Mass}
                 \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
-                    \item Formulates the continuous Hamiltonian $\mathcal{H}$ and costates $\boldsymbol{\lambda}(t)$ via Pontryagin's Minimum Principle (PMP)[cite: 28].
-                    \item Solves a \textbf{Two-Point Boundary Value Problem (TPBVP)} using root-finding shooting methods.
-                    \item \textbf{Challenge:} Costates have no intuitive physical units; radius of numerical convergence is vanishingly small.
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Chemical Rockets:} Energy is stored in molecular bonds. Thermodynamics caps exhaust velocity:
+                    \par\vspace{1pt}
+                    {\centering $v_e = \sqrt{2 c_p T_c} \le 4.5\text{ km/s} \implies I_{\text{sp}} \le 450\text{ s}$ \par}
+                    \item \textbf{Electric Propulsion (EP):} Power is supplied externally (solar arrays or nuclear) and deposited into propellant particles.
+                    \item Accelerates ions to hyperthermal exhaust speeds:
+                    \par\vspace{1pt}
+                    {\centering $v_e = g_0 I_{\text{sp}} \approx 20\text{--}50\text{ km/s} \implies I_{\text{sp}} \approx 1{,}500\text{--}5{,}000\text{ s}$ \par}
                 \end{itemize}
             \end{block}
             \vspace{-0.15cm}
-            \begin{exampleblock}{2. Direct Transcription (NLP)}
+            \begin{alertblock}{The Fundamental Power-Thrust Dilemma}
+                \scriptsize
+                Kinetic beam power is $P_{\text{jet}} = \frac{1}{2} \dot{m} v_e^2 = \frac{1}{2} T g_0 I_{\text{sp}}$. For a spacecraft bus with available electrical power $P_{\text{elec}}$ and thruster efficiency $\eta$:
+                \par\vspace{1pt}
+                {\centering $\displaystyle T = \frac{2 \eta P_{\text{elec}}}{g_0 I_{\text{sp}}}, \qquad \dot{m} = \frac{2 \eta P_{\text{elec}}}{(g_0 I_{\text{sp}})^2} = \frac{T}{g_0 I_{\text{sp}}}$ \par}
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{The Core Engineering Trade-Off}
+                \scriptsize
+                For a fixed power budget ($P_{\text{elec}} = \text{const}$):
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
+                    \item Doubling $I_{\text{sp}}$ **cuts thrust $T$ strictly in half**!
+                    \item High $I_{\text{sp}}$ minimizes propellant mass, but low thrust forces burns to extend over hundreds to thousands of orbital revolutions.
+                \end{itemize}
+            \end{exampleblock}
+            \vspace{-0.1cm}
+            \begin{block}{Thruster Power Scaling ($P_{\text{elec}} = 5\text{ kW}$)}
+                \centering
+                \vspace{1pt}
+                \fontsize{5.2pt}{6.2pt}\selectfont
+                \setlength{\tabcolsep}{2.5pt}
+                \renewcommand{\arraystretch}{1.2}
+                \begin{tabular}{lcccc}
+                    \toprule
+                    \textbf{Thruster Type} & $\bm{I_{\text{sp}}\text{ [s]}}$ & $\bm{\eta}$ & \textbf{Thrust }$\bm{T}$ & \textbf{Mass Flow }$\bm{\dot{m}}$ \\ \midrule
+                    \textbf{Resistojet}    & 300   & 0.80 & $2.72\text{ N}$   & $924.3\text{ mg/s}$ \\
+                    \textbf{Arcjet}        & 600   & 0.45 & $0.76\text{ N}$   & $129.9\text{ mg/s}$ \\
+                    \textbf{Hall Thruster} & 2,000 & 0.60 & $306\text{ mN}$   & $15.6\text{ mg/s}$  \\
+                    \textbf{Gridded Ion}   & 3,500 & 0.70 & $204\text{ mN}$   & $5.9\text{ mg/s}$   \\
+                    \bottomrule
+                \end{tabular}
+                \vspace{2pt}
+            \end{block}
+            \vspace{-0.1cm}
+            \tiny \textcolor{Charcoal}{\textit{Thrust is restricted to millinewtons because electrical power on orbit is bounded.}}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 5E: EP THRUSTER TECHNOLOGIES
+% ==============================================================================
+\begin{frame}{Electric Thruster Technologies: Physical Mechanisms}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{1. Electrothermal (Thermal Expansion)}
                 \scriptsize
                 \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
-                    \item Discretizes state $\mathbf{Y}(t)$ and control $\hat{\mathbf{u}}(t)$ into $N$ nodes, converting the optimal control problem into \textbf{Nonlinear Programming (NLP)}[cite: 28].
-                    \item Solved via Sequential Quadratic Programming (SQP) or Interior Point algorithms.
+                    \item \textbf{Mechanism:} Propellant is heated electrically (resistive coil or arc discharge); gas expands through a physical convergent-divergent nozzle.
+                    \item \textbf{Examples:} Resistojets ($I_{\text{sp}} \sim 300\text{ s}$), Arcjets ($I_{\text{sp}} \sim 600\text{--}1000\text{ s}$).
+                    \item \textbf{Limitation:} Wall material thermal melting limits ($T_{\text{wall}} \le 3000\text{ K}$).
+                \end{itemize}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{exampleblock}{2. Electrostatic (Coulomb Acceleration)}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Mechanism:} Gas is ionized; high-voltage electrostatic grid assemblies accelerate positive ions via Coulomb $\mathbf{E}$-fields:
+                    \par\vspace{1pt}
+                    {\centering $v_e = \sqrt{2 q V_{\text{grid}} / m_{\text{ion}}} \approx 30\text{--}50\text{ km/s}$ \par}
+                    \item \textbf{Examples:} NSTAR (\textit{Deep Space 1}), NEXT (\textit{DART}).
+                    \item $I_{\text{sp}} \approx 3{,}000\text{--}5{,}000\text{ s}$; limited by space-charge grid erosion.
                 \end{itemize}
             \end{exampleblock}
         \end{column}
 
         \begin{column}{0.49\textwidth}
-            \begin{alertblock}{3. Heuristic and Shape-Based Methods}
+            \begin{alertblock}{3. Electromagnetic (Lorentz Force Acceleration)}
                 \scriptsize
                 \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
-                    \item \textbf{Sims-Flanagan Transcription:} Replaces continuous burns with an impulsive $\Delta V$ at the center of each segment bounded by 2-body coasts.
-                    \item \textbf{Q-Law (Lyapunov Feedback Control):} Analytical proximity quotient $Q$ drives Picard-iteration steering toward target Keplerian elements $(\Delta a, \Delta e, \Delta i)$.
-                    \item \textbf{Hodographic / Exponential Shaping:} Enforces an analytical geometry to rapidly assess millions of preliminary interplanetary transfers.
+                    \item \textbf{Mechanism:} Plasma accelerated via $\mathbf{j} \times \mathbf{B}$ Lorentz body forces or magnetic electron-trapping in Hall plasma sheets.
+                    \item \textbf{Hall-Effect Thrusters (HET):} Radial magnetic field traps electrons into an azimuthal $\mathbf{E}\times\mathbf{B}$ drift, setting up an axial electric field that accelerates ions without grid extraction limits.
+                    \item \textbf{Examples:} BPT-4000, SPT-100, AEPS (Gateway), Starlink (Krypton/Argon Hall units).
+                    \item $I_{\text{sp}} \approx 1{,}500\text{--}2{,}500\text{ s}$; high thrust-to-power density.
                 \end{itemize}
             \end{alertblock}
-            \vspace{-0.15cm}
-            \begin{block}{Method Selection Spectrum}
-                \centering
+            \vspace{-0.12cm}
+            \begin{block}{Propellant Sizing}
                 \scriptsize
-                \begin{tabular}{lccc}
-                    \toprule
-                    \textbf{Criteria} & \textbf{Indirect} & \textbf{Direct (NLP)} & \textbf{Shape-Based} \\
-                    \midrule
-                    Accuracy & Exact & Very High & Approximate \\
-                    Convergence & Fragile & Robust & Guaranteed \\
-                    Path Bounds & Difficult & Natural & N/A \\
-                    Mission Phase & Final Ops & Detailed Design & Global Search \\
-                    \bottomrule
-                \end{tabular}
+                \textbf{Xenon ($M = 131.3\text{ amu}$):} Standard due to high atomic mass and low ionization potential ($12.1\text{ eV}$). Commercial constellations adopt **Krypton** or **Argon** to reduce propellant procurement costs.
             \end{block}
         \end{column}
     \end{columns}
 \end{frame}
 
 % ==============================================================================
-% SLIDE 5E: DIRECT TRANSCRIPTION: MATHEMATICAL NLP FORMULATION
+% SLIDE 5F: PARAMETERIZED OPTIMIZATION VIA YUKON SQP
 % ==============================================================================
-\begin{frame}{Direct Transcription: Formulating the NLP Problem}
+\begin{frame}{Low-Thrust Optimization: Parameterization in Yukon SQP}
     \begin{columns}[T]
         \begin{column}{0.50\textwidth}
-            \begin{block}{The Continuous Optimal Control Problem (OCP)}
+            \begin{block}{Direct Parameter Optimization (Shooting)}
                 \scriptsize
-                Find the continuous thrust orientation history $\hat{\mathbf{u}}(t)$ and throttle $\eta(t) \in [0, 1]$ to minimize propellant or flight time[cite: 28]:
-                \par\vspace{1pt}
-                {\centering $\displaystyle J = -m(t_f) \quad \text{or} \quad J = \int_{t_0}^{t_f} \eta(t) dt$ \par}
-                \vspace{1pt}
-                Subject to 7D translational and mass flow dynamics:
-                \par\vspace{1pt}
-                {\centering $\displaystyle \dot{\mathbf{Y}}(t) = \mathbf{f}(\mathbf{Y}(t), \hat{\mathbf{u}}(t), \eta(t), t)$ \par}
+                Because an infinite-dimensional steering history $\hat{\mathbf{u}}(t)$ cannot be fed into a shooting solver directly, Yukon optimizes a **parameterized transcription**:
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Decision Knobs ($\mathbf{X}$):} Burn duration $\Delta t$ and local thrust direction components $(u_V, u_N, u_B)$ in the VNB frame.
+                    \item \textbf{State Integration ($\mathbb{R}^7$):} GMAT integrates translational motion $\ddot{\mathbf{r}}$ and continuous mass depletion $\dot{m} = -T / (I_{\text{sp}} g_0)$ through an \texttt{ElectricThruster} and \texttt{ElectricTank}.
+                    \item \textbf{Active-Set Subproblem:} Solves local Quadratic Programs (QP) with Self-Scaled BFGS updates to satisfy orbital boundaries while sliding toward minimum propellant consumption.
+                \end{itemize}
             \end{block}
-            \vspace{-0.15cm}
-            \begin{exampleblock}{Collocation Defect Constraints ($\boldsymbol{\Delta}_k = \mathbf{0}$)}
-                \scriptsize
-                In \textbf{Hermite-Simpson Collocation}, state continuity between mesh nodes $k$ and $k+1$ is enforced through Simpson integration defects:
-                \par\vspace{1pt}
-                {\centering $\displaystyle \boldsymbol{\Delta}_k = \mathbf{Y}_{k+1} - \mathbf{Y}_k - \frac{h_k}{6}\left(\mathbf{f}_k + 4\mathbf{f}_{k+1/2} + \mathbf{f}_{k+1}\right) = \mathbf{0}$ \par}
-            \end{exampleblock}
         \end{column}
 
         \begin{column}{0.48\textwidth}
-            \begin{alertblock}{The Discretized Parameter Space ($\mathbf{X} \in \mathbb{R}^M$)}
-                \scriptsize
-                The continuous problem is parameterized into a large-scale finite decision vector $\mathbf{X}$[cite: 28]:
-                \par\vspace{1pt}
-                {\centering $\displaystyle \mathbf{X} = \begin{bmatrix} \mathbf{Y}_1, \dots, \mathbf{Y}_N, \, \hat{\mathbf{u}}_1, \dots, \hat{\mathbf{u}}_N, \, \Delta t_1, \dots, \Delta t_{N-1} \end{bmatrix}^T$ \par}
-                \vspace{2pt}
-                Solved subject to algebraic constraints:
-                \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\topsep}{0pt}
-                    \item \textbf{Dynamic Continuity:} $\boldsymbol{\Delta}_k(\mathbf{X}) = \mathbf{0}$ for $k = 1, \dots, N-1$.
-                    \item \textbf{Unit Control Bounds:} $\|\hat{\mathbf{u}}_k\|^2 - 1 = 0$.
-                    \item \textbf{Terminal Boundary "Fence":} Target orbit conditions $\boldsymbol{\psi}(\mathbf{Y}(t_f)) = \mathbf{oe}_{\text{target}}$.
-                    \item \textbf{Path Constraints:} Minimum periapsis $r(t) \ge R_{\text{safe}}$, solar eclipse thrust cutoff $\eta = 0$.
-                \end{itemize}
-            \end{alertblock}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% ==============================================================================
-% SLIDE 5E.1: INTUITIVE OPTIMIZATION: THE MOUNTAIN IN THE FOG ANALOGY
-% ==============================================================================
-\begin{frame}{Demystifying NLP and SQP: The Mountain in the Fog Analogy}
-    \begin{columns}[T]
-        \begin{column}{0.50\textwidth}
-            \begin{block}{The Physical Setting: Blindfolded in the Mountains}
-                \scriptsize
-                Imagine you are a blindfolded hiker dropped into a rugged mountain range. Your goal is to reach the lowest valley floor under dense fog:
-                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{1pt}
-                    \item \textbf{The Mountain Terrain:} The complex non-linear cost surface $J(\mathbf{X})$ (e.g., fuel mass $\Delta m$ or total $\Delta V$).
-                    \item \textbf{The Lowest Valley Floor:} The optimal trajectory $\mathbf{X}^*$.
-                    \item \textbf{The Electric Fences:} The constraints $\mathbf{g}(\mathbf{X}) \le \mathbf{0}$ and $\mathbf{h}(\mathbf{X}) = \mathbf{0}$ (e.g., target orbit $a_f$, minimum safe periapsis $r_p \ge R_{\text{safe}}$).
-                    \item \textbf{The Dense Fog (The Black Box):} The flight computer cannot see the global landscape; it only knows the ground elevation and slope directly beneath its boots!
-                \end{itemize}
-            \end{block}
-            \vspace{-0.15cm}
-            \begin{alertblock}{Targeter vs. Optimizer in the Fog}
-                \scriptsize
-                A **Targeter** only searches for the fence. Once it hits the fence, it stops immediately, even if perched on a fuel-wasting peak! An **Optimizer** slides along the fence until it reaches the lowest valley.
-            \end{alertblock}
-        \end{column}
-
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Conceptual Schematic in Control Space}
-                \centering
-                \vspace{0.05cm}
-                \begin{tikzpicture}[scale=0.82, >=Stealth]
-                    % Dark Slate Container Box
-                    \draw[fill=DarkSlate, rounded corners=6pt, draw=Charcoal!60] (-3.1, -2.1) rectangle (3.1, 2.1);
-
-                    % Mountain Contours (Cost Function J)
-                    \draw[color=gray!50, dashed, line width=0.5pt] (1.0, -0.6) ellipse (2.4cm and 1.3cm);
-                    \draw[color=gray!70, dashed, line width=0.6pt] (1.0, -0.6) ellipse (1.6cm and 0.85cm);
-                    \draw[color=SpiceBlue!80, line width=0.7pt] (1.0, -0.6) ellipse (0.85cm and 0.45cm);
-
-                    % Unconstrained Minimum
-                    \filldraw[color=SpiceBlue] (1.0, -0.6) circle (2.0pt);
-                    \node[below, font=\tiny\bfseries, color=SpiceBlue!90!white] at (1.0, -0.65) {Valley Center};
-
-                    % Electric Fence (Constraint Line g(X) = 0)
-                    \draw[very thick, color=AlertRed] (-2.5, -1.4) to[out=25, in=-150] (0.2, 0.1) to[out=30, in=-140] (2.7, 1.4);
-                    \node[above left, font=\tiny\bfseries, color=AlertRed] at (-1.0, -0.7) {Constraint Fence $\mathbf{g}(\mathbf{X}) = \mathbf{0}$};
-
-                    % Initial Point X0 (Hiker dropped in fog)
-                    \filldraw[color=UdeAGold] (-2.2, 1.3) circle (2.4pt);
-                    \node[above right, font=\tiny\bfseries, color=UdeAGold] at (-2.2, 1.3) {Hiker $\mathbf{X}_0$ (In Fog)};
-
-                    % Tapping with cane (Perturbations)
-                    \draw[thick, dotted, color=yellow!80!white, ->] (-2.2, 1.3) -- (-1.7, 1.3);
-                    \draw[thick, dotted, color=yellow!80!white, ->] (-2.2, 1.3) -- (-2.2, 0.8);
-                    \node[below left, font=\fontsize{4.8pt}{5.8pt}\selectfont, color=yellow!90!white] at (-1.8, 1.25) {Cane Taps ($\delta$)};
-
-                    % Targeter path (Blind straight to fence)
-                    \draw[thick, dashed, color=AlertRed!80!white, ->] (-2.2, 1.3) -- (-1.1, -0.75);
-                    \filldraw[color=AlertRed!80!white] (-1.1, -0.75) circle (2.0pt);
-                    \node[below, font=\fontsize{4.8pt}{5.8pt}\selectfont, color=AlertRed!80!white] at (-1.1, -0.85) {Targeter Stops Here};
-
-                    % Optimizer path (Yukon sliding to lowest point)
-                    \draw[very thick, color=UdeAGreen!80!white, ->] (-2.2, 1.3) to[out=-40, in=140] (-0.3, 0.4) to[out=-40, in=120] (0.2, 0.1);
-                    \filldraw[color=UdeAGreen!80!white] (0.2, 0.1) circle (2.5pt);
-                    \node[above right=1pt, font=\tiny\bfseries, color=UdeAGreen!80!white] at (0.2, 0.1) {Optimal $\mathbf{X}^*$};
-
-                    % Optimality condition
-                    \node[font=\fontsize{5pt}{6pt}\selectfont, color=cyan!85!white, fill=DarkSlate!90!black, draw=cyan!40!black, rounded corners=2pt, inner sep=2pt]
-                        at (1.1, 1.7) {$\nabla J \parallel \nabla g \implies \text{Min Fuel on Fence}$};
-                \end{tikzpicture}
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% ==============================================================================
-% SLIDE 5E.2: THE 5 STEPS OF SQP: MAPPING HIKER TO YUKON
-% ==============================================================================
-\begin{frame}{The 5 Steps of SQP: Mapping the Hiker to the Yukon Algorithm}
-    \begin{columns}[T]
-        \begin{column}{0.50\textwidth}
-            \begin{block}{The 5-Step Hiker Protocol}
-                \scriptsize
-                \begin{enumerate}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{1pt}
-                    \item \textbf{Tapping the Cane ($\nabla J, \nabla \mathbf{g}$):} Taps slightly forward and sideways to measure the local slope in each variable (`Perturbation`).
-                    \item \textbf{Carving a Parabolic Bowl (QP Subproblem):} Since the global mountain is hidden, approximates local ground as a simple quadratic bowl.
-                    \item \textbf{Straightening the Fences (Linearization):} Approximates curved fences as locally flat tangent walls.
-                    \item \textbf{Taking the Step ($\mathbf{d}_k$):} Walks to the lowest point of the local bowl without violating the straightened fence.
-                    \item \textbf{Updating the Mental Map (Self-Scaled BFGS):} At the new location, uses the change in slope to refine curvature without recalculating full 2nd derivatives.
-                \end{enumerate}
-            \end{block}
-            \vspace{-0.15cm}
-            \begin{alertblock}{Stopping Conditions: Are We There Yet?}
-                \scriptsize
-                \begin{itemize}\setlength{\itemsep}{0.8pt}
-                    \item \textbf{Feasibility Tolerance:} We are inside the legal fences.
-                    \item \textbf{Optimality Tolerance:} The ground is flat along the fence.
-                \end{itemize}
-            \end{alertblock}
-        \end{column}
-
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Analogy to GMAT Engine Translation}
+            \begin{block}{The 4 GMAT Command Pillars for EP}
                 \centering
                 \vspace{1pt}
                 \fontsize{5.2pt}{6.2pt}\selectfont
@@ -693,136 +604,87 @@
                 \renewcommand{\arraystretch}{1.2}
                 \begin{tabular}{lll}
                     \toprule
-                    \textbf{Hiker Action} & \textbf{Mathematical Concept} & \textbf{NASA GMAT Syntax} \\ \midrule
-                    \textbf{Cane Tap}     & Gradient $\nabla J, \nabla \mathbf{g}$ & \texttt{Vary ... Perturbation = 1e-4} \\
-                    \textbf{Parabolic Bowl} & Quadratic Subproblem (QP) & \texttt{Yukon SQP Subproblem} \\
-                    \textbf{Curvature Map} & Hessian Estimate $\mathbf{B}_k$ & \texttt{HessianUpdateMethod = BFGS} \\
-                    \textbf{Straight Fence} & Linearized Constraints & \texttt{NonlinearConstraint(SMA = 7000)} \\
-                    \textbf{Valley Depth}  & Objective Cost $J(\mathbf{X})$ & \texttt{Minimize Yukon(FuelBurned)} \\
-                    \textbf{Valley Floor}  & KKT Optimality ($\nabla \mathcal{L} = \mathbf{0}$) & \texttt{OptimalityTolerance = 1e-4} \\
+                    \textbf{Pillar} & \textbf{GMAT Command} & \textbf{Function in Low-Thrust EP} \\ \midrule
+                    \textbf{Control} & \texttt{Vary Yukon(...)} & Tunes $\Delta t$ and steering angles $(u_V, u_N, u_B)$ \\
+                    \textbf{Physics} & \texttt{Begin/EndFiniteBurn} & Propagates continuous 7D finite burn arc \\
+                    \textbf{Target}  & \texttt{NonlinearConstraint} & Enforces terminal orbit ($a = 7000\text{ km}, i = 45^\circ$) \\
+                    \textbf{Cost}    & \texttt{Minimize Yukon(Fuel)} & Minimizes expended propellant mass $\Delta m$ \\
                     \bottomrule
                 \end{tabular}
                 \vspace{2pt}
             \end{block}
-
-            \vspace{-0.12cm}
-
-            \begin{exampleblock}{Elastic Mode: Handling Infeasible Starts}
-                \scriptsize
-                If an initial guess is outside the fences, Yukon activates **Elastic Weighting** (`MaximumElasticWeight = 10000`). It attaches imaginary rubber bands (slack variables) to pull the spacecraft into a feasible zone first, before minimizing fuel!
-            \end{exampleblock}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% ==============================================================================
-% SLIDE 5F: NASA GMAT OPTIMIZATION SUITE (ENGINES & SOLVERS) — ZERO OVERFLOW
-% ==============================================================================
-\begin{frame}{The NASA GMAT Optimization Suite: Solvers and Capabilities}
-    \begin{columns}[T]
-        \begin{column}{0.50\textwidth}
-            \begin{block}{GMAT Optimizer Engines}
-                \scriptsize
-                Unlike simple targeters that only zero out equal-dimension residuals, GMAT supports four distinct optimization engines:
-                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
-                    \item \textbf{Yukon (Native SQP):} \\
-                    Developed in-house at NASA Goddard. A C++ Sequential Quadratic Programming optimizer using Self-Scaled BFGS Hessian updates. Requires no external license.
-                    \item \textbf{VF13ad (Harwell Subroutine Library):} \\
-                    A classic, highly stable Fortran SQP algorithm available as a GMAT plugin. Ideal for small-to-medium non-linear problems.
-                    \item \textbf{SNOPT (Sparse Nonlinear OPTimizer):} \\
-                    Large-scale SQP optimizer (Gill, Murray, Saunders). Exploits sparsity in collocation Jacobians; industry standard for low-thrust spirals.
-                    \item \textbf{MATLAB Interface (\texttt{fmincon}):} \\
-                    Allows GMAT to pass state derivatives and constraints directly to MATLAB's Interior-Point / Active-Set solvers.
-                \end{itemize}
-            \end{block}
-        \end{column}
-
-        \begin{column}{0.48\textwidth}
-            \begin{block}{GMAT Solvers Architectural Comparison}
-                \centering
-                \vspace{1pt}
-                \fontsize{5.1pt}{6.2pt}\selectfont
-                \setlength{\tabcolsep}{2.5pt}
-                \renewcommand{\arraystretch}{1.18}
-                \begin{tabular}{@{}llll@{}}
-                    \toprule
-                    \textbf{Solver Engine} & \textbf{Algorithm Type} & \textbf{Sparsity} & \textbf{Dependency} \\
-                    \midrule
-                    \textbf{Targeter (DC)}    & Newton-Raphson   & None ($n = m$) & Native \\
-                    \textbf{Yukon}            & Dense SQP (BFGS) & Medium         & Native \\
-                    \textbf{VF13ad}           & Dense SQP        & Low            & Plugin \\
-                    \textbf{SNOPT}            & Sparse SQP       & Very High      & Plugin \\
-                    \textbf{\texttt{fmincon}} & Interior-Point   & High           & MATLAB \\
-                    \bottomrule
-                \end{tabular}
-                \vspace{1pt}
-            \end{block}
-
             \vspace{-0.15cm}
-
-            \begin{alertblock}{Why Differential Correctors Fail in Low Thrust}
+            \begin{alertblock}{Why Differential Correctors Diverge Here}
                 \scriptsize
-                Standard targeters require the number of control knobs ($n$) to strictly equal the number of goals ($m$). Low-thrust trajectories are under-determined ($n \gg m$), creating singular Jacobians unless guided by a cost-minimizing objective.
+                Low-thrust problems are heavily under-determined ($n \gg m$). A Differential Corrector encounters singular Jacobians or stalls on wasteful non-tangential thrust, whereas Yukon exploits nullspace degrees of freedom to drive fuel waste to zero.
             \end{alertblock}
         \end{column}
     \end{columns}
 \end{frame}
 
 % ==============================================================================
-% SLIDE 5G: GMAT SCRIPTING: THE OPTIMIZE COMMAND ARCHITECTURE
+% SLIDE 5G: NASA GMAT SCRIPT IMPLEMENTATION FOR EP
 % ==============================================================================
-\begin{frame}[fragile]{Anatomy of GMAT Optimization Syntax: The 4 Structural Pillars}
+\begin{frame}[fragile]{NASA GMAT Implementation: Electric Propulsion with Yukon}
     \begin{columns}[T]
         \begin{column}{0.49\textwidth}
-            \begin{block}{Structural Pillars of the \texttt{Optimize} Loop}
+            \begin{block}{Hardware Preamble \& Setup}
                 \scriptsize
-                \begin{enumerate}\setlength{\itemsep}{2pt}\setlength{\topsep}{0pt}
-                    \item \textbf{\texttt{Vary} (Independent Decision Knobs):} \\
-                    Assigns bounded search parameters: burn durations, throttle settings, and thrust pointing vector components[cite: 24].
-                    \par\vspace{1pt}
-                    {\tiny \texttt{Vary YukonOpt(Duration, \{Lower=100, Upper=50000\})}}[cite: 24]
-                    \item \textbf{Dynamic Propagation:} \\
-                    Executes the 7D finite burn arc via \texttt{BeginFiniteBurn} $\to$ \texttt{Propagate} $\to$ \texttt{EndFiniteBurn}[cite: 24].
-                    \item \textbf{\texttt{NonlinearConstraint} (The Fence):} \\
-                    Replaces the targeter's \texttt{Achieve}[cite: 24, 26]. Enforces orbital boundaries ($a = a_{\text{tgt}}$, $e \le e_{\max}$, $i = i_{\text{tgt}}$)[cite: 24].
-                    \item \textbf{\texttt{Minimize} (The Objective Cost):} \\
-                    Defines the scalar performance index to minimize, such as total propellant expended ($\Delta m$) or transfer time[cite: 24].
-                \end{enumerate}
+                Configuring continuous electric thrust requires linking an \texttt{ElectricTank} to an \texttt{ElectricThruster} with \texttt{DecrementMass = true}:
             \end{block}
-        \end{column}
-
-        \begin{column}{0.49\textwidth}
 \begin{lstlisting}[style=gmatstyle]
-% =======================================================
-% GMAT Low-Thrust Optimization Sequence (Yukon SQP)
-% =======================================================
+Create ElectricTank XenonTank;
+XenonTank.FuelMass = 50.0; % Initial Xenon [kg]
+
+Create ElectricThruster HallThruster;
+HallThruster.CoordinateSystem = Local;
+HallThruster.Origin = Earth;
+HallThruster.Axes = VNB;
+HallThruster.ThrustModel = ConstantThrustAndIsp;
+HallThruster.ThrustCoeff1 = 0.250; % 250 mN (0.25 N)
+HallThruster.Isp = 2000.0;         % 2000 s
+HallThruster.DecrementMass = true; % 7D mass flow
+HallThruster.Tank = {XenonTank};
+
+Create FiniteBurn LowThrustBurn;
+LowThrustBurn.Thrusters = {HallThruster};
+
 Create Yukon YukonOpt;
-YukonOpt.MaximumIterations    = 150;
+YukonOpt.HessianUpdateMethod = SelfScaledBFGS;
 YukonOpt.FeasibilityTolerance = 1e-4;
 YukonOpt.OptimalityTolerance  = 1e-4;
-YukonOpt.HessianUpdateMethod  = SelfScaledBFGS;
 
+Create Variable BurnDuration FuelSpent;
+\end{lstlisting}
+        \end{column}
+
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Mission Sequence Optimization Loop}
+                \scriptsize
+                Yukon varies burn duration and out-of-plane steering, executes the finite burn, and enforces the semi-major axis target:
+            \end{block}
+\begin{lstlisting}[style=gmatstyle]
 BeginMissionSequence;
 
-Optimize YukonOpt {SolveMode = Solve};
+Optimize YukonOpt {SolveMode = Solve, ExitMode = SaveAndContinue};
 
-    % 1. VARY: Burn duration and Out-of-Plane Yaw
+    % 1. VARY: Burn duration and Out-of-Plane Steering
     Vary YukonOpt(BurnDuration = 12000, ...
          {Perturbation = 1.0, Lower = 1000, Upper = 40000});
-    Vary YukonOpt(Engine.ThrustDirection2 = 0.0, ...
+    Vary YukonOpt(HallThruster.ThrustDirection2 = 0.50, ...
          {Perturbation = 1e-4, Lower = -1.0, Upper = 1.0});
 
-    % 2. PROPAGATE: 7D Numerical Finite Burn Arc
-    BeginFiniteBurn IonManeuver(Sat);
+    % 2. EXECUTE: 7D Numerical Finite Burn Arc
+    BeginFiniteBurn LowThrustBurn(Sat);
     Propagate RK78Prop(Sat) {Sat.ElapsedSecs = BurnDuration};
-    EndFiniteBurn IonManeuver(Sat);
+    EndFiniteBurn LowThrustBurn(Sat);
 
-    % 3. NONLINEAR CONSTRAINT: Orbital Boundary Fence
+    % 3. CONSTRAINT: Enforce target Semi-Major Axis
     NonlinearConstraint YukonOpt(Sat.Earth.SMA = 7000.0);
 
-    % 4. MINIMIZE: Expended Propellant Mass
-    FuelBurned = InitialFuel - Sat.XenonTank.FuelMass;
-    Minimize YukonOpt(FuelBurned);
+    % 4. MINIMIZE: Fuel mass expended
+    FuelSpent = 50.0 - Sat.XenonTank.FuelMass;
+    Minimize YukonOpt(FuelSpent);
 
 EndOptimize;
 \end{lstlisting}
@@ -831,129 +693,46 @@ EndOptimize;
 \end{frame}
 
 % ==============================================================================
-% SLIDE 5G.1: THE MATHEMATICAL SANDBOX: EX_YUKON_ALGEBRAICOPTIMIZATION
+% SLIDE 5H: FORENSIC BENCHMARK ON EP
 % ==============================================================================
-\begin{frame}{The Mathematical Sandbox: \texttt{Ex\_Yukon\_AlgebraicOptimization}}
+\begin{frame}{Forensic Benchmark: Targeter (DC) vs. Yukon Optimizer on EP}
     \begin{columns}[T]
-        \begin{column}{0.50\textwidth}
-            \begin{block}{Problem Formulation and KKT Conditions}
-                \scriptsize
-                GMAT's official benchmark solves a purely algebraic problem without orbital propagators:
-                \par\vspace{1pt}
-                {\centering $\displaystyle \min_{X_1, X_2} J = (X_1 - 2)^2 + (X_2 - 2)^2 \quad \text{s.t.} \quad G = X_1 + X_2 \le 8$\par}
+        \begin{column}{0.55\textwidth}
+            \begin{block}{Benchmark: Orbit Raising ($r_0 = 6778\text{ km} \to r_f = 7000\text{ km}$, $T = 0.25\text{ N}$)}
+                \centering
+                \vspace{1pt}
+                \fontsize{5.2pt}{6.3pt}\selectfont
+                \setlength{\tabcolsep}{2.2pt}
+                \renewcommand{\arraystretch}{1.2}
+                \begin{tabular}{lcccc}
+                    \toprule
+                    \textbf{Telemetry Parameter} & \textbf{Initial Seed} & \textbf{Targeter (DC)} & \textbf{Yukon (SQP)} & \textbf{Optimal Physics} \\ \midrule
+                    \textbf{In-Plane Steer ($u_V$)}  & $1.0000$ & $1.0000$ & $\mathbf{1.0000}$ & Pure tangential $\hat{\mathbf{V}}$ \\
+                    \textbf{Normal Steer ($u_N$)}    & $0.5000$ & $0.4981$ & $\mathbf{0.0000}$ & Out-of-plane eliminated \\
+                    \textbf{Burn Duration ($\Delta t$)} & $12{,}000\text{ s}$ & $13{,}685\text{ s}$ & $\mathbf{12{,}241\text{ s}}$ & Minimum burn time \\
+                    \textbf{Xenon Burned ($\Delta m$)} & $0.153\text{ kg}$ & $0.174\text{ kg}$ & $\mathbf{0.156\text{ kg}}$ & $\mathbf{-10.3\%\text{ fuel saved}}$ \\
+                    \textbf{Final Semi-Major Axis}   & $6972.4\text{ km}$ & $7000.0\text{ km}$ & $\mathbf{7000.0\text{ km}}$ & Feasibility met ($< 1\text{ m}$) \\
+                    \bottomrule
+                \end{tabular}
                 \vspace{2pt}
-                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
-                    \item \textbf{Objective ($J$):} A 3D paraboloid (bowl) centered at $(2, 2)$.
-                    \item \textbf{Initial Seed:} $\mathbf{X}_0 = (0, 0)$ with initial cost $J(0, 0) = 8.0$.
-                    \item \textbf{Unconstrained Minimum:} $\mathbf{X}^* = (2.0, 2.0)$ with $J^* = 0.0$.
-                    \item \textbf{Constraint Status:} At $\mathbf{X}^*$, $G = 2 + 2 = 4 \le 8$. The constraint is \textbf{strictly inactive} ($\mu = 0$).
-                \end{itemize}
             \end{block}
             \vspace{-0.15cm}
-            \begin{alertblock}{The ``Frictionless Sandbox'' Principle}
+            \begin{alertblock}{Forensic Analysis of Solver Behavior}
                 \scriptsize
-                Isolates the SQP algorithm from orbital physics. If a trajectory optimization fails in flight dynamics, test the optimizer parameters here first to verify gradient behavior and tolerance thresholds.
+                \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Targeter Pathology:} Because an initial out-of-plane guess ($u_N = 0.50$) still raises altitude, the Targeter satisfies $a = 7000\text{ km}$ by simply burning $1{,}444\text{ seconds}$ longer, wasting Xenon!
+                    \item \textbf{Yukon Performance:} Senses that non-zero $u_N$ reduces tangential acceleration, driving $u_N \to 0.0000$ and identifying the global minimum fuel solution.
+                \end{itemize}
             \end{alertblock}
         \end{column}
 
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Optimization Geometry in Control Space}
-                \centering
-                \vspace{0.02cm}
-                \begin{tikzpicture}[scale=0.78, >=Stealth]
-                    % Dark Slate Container Card
-                    \draw[fill=DarkSlate, rounded corners=5pt, draw=Charcoal!60] (-0.6, -0.6) rectangle (4.2, 3.6);
-
-                    % Coordinate Axes
-                    \draw[thick, ->, color=gray!60] (-0.3, 0) -- (3.8, 0) node[right, font=\tiny]{$X_1$};
-                    \draw[thick, ->, color=gray!60] (0, -0.3) -- (0, 3.3) node[above, font=\tiny]{$X_2$};
-
-                    % Infeasible Region Shading above G = 8 line
-                    \fill[AlertRed!15] (0.8, 3.1) -- (3.3, 0.6) -- (3.3, 3.1) -- cycle;
-
-                    % Constraint Boundary Line G = X1 + X2 = 8
-                    \draw[thick, dashed, color=AlertRed] (0.5, 3.4) -- (3.4, 0.5);
-                    \node[above right, font=\tiny\bfseries, color=AlertRed] at (1.8, 2.1) {$X_1 + X_2 = 8$};
-                    \node[font=\tiny, color=AlertRed!80!white] at (2.8, 2.8) {Infeasible};
-
-                    % Objective Function Contours centered at (1.2, 1.2) representing (2, 2)
-                    \draw[color=gray!40, dashed, line width=0.6pt] (1.2, 1.2) circle (1.1cm);
-                    \draw[color=gray!60, line width=0.7pt] (1.2, 1.2) circle (0.75cm);
-                    \draw[color=SpiceBlue, line width=0.8pt] (1.2, 1.2) circle (0.4cm);
-
-                    % Initial Point X0 = (0, 0)
-                    \filldraw[color=UdeAGold] (0, 0) circle (2.2pt);
-                    \node[below left, font=\tiny\bfseries, color=UdeAGold] at (0, 0) {$\mathbf{X}_0 (0,0)$};
-
-                    % Optimizer Search Path
-                    \draw[very thick, ->, color=UdeAGreen!70!white] (0, 0) -- (1.15, 1.15);
-
-                    % Optimal Solution Point X* = (2, 2)
-                    \filldraw[color=UdeAGreen!50!white] (1.2, 1.2) circle (2.2pt);
-                    \node[above right, font=\tiny\bfseries, color=white] at (1.2, 1.2) {$\mathbf{X}^* (2, 2)$};
-                    \node[below, font=\tiny, color=cyan!90!white] at (1.2, 1.0) {$J^* = 0.0$};
-
-                    % Feasible Tag
-                    \node[font=\tiny\bfseries, color=UdeAGreen!80!white] at (0.9, 0.3) {Feasible Region};
-                \end{tikzpicture}
-                \par\vspace{1pt}
-                \tiny \textcolor{Charcoal}{\textit{Yukon steps down the paraboloid uninhibited by the inactive boundary.}}
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% ==============================================================================
-% SLIDE 5G.2: DISSECTING THE SCRIPT & CLASSROOM EXPERIMENTS
-% ==============================================================================
-\begin{frame}[fragile]{Dissecting the GMAT Script: Execution and In-Class Experiments}
-    \begin{columns}[T]
-        \begin{column}{0.50\textwidth}
-\begin{lstlisting}[style=gmatstyle]
-Create Yukon Yukon1;
-Yukon1.ShowProgress          = true;
-Yukon1.MaximumIterations     = 500;
-Yukon1.UseCentralDifferences = false;    % Forward differences
-Yukon1.FeasibilityTolerance  = 0.001;    % |G| <= 8.001
-Yukon1.HessianUpdateMethod   = SelfScaledBFGS;
-Yukon1.OptimalityTolerance   = 0.0001;   % KKT gradient stop
-Yukon1.FunctionTolerance     = 0.0001;   % |J_{k+1} - J_k|
-
-Create Variable X1 X2 J G;
-BeginMissionSequence;
-
-Optimize Yukon1 {SolveMode = Solve, ExitMode = DiscardAndContinue};
-   % 1. Vary control variables (Perturbation = 1e-7)
-   Vary Yukon1(X1 = 0, {Perturbation = 1e-7, MaxStep = 1e300});
-   Vary Yukon1(X2 = 0, {Perturbation = 1e-7, MaxStep = 1e300});
-   
-   % 2. Evaluate objective function
-   J = ( X1 - 2 )^2 + ( X2 - 2 )^2;
-   Minimize Yukon1(J);
-   
-   % 3. Enforce inequality constraint
-   G = X2 + X1;
-   NonlinearConstraint Yukon1(G <= 8);
-EndOptimize;
-\end{lstlisting}
-        \end{column}
-
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Solver Mechanics Demystified}
+        \begin{column}{0.43\textwidth}
+            \begin{exampleblock}{Classroom Takeaway}
                 \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
-                    \item \textbf{\texttt{SelfScaledBFGS}:} Estimates the inverse Hessian matrix without calculating costly analytical 2nd derivatives.
-                    \item \textbf{\texttt{Perturbation = 1e-7}:} The finite-difference step $\delta$ used to build numerical gradients $\nabla J = [\frac{\partial J}{\partial X_1}, \frac{\partial J}{\partial X_2}]^T$.
-                \end{itemize}
-            \end{block}
-            \vspace{-0.15cm}
-            \begin{exampleblock}{Three Diagnostic Classroom Experiments}
-                \scriptsize
-                Have students modify this script to build intuition:
-                \begin{enumerate}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
-                    \item \textbf{Activate the Boundary:} Change to \texttt{G >= 6}. The unconstrained point $(2,2)$ is now infeasible. Yukon slides to the fence boundary at \textbf{$(3.0, 3.0)$} with $J = 2.0$.
-                    \item \textbf{Targeter vs. Optimizer:} Replace \texttt{Optimize} with \texttt{Target DC}. The Differential Corrector stops at the first root it touches, blind to cost $J$.
-                    \item \textbf{Perturbation Breakdown:} Set \texttt{Perturbation = 1e-15}. Roundoff noise corrupts the gradient, causing the solver to stall.
+                \begin{enumerate}\setlength{\itemsep}{2pt}\setlength{\topsep}{0pt}
+                    \item **Electric Propulsion** provides $10\times$ the $I_{\text{sp}}$ of chemical systems but requires continuous firings due to power constraints.
+                    \item **Differential Correctors** are fuel-blind and preserve parasitic steering components.
+                    \item **Yukon SQP** enforces boundary equality while exploring control nullspaces to minimize propellant expenditure.
                 \end{enumerate}
             \end{exampleblock}
         \end{column}
@@ -961,115 +740,8 @@ EndOptimize;
 \end{frame}
 
 % ==============================================================================
-% SLIDE 5H: PARAMETERIZED CONTROL: MULTI-SEGMENT CONTINUOUS STEERING
+% SLIDE 6: 7D STATE EXPANSION & EQUATIONS OF MOTION
 % ==============================================================================
-\begin{frame}[fragile]{Parameterized Control: Multi-Segment Finite Burns}
-    \begin{columns}[T]
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Multi-Segment Trajectory Parameterization}
-                \scriptsize
-                To represent complex continuous steering profiles without full direct collocation, GMAT missions subdivide transfers into $M$ sequential control arcs:
-                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
-                    \item \textbf{Piecewise-Constant or Linear Steering:} \\
-                    Each arc has independent pointing angles: In-plane pitch $\alpha_k$ and out-of-plane yaw $\beta_k$ in local VNB frames.
-                    \item \textbf{Duty Cycles / Coasting Intervals:} \\
-                    Optimizers interleave powered arcs ($\eta = 1$) with coast arcs ($\eta = 0$) to exploit natural gravity resonances and orbital apse-line alignment.
-                    \item \textbf{Mass Continuity Preservation:} \\
-                    Propellant mass flow $\dot{m}$ flows continuously through the shared \texttt{ElectricTank} resource across all segments.
-                \end{itemize}
-            \end{block}
-        \end{column}
-
-        \begin{column}{0.50\textwidth}
-\begin{lstlisting}[style=gmatstyle]
-% Segment 1: Perigee Pumping Arc
-Vary YukonOpt(Seg1_Pitch = 0.0, {Lower = -30, Upper = 30});
-Vary YukonOpt(Seg1_Dt = 3600.0, {Lower = 600, Upper = 7200});
-Sat.Thruster.ThrustDirection1 = cos(Seg1_Pitch*deg);
-Sat.Thruster.ThrustDirection3 = sin(Seg1_Pitch*deg);
-
-BeginFiniteBurn Arc1(Sat);
-Propagate RK78(Sat) {Sat.ElapsedSecs = Seg1_Dt};
-EndFiniteBurn Arc1(Sat);
-
-% Segment 2: Intermediate Coast Arc
-Propagate RK78(Sat) {Sat.Earth.Apoapsis};
-
-% Segment 3: Circularization & Inclination Arc
-Vary YukonOpt(Seg2_Yaw = 15.0, {Lower = -45, Upper = 45});
-Sat.Thruster.ThrustDirection1 = cos(Seg2_Yaw*deg);
-Sat.Thruster.ThrustDirection2 = sin(Seg2_Yaw*deg);
-
-BeginFiniteBurn Arc2(Sat);
-Propagate RK78(Sat) {Sat.Earth.SMA = 42164};
-EndFiniteBurn Arc2(Sat);
-\end{lstlisting}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% ==============================================================================
-% SLIDE 5I: THE BROADER INDUSTRY LANDSCAPE — ZERO OVERFLOW
-% ==============================================================================
-\begin{frame}{Beyond GMAT: The Global Aerospace Optimization Ecosystem}
-    \begin{columns}[T]
-        \begin{column}{0.49\textwidth}
-            \begin{block}{NASA Copernicus (NASA JSC)}
-                \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
-                    \item \textbf{Architecture:} Generalized trajectory design and optimization system based on high-order direct collocation (Lobatto III-C / Hermite-Simpson).
-                    \item \textbf{Engine:} Tightly integrated with \texttt{SNOPT}.
-                    \item \textbf{Application:} NASA's flagship tool for Artemis, Gateway Lunar Transfer, and deep-space Solar Electric Propulsion (SEP).
-                \end{itemize}
-            \end{block}
-
-            \vspace{-0.15cm}
-
-            \begin{exampleblock}{NASA EMTG (NASA GSFC)}
-                \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
-                    \item \textbf{Evolutionary Mission Trajectory Generator:} Automates global search of multi-planet low-thrust flybys.
-                    \item Blends Genetic Algorithms (GA) with Sims-Flanagan transcriptions and NLP boundary smoothers.
-                    \item Guided preliminary trajectory trade spaces for \textit{Psyche} and \textit{Lucy}.
-                \end{itemize}
-            \end{exampleblock}
-        \end{column}
-
-        \begin{column}{0.49\textwidth}
-            \begin{alertblock}{JPL Mystic / MALTO (NASA JPL)}
-                \scriptsize
-                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
-                    \item \textbf{Mystic:} Developed by Greg Whiffen; built upon the Static/Dynamic Control Algorithm (SDCA).
-                    \item Uses thousands of control nodes to solve multi-year continuous spiral trajectories with ion propulsion.
-                    \item \textbf{Heritage:} Designed the low-thrust flight paths for \textit{Deep Space 1} and the \textit{Dawn} mission to Vesta and Ceres.
-                \end{itemize}
-            \end{alertblock}
-
-            \vspace{-0.15cm}
-
-            \begin{block}{Trajectory Optimization Toolchain Summary}
-                \centering
-                \vspace{1pt}
-                \fontsize{5.1pt}{6.2pt}\selectfont
-                \setlength{\tabcolsep}{2.8pt}
-                \renewcommand{\arraystretch}{1.18}
-                \begin{tabular}{@{}lll@{}}
-                    \toprule
-                    \textbf{Tool} & \textbf{Primary Algorithm} & \textbf{Core Application} \\
-                    \midrule
-                    \textbf{GMAT}       & Dense SQP (Yukon, VF13ad) & Flight Dynamics Operations \\
-                    \textbf{Copernicus} & Collocation + SNOPT       & Cislunar and Deep-Space SEP \\
-                    \textbf{EMTG}       & GA + Sims-Flanagan        & Global Interplanetary Search \\
-                    \textbf{Mystic}     & SDCA / Direct Colloc.     & High-Rev Electric Spirals \\
-                    \bottomrule
-                \end{tabular}
-                \vspace{1pt}
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-% --- SLIDE 3.2: 7D STATE EXPANSION ---
 \begin{frame}{Finite Maneuvers: Dynamic Equations and 7D State Vector}
     \begin{columns}[T]
         \begin{column}{0.54\textwidth}
@@ -1105,7 +777,9 @@ EndFiniteBurn Arc2(Sat);
     \end{columns}
 \end{frame}
 
-% --- SLIDE 3.3: QUASI-CIRCULAR SPIRAL ---
+% ==============================================================================
+% SLIDE 7: QUASI-CIRCULAR SPIRAL & GRAVITY LOSSES
+% ==============================================================================
 \begin{frame}{The Quasi-Circular Spiral and Gravity Losses}
     \begin{columns}[T]
         \begin{column}{0.54\textwidth}
@@ -1149,11 +823,11 @@ EndFiniteBurn Arc2(Sat);
     \end{columns}
 \end{frame}
 
-% --- SLIDE 3.4: EDELBAUM STEERING ---
-% --- SLIDE: EDELBAUM'S OPTIMAL STEERING (ZERO OVERFLOW) ---
+% ==============================================================================
+% SLIDE 8: EDELBAUM'S OPTIMAL STEERING
+% ==============================================================================
 \begin{frame}{Non-Coplanar Transfers: Edelbaum's Optimal Steering}
     \begin{columns}[T]
-        % --- Left Column: Mechanics & Continuous Penalty ---
         \begin{column}{0.53\textwidth}
             \begin{block}{Simultaneous Altitude Raise and Inclination Change}
                 \scriptsize
@@ -1179,7 +853,6 @@ EndFiniteBurn Arc2(Sat);
             \end{block}
         \end{column}
 
-        % --- Right Column: Yaw Synergy & Vector Geometry ---
         \begin{column}{0.45\textwidth}
             \begin{alertblock}{The Synergy of Yaw Steering}
                 \scriptsize
@@ -1194,13 +867,9 @@ EndFiniteBurn Arc2(Sat);
             \vspace{-0.05cm}
             \centering
             \begin{tikzpicture}[scale=0.82, >=stealth]
-                % Base v1
                 \draw[thick, ->, color=DarkSlate] (0,0) -- (3.2,0) node[midway, below=2pt, font=\scriptsize] {$v_1$};
-                % Vector v2
                 \draw[thick, ->, color=DarkSlate] (0,0) -- (2.2, 1.65) node[midway, above left=1pt, font=\scriptsize] {$v_2$};
-                % Delta V Vector
                 \draw[very thick, ->, color=AlertRed] (3.2,0) -- (2.2, 1.65) node[midway, right=3pt, font=\scriptsize\bfseries] {$\Delta V$};
-                % Angle Arc
                 \draw[dashed, color=UdeAGold, thick] (0.8,0) arc (0:37:0.8);
                 \node[font=\tiny, color=Charcoal] at (1.15,0.24) {$\frac{\pi}{2}\Delta i$};
             \end{tikzpicture}
@@ -1210,6 +879,9 @@ EndFiniteBurn Arc2(Sat);
     \end{columns}
 \end{frame}
 
+% ==============================================================================
+% SLIDE 9: CONCEPT INFOGRAPHIC
+% ==============================================================================
 \begin{frame}{Low-Thrust Concepts and Definitions}
     \begin{figure}
         \centering
@@ -1217,7 +889,9 @@ EndFiniteBurn Arc2(Sat);
     \end{figure}
 \end{frame}
 
-% --- SLIDE 3.5: PYTHON IMPLEMENTATION ---
+% ==============================================================================
+% SLIDE 10: PYTHON 7D DERIVATIVE ENGINE
+% ==============================================================================
 \begin{frame}[fragile]{Numerical Trajectory Propagation: Python Derivative Engine}
     \begin{columns}[T]
         \begin{column}{0.49\textwidth}
@@ -1225,11 +899,11 @@ EndFiniteBurn Arc2(Sat);
                 \scriptsize
                 \begin{enumerate}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{1pt}
                     \item Unpack $\mathbf{Y} \in \mathbb{R}^7$: position $\mathbf{r}$, velocity $\mathbf{v}$, and mass $m$.
-                    \item Compute central gravity acceleration: $\mathbf{a}_{\text{grav}} = -\frac{\mu}{\|\mathbf{r}\|^3}\mathbf{r}$.
-                    \item Form unit tangent vector $\hat{\mathbf{u}}_v = \mathbf{v}/\|\mathbf{v}\|$.
-                    \item Compute thrust acceleration: $\mathbf{a}_{\text{thrust}} = \frac{T}{m} \hat{\mathbf{u}}_v$.
-                    \item Mass depletion: $\dot{m} = -T / (I_{\text{sp}} g_0)$.
-                    \item Concatenate derivative vector: $d\mathbf{Y}/dt = [\mathbf{v},\, \mathbf{a}_{\text{total}},\, \dot{m}]^T$.
+                    \item Central body gravity acceleration: $\mathbf{a}_{\text{grav}} = -\frac{\mu}{\|\mathbf{r}\|^3}\mathbf{r}$.
+                    \item Tangential unit vector: $\hat{\mathbf{u}}_v = \mathbf{v}/\|\mathbf{v}\|$.
+                    \item Thrust acceleration: $\mathbf{a}_{\text{thrust}} = \frac{T}{m} \hat{\mathbf{u}}_v$.
+                    \item Mass depletion rate: $\dot{m} = -T / (I_{\text{sp}} g_0)$.
+                    \item Derivative vector: $d\mathbf{Y}/dt = [\mathbf{v},\, \mathbf{a}_{\text{total}},\, \dot{m}]^T$.
                 \end{enumerate}
             \end{block}
             \vspace{-0.1cm}
@@ -1266,18 +940,19 @@ def low_thrust_ode(t, state, mu, thrust, isp, g0):
     # 5. Return 7D Derivative Array
     return np.concatenate((v_vec, a_total, [mdot]))
 
-# Execution: solve_ivp(low_thrust_ode, [0, t_final], y0, 
-#                      args=(mu, T, Isp, g0), rtol=1e-10)
+# solve_ivp(low_thrust_ode, [0, t_final], y0, args=(mu, T, Isp, g0))
 \end{lstlisting}
         \end{column}
     \end{columns}
 \end{frame}
 
-% --- SLIDE 3.6: GMAT SCRIPTING ---
+% ==============================================================================
+% SLIDE 11: GMAT HARDWARE & FINITE BURN MODELING
+% ==============================================================================
 \begin{frame}[fragile]{Finite Burn Modeling in NASA GMAT}
     \begin{columns}[T]
         \begin{column}{0.49\textwidth}
-            \begin{block}{Physical Hardware vs. Impulsive Deltas}
+            \begin{block}{Physical Hardware vs. Impulsive Burns}
                 \scriptsize
                 \begin{itemize}\setlength{\itemsep}{2pt}\setlength{\topsep}{1pt}
                     \item Finite maneuvers require abandoning instantaneous \texttt{ImpulsiveBurn} objects to configure real spacecraft subsystems.
@@ -1290,16 +965,14 @@ def low_thrust_ode(t, state, mu, thrust, isp, g0):
                 \scriptsize
                 \begin{itemize}\setlength{\itemsep}{1.5pt}
                     \item Standard Differential Correctors (DC) often diverge or exceed iteration limits over multi-revolution transfers.
-                    \item Mission design uses \textbf{Nonlinear Optimizers} (e.g., VF13ad, SNOPT) to minimize burn duration under orbital boundary constraints.
+                    \item Mission design uses \textbf{Nonlinear Optimizers} (e.g., Yukon, VF13ad, SNOPT) to minimize burn duration under orbital boundary constraints.
                 \end{itemize}
             \end{alertblock}
         \end{column}
 
         \begin{column}{0.49\textwidth}
 \begin{lstlisting}[style=gmatstyle]
-% ==========================================
 % 1. Spacecraft Hardware Configuration
-% ==========================================
 Create ElectricThruster IonEngine;
 IonEngine.CoordinateSystem = Local;
 IonEngine.Origin           = Earth;
@@ -1314,9 +987,7 @@ XenonTank.FuelMass         = 50.0;  % Propellant Mass (kg)
 SC.Thrusters               = {IonEngine};
 SC.Tanks                   = {XenonTank};
 
-% ==========================================
-% 2. Mission Sequence: Finite Maneuver Loop
-% ==========================================
+% 2. Mission Sequence Finite Burn Loop
 BeginMissionSequence;
 
 % Activate continuous low-thrust arc
@@ -1332,7 +1003,9 @@ EndFiniteBurn IonEngine(SC);
     \end{columns}
 \end{frame}
 
-% --- SLIDE 3.7: LAB VALIDATION BENCHMARK ---
+% ==============================================================================
+% SLIDE 12: VALIDATION BENCHMARK (12U CUBESAT)
+% ==============================================================================
 \begin{frame}{Validation Benchmark: Active Debris Removal (12U CubeSat)}
     \begin{columns}[T]
         \begin{column}{0.54\textwidth}

@@ -44,6 +44,13 @@ jobs:
           compiler: latexmk
           args: -pdf -file-line-error -interaction=nonstopmode
 
+      - name: Compile Section 4 Presentation
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: Astrodynamics_Content_4.tex
+          compiler: latexmk
+          args: -pdf -file-line-error -interaction=nonstopmode
+
       - name: RAAN Change Explanation
         uses: xu-cheng/latex-action@v3
         with:
@@ -57,8 +64,8 @@ jobs:
           mv Astrodynamics_Content_1.pdf public/Astrodynamics_Section_1.pdf
           mv Astrodynamics_Content_2.pdf public/Astrodynamics_Section_2.pdf
           mv Astrodynamics_Content_3.pdf public/Astrodynamics_Section_3.pdf
-          mv RAAN_Change_Explanation.pdf public/RAAN_Change_Explanation.pdf
           mv Astrodynamics_Content_4.pdf public/Astrodynamics_Section_4.pdf
+          mv RAAN_Change_Explanation.pdf public/RAAN_Change_Explanation.pdf
           cp *.{html,png} public/ 2>/dev/null || true
 
       - name: Setup Pages Configuration

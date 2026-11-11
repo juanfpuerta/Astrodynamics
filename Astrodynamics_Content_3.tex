@@ -100,7 +100,7 @@
 \title[Astrodynamics Module 3]{\textbf{Module 3: Low-Thrust Spacecraft Maneuvers}}
 \subtitle{Continuous Flight Dynamics, Electric Propulsion, and Trajectory Optimization}
 \author{\textbf{Juan Francisco Puerta Ibarra}}
-\institute{Department of Aerospace Engineering --- Faculty of Engineering \\ Universidad de Antioquia (UdeA)}
+\institute{Aerospace Engineering}
 \date{Semester 2026-2}
 \titlegraphic{%
     \IfFileExists{Images/UdeA+simplificado+Negro_Smaller.png}{%
@@ -475,7 +475,7 @@
 % ==============================================================================
 % SLIDE 5D: ELECTRIC PROPULSION PHYSICS
 % ==============================================================================
-\begin{frame}{Electric Propulsion Physics: Energy Decoupling \& The Power Law}
+\begin{frame}{Electric Propulsion Physics: Energy Decoupling and The Power Law}
     \begin{columns}[T]
         \begin{column}{0.50\textwidth}
             \begin{block}{Decoupling Energy from Propellant Mass}
@@ -628,7 +628,7 @@
 \begin{frame}[fragile]{NASA GMAT Implementation: Electric Propulsion with Yukon}
     \begin{columns}[T]
         \begin{column}{0.49\textwidth}
-            \begin{block}{Hardware Preamble \& Setup}
+            \begin{block}{Hardware Preamble and Setup}
                 \scriptsize
                 Configuring continuous electric thrust requires linking an \texttt{ElectricTank} to an \texttt{ElectricThruster} with \texttt{DecrementMass = true}:
             \end{block}
@@ -735,6 +735,213 @@ EndOptimize;
                     \item **Yukon SQP** enforces boundary equality while exploring control nullspaces to minimize propellant expenditure.
                 \end{enumerate}
             \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 5I: THE TWO-REGIME STRATEGY: CONTINUOUS VS. VARIABLE/MODULATED THRUST
+% ==============================================================================
+\begin{frame}{Low-Thrust Mission Architecture: Continuous vs. Variable Regimes}
+    \begin{columns}[T]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Phase 1: Continuous Full Thrust ($\eta = 1.0$)}
+                \scriptsize
+                \textbf{Operating Zone:} Deep in the gravitational potential well ($r \ll r_{\text{target}}$).
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{1pt}
+                    \item \textbf{Objective:} Inject orbital energy $\mathcal{E}$ as fast as possible to escape high-radiation zones.
+                    \item \textbf{Kinematic Advantage:} Mechanical energy addition rate $\dot{\mathcal{E}} = \mathbf{v} \cdot \mathbf{a}_T$ is maximized when orbital speed $v$ is highest.
+                    \item Firing at 100\% throttle along velocity ($\hat{\mathbf{u}} = \mathbf{v}/v$) continuously expands semi-major axis monotonically.
+                \end{itemize}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{alertblock}{The Pathology of Pure Continuous Thrust}
+                \scriptsize
+                If 100\% thrust continues all the way to target arrival:
+                \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Energy Overshoot:} Spacecraft blows past $a_{\text{target}}$ into a super-synchronous graveyard orbit.
+                    \item \textbf{Eccentricity Locking:} Low circular speeds at high altitude freeze orbital eccentricity errors ($e > 0$).
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.49\textwidth}
+            \begin{exampleblock}{Phase 2: Variable / Modulated Settling ($\eta \to 0$)}
+                \scriptsize
+                \textbf{Operating Zone:} Target corridor approach ($r \ge r_{\text{trans}} \approx 0.85\, r_{\text{target}}$).
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{1pt}
+                    \item \textbf{Objective:} Precise boundary injection ($a \to a_{\text{tgt}}$) and circularization ($e \to 0$).
+                    \item \textbf{Governor Logic:} Throttle $\eta \in [0, 1]$ modulates dynamically or pulses through duty cycles:
+                    \par\vspace{1pt}
+                    {\centering $\displaystyle \eta(t) = \text{clip}\left(K_p \frac{a_{\text{tgt}} - a(t)}{a_{\text{tgt}}} - K_d \, e(t), \; 0, \; 1\right)$ \par}
+                    \item \textbf{Solver Role:} Optimizers like Yukon SQP tune remaining burn durations to settle onto the boundary smoothly.
+                \end{itemize}
+            \end{exampleblock}
+            \centering
+            \begin{tikzpicture}[scale=0.82]
+                \draw[thick, fill=LightBg] (0,0) rectangle (6.2,1.3);
+                \node[font=\scriptsize\bfseries, color=UdeAGreen] at (3.1, 0.95) {Two-Regime Trajectory Design};
+                \node[font=\tiny, Charcoal] at (3.1, 0.60) {Phase 1 (Open-Loop): Rapid tangential boost in deep gravity};
+                \node[font=\tiny, Charcoal] at (3.1, 0.25) {Phase 2 (Closed-Loop / SQP): Modulated capture \& settling};
+            \end{tikzpicture}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 5J: GMAT BENCHMARK: CONTINUOUS VS. VARIABLE ELECTRIC PROPULSION
+% ==============================================================================
+\begin{frame}{NASA GMAT Case Study: \texttt{Sat\_Continuous} vs. \texttt{Sat\_Variable}}
+    \begin{columns}[T]
+        \begin{column}{0.54\textwidth}
+            \begin{block}{Comparative Flight Telemetry ($r_0 = 6,778\text{ km} \to r_{\text{target}} = 10,000\text{ km}$)}
+                \centering
+                \vspace{1pt}
+                \fontsize{5.2pt}{6.3pt}\selectfont
+                \setlength{\tabcolsep}{2.5pt}
+                \renewcommand{\arraystretch}{1.2}
+                \begin{tabular}{lcccc}
+                    \toprule
+                    \textbf{Mission Parameter} & \textbf{Initial Seed} & \textbf{Sat\_Continuous} & \textbf{Sat\_Variable (Yukon)} & \textbf{Mission Impact} \\ \midrule
+                    \textbf{Phase 1 Throttle ($\eta_1$)} & $100\%$ ($1.0\text{ N}$) & $100\%$ ($1.0\text{ N}$) & $100\%$ ($1.0\text{ N}$) & Rapid initial climb \\
+                    \textbf{Phase 2 Throttle ($\eta_2$)} & Unused & $100\%$ (Fixed) & $\mathbf{30\%}$ ($0.3\text{ N}$, throttled) & Damped energy addition \\
+                    \textbf{Target Semi-Major Axis}     & $10{,}000.0\text{ km}$ & $10{,}000.0\text{ km}$ & $10{,}000.0\text{ km}$ & Operational requirement \\
+                    \textbf{Achieved Final SMA}         & $6{,}778.1\text{ km}$ & $\mathbf{11{,}248.3\text{ km}}$ & $\mathbf{10{,}000.0\text{ km}}$ & \textbf{Overshoot eliminated!} \\
+                    \textbf{Final Eccentricity ($e$)}   & $0.0001$ & $\mathbf{0.0418}$ & $\mathbf{0.0003}$ & \textbf{Circular orbit preserved} \\
+                    \textbf{Propellant Expended}        & $0.0\text{ kg}$ & $2.447\text{ kg}$ & $\mathbf{1.892\text{ kg}}$ & $\mathbf{-22.7\%\text{ fuel saved}}$ \\
+                    \bottomrule
+                \end{tabular}
+                \vspace{2pt}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{alertblock}{The Engineering Takeaway}
+                \scriptsize
+                Without active throttle modulation or optimizer-governed cutoffs, continuous electric propulsion results in severe orbit overshoot. Modulating thrust near the boundary eliminates fuel waste and settles the orbit with $e \approx 0$.
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.44\textwidth}
+            \begin{exampleblock}{GMAT Mission Sequence Architecture}
+                \scriptsize
+                \begin{enumerate}\setlength{\itemsep}{2pt}\setlength{\topsep}{0pt}
+                    \item \textbf{\texttt{Sat\_Continuous}:} Single unbroken \texttt{BeginFiniteBurn} $\to$ \texttt{Propagate} ($48\text{ ks}$) $\to$ \texttt{EndFiniteBurn}.
+                    \item \textbf{\texttt{Sat\_Variable} (Phase 1):} Full thrust until \texttt{Sat.Earth.SMA = 9800.0 km}.
+                    \item \textbf{State Buffering:} \texttt{Sat\_Var\_Patch = Sat\_Variable} saves boundary conditions for solver resets.
+                    \item \textbf{\texttt{Sat\_Variable} (Phase 2):} \texttt{Optimize YukonOpt} varies \texttt{BurnDuration\_P2} at $30\%$ throttle to meet \texttt{SMA = 10000.0 km}.
+                \end{enumerate}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 5K: OPERATIONAL CONSTRAINTS: POWER, RADIATION, & ECLIPSES
+% ==============================================================================
+\begin{frame}{Flight Operations: Environmental Constraints on Low-Thrust}
+    \begin{columns}[T]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{1. Solar Array Power \& Eclipse Thrust Cutoffs}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Solar Distance Falloff:} Available electric power scales inversely with distance from the Sun:
+                    \par\vspace{1pt}
+                    {\centering $\displaystyle P_{\text{array}}(R_\odot) = P_0 \left(\frac{1\text{ AU}}{R_\odot}\right)^2 \implies T(R_\odot) \propto \frac{1}{R_\odot^2}$ \par}
+                    \item \textbf{Earth Umbra / Penumbra Eclipses:} In LEO, spacecraft spend $\sim 35\text{ minutes}$ of every $90\text{ minute}$ orbit in darkness.
+                    \item \textbf{Operational Impact:} Batteries cannot support high thruster power draw ($> 2\text{ kW}$); thrusters must shut down during eclipse ($\eta = 0$), enforcing pulsed duty cycles.
+                \end{itemize}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{alertblock}{Why GMAT Mandates a \texttt{PowerSystem}}
+                \scriptsize
+                Electric thrusters cannot operate in GMAT without a linked \texttt{SolarPowerSystem}. Setting \texttt{ShadowModel = None} assumes idealized power; \texttt{DualCone} models true solar eclipse cutoffs.
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.49\textwidth}
+            \begin{exampleblock}{2. Van Allen Radiation Belt Degradation}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
+                    \item Chemical transfers cross the radiation belts in hours (impulsive Hohmann). Low-thrust spirals take **months**.
+                    \item \textbf{Trapped Protons \& Electrons:} Cause non-ionizing displacement damage in solar photovoltaic crystal lattices.
+                    \item \textbf{Power Decay Law:}
+                    \par\vspace{1pt}
+                    {\centering $\displaystyle P_{\text{avail}}(t) = P_0 \left(1 - C_{\text{rad}} \cdot \Phi_{\text{fluence}}(t)\right)$ \par}
+                    \item As solar arrays degrade, thrusters must continuously throttle down, decreasing available acceleration ($a_T(t)$).
+                \end{itemize}
+            \end{exampleblock}
+            \vspace{-0.15cm}
+            \begin{block}{3. Attitude \& Slew-Rate Coupling}
+                \scriptsize
+                Continuous low-thrust requires conflicting orientations: pointing solar panels at the Sun ($\hat{\mathbf{S}}$) while pointing the thruster along velocity ($\hat{\mathbf{V}}$).
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 5L: INTERPLANETARY LOW-THRUST: THE MATCH-POINT MULTIPLE SHOOTING TOPOLOGY
+% ==============================================================================
+\begin{frame}{Deep-Space Optimization: Match-Point Multiple Shooting}
+    \begin{columns}[T]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Why Single-Shooting Targeters Fail in Deep Space}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Hyper-Sensitivity:} Over a 300-day heliocentric transfer, a $1\text{ mm/s}$ velocity error at Earth departure expands into a miss distance $> 10^6\text{ km}$ at Mars or Jupiter.
+                    \item Differential correctors encounter highly ill-conditioned Jacobians, causing step sizes to explode and divergence.
+                \end{itemize}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{exampleblock}{The Heliocentric Match-Point Topology}
+                \scriptsize
+                Divide the trajectory into two simultaneous half-arcs meeting at a shared temporal midpoint $t_{\text{patch}} = t_{\text{dep}} + \frac{1}{2}\text{TOF}$:
+                \begin{enumerate}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Forward Arc (\texttt{satForward}):} Propagates forward in time ($+t$) from departure planet.
+                    \item \textbf{Backward Arc (\texttt{satBackward}):} Propagates backward in time ($-t$, \texttt{BackProp}) from arrival planet.
+                    \item \textbf{Continuity Matching:} Yukon SQP matches 6 Cartesian states $[\mathbf{r}, \mathbf{v}]$ at $t_{\text{patch}}$ in inertial space.
+                \end{enumerate}
+            \end{exampleblock}
+        \end{column}
+
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Multiple-Shooting Patch Geometry}
+                \centering
+                \vspace{0.05cm}
+                \begin{tikzpicture}[scale=0.82, >=Stealth]
+                    \draw[fill=DarkSlate, rounded corners=6pt, draw=Charcoal!60] (-3.1, -1.9) rectangle (3.1, 1.9);
+
+                    % Sun Center
+                    \filldraw[color=UdeAGold] (0, -1.2) circle (3.0pt);
+                    \node[below, font=\tiny\bfseries, color=UdeAGold] at (0, -1.25) {Sun};
+
+                    % Earth Departure Point
+                    \filldraw[color=SpiceBlue] (-2.4, -0.4) circle (2.2pt);
+                    \node[below left, font=\tiny\bfseries, color=SpiceBlue] at (-2.3, -0.4) {Earth Dep. ($+t$)};
+
+                    % Mars / Target Arrival Point
+                    \filldraw[color=AlertRed] (2.4, 0.8) circle (2.2pt);
+                    \node[above right, font=\tiny\bfseries, color=AlertRed] at (2.2, 0.8) {Target Arr. ($-t$)};
+
+                    % Forward Arc
+                    \draw[thick, ->, color=SpiceBlue!85!white] (-2.4, -0.4) to[out=40, in=190] (-0.2, 0.45);
+                    \node[above left, font=\fontsize{5pt}{6pt}\selectfont, color=SpiceBlue!85!white] at (-1.1, 0.25) {Forward Prop};
+
+                    % Backward Arc
+                    \draw[thick, ->, color=AlertRed!85!white] (2.4, 0.8) to[out=190, in=10] (0.2, 0.45);
+                    \node[above right, font=\fontsize{5pt}{6pt}\selectfont, color=AlertRed!85!white] at (0.9, 0.8) {BackProp};
+
+                    % Continuity Match Point Box
+                    \draw[thick, dashed, color=UdeAGreen] (-0.4, 0.15) rectangle (0.4, 0.75);
+                    \node[above, font=\tiny\bfseries, color=UdeAGreen!80!white] at (0, 0.85) {Patch Epoch $t_{\text{patch}}$};
+                    \node[font=\fontsize{4.8pt}{5.8pt}\selectfont, color=white] at (0, 0.45) {$\Delta\mathbf{r}=\mathbf{0}, \Delta\mathbf{v}=\mathbf{0}$};
+                    \node[font=\fontsize{4.8pt}{5.8pt}\selectfont, color=cyan!80!white] at (0, 0.25) {6 Continuity Constraints};
+                \end{tikzpicture}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{alertblock}{Yukon SQP Interplanetary Degrees of Freedom}
+                \scriptsize
+                Decision vector has dimension $m = 7$ (arrival epoch $+ 6$ asymptotic velocity components). The 6 constraints leave **1 degree of freedom**, which Yukon uses to minimize total mission $\Delta V$.
+            \end{alertblock}
         \end{column}
     \end{columns}
 \end{frame}

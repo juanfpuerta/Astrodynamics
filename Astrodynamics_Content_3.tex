@@ -835,6 +835,72 @@ EndOptimize;
 \end{frame}
 
 % ==============================================================================
+% SLIDE 5J.1: GMAT ARCHITECTURE: WHY OPTIMIZERS NEED BUFFER SPACECRAFT
+% ==============================================================================
+\begin{frame}{GMAT Solver Architecture: Why Optimizers Need Buffer Spacecraft}
+    \begin{columns}[T]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{1. Destructive Stateful Integration in GMAT}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\topsep}{0pt}
+                    \item \texttt{Propagate} permanently modifies spacecraft states in RAM ($[\mathbf{r}, \mathbf{v}, m]^T$ and epoch are overwritten in place).
+                    \item Unlike a pure mathematical function $f(x)$, numerical trajectory propagation carries stateful "memory".
+                \end{itemize}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{alertblock}{2. The Iteration Compounding Trap}
+                \scriptsize
+                Inside \texttt{Optimize YukonOpt}, the solver evaluates finite-difference gradients:
+                \par\vspace{1pt}
+                {\centering $\displaystyle \frac{\partial \text{SMA}}{\partial \Delta t} \approx \frac{\text{SMA}(\Delta t + \delta) - \text{SMA}(\Delta t)}{\delta}$ \par}
+                \vspace{1pt}
+                \begin{itemize}\setlength{\itemsep}{1pt}\setlength{\topsep}{0pt}
+                    \item Without a reset, trial $k+1$ integrates from the \textbf{end} of trial $k$.
+                    \item Burn durations compound ($9,800 \to 10,000 \to 10,200\text{ km}\dots$), inflating states to infinity and blowing up the Jacobian!
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{3. The ``Checkpoint / Save-State'' Strategy}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.2pt}\setlength{\topsep}{0pt}
+                    \item \textbf{Why not reset to LEO?} Re-integrating Phase 1 ($8.7\text{ days}$) across 50 iterations requires $\sim 10^7$ steps, freezing GMAT.
+                    \item \texttt{Sat\_Var\_Patch} captures an instantaneous snapshot at the $9,800\text{ km}$ boundary (executed once).
+                    \item Inside \texttt{Optimize}:
+                    \par\vspace{1pt}
+                    {\centering \texttt{Sat\_Variable = Sat\_Var\_Patch;} \par}
+                    \vspace{1pt}
+                    restores the exact state in $\mathbf{0.00\text{ ms}}$ before each trial!
+                \end{itemize}
+            \end{exampleblock}
+            \vspace{-0.12cm}
+            \begin{block}{The Checkpoint Loop Mechanism}
+                \centering
+                \vspace{0.02cm}
+                \begin{tikzpicture}[scale=0.74, >=Stealth]
+                    \draw[fill=DarkSlate, rounded corners=5pt, draw=Charcoal!60] (-3.1, -1.5) rectangle (3.1, 1.5);
+                    % Run Once Phase
+                    \node[font=\fontsize{4.8pt}{5.8pt}\selectfont, color=SpiceBlue!90!white, align=center] at (-1.8, 0.9) 
+                        {Phase 1: LEO $\to 9,800\text{ km}$\\[-1pt]{\tiny (Executed Once)}};
+                    \draw[thick, ->, color=SpiceBlue!90!white] (-2.8, 0.4) -- (-0.8, 0.4);
+                    % Save point
+                    \node[fill=UdeAGold, rounded corners=2pt, font=\fontsize{4.5pt}{5.5pt}\selectfont\bfseries, text=DarkSlate, inner sep=2pt] at (0.3, 0.4)
+                        {Sat\_Var\_Patch};
+                    \node[font=\fontsize{4.2pt}{5.2pt}\selectfont, color=UdeAGold] at (0.3, 0.85) {Save Checkpoint};
+                    % Loop
+                    \draw[thick, ->, color=UdeAGreen!80!white] (0.3, 0.1) -- (0.3, -0.4) -- (1.6, -0.4);
+                    \node[fill=DarkSlate!90!black, draw=UdeAGreen!70!white, rounded corners=2pt, font=\fontsize{4.5pt}{5.5pt}\selectfont, color=white, inner sep=2pt] at (1.6, -0.4)
+                        {Optimize Loop};
+                    \draw[thick, ->, color=AlertRed!80!white] (1.6, -0.7) -- (1.6, -1.1) -- (-0.5, -1.1) -- (-0.5, -0.1) -- (0.0, 0.2);
+                    \node[font=\fontsize{4.2pt}{5.0pt}\selectfont, color=AlertRed!85!white] at (0.55, -0.95) {Reset State: Sat\_Var = Sat\_Var\_Patch};
+                \end{tikzpicture}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
 % SLIDE 5K: OPERATIONAL CONSTRAINTS: POWER, RADIATION, & ECLIPSES
 % ==============================================================================
 \begin{frame}{Flight Operations: Environmental Constraints on Low-Thrust}

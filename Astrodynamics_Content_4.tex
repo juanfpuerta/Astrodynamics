@@ -76,7 +76,7 @@
 % Code Listings Configuration
 \lstdefinestyle{gmatstyle}{
     backgroundcolor=\color{LightBg},
-    basicstyle=\ttfamily\fontsize{5pt}{6pt}\selectfont\color{Charcoal},
+    basicstyle=\ttfamily\fontsize{4.9pt}{5.8pt}\selectfont\color{Charcoal},
     keywordstyle=\bfseries\color{UdeAGreen},
     commentstyle=\itshape\color{gray},
     stringstyle=\color{UdeAGold!90!black},
@@ -143,7 +143,7 @@
                     \item \textbf{Rotating Coordinates}: Transport theorem, barycentric axes.
                     \item \textbf{CR3BP Equations}: Canonical normalization ($\mu$).
                     \item \textbf{Jacobi Constant ($C$)}: First integral and conservation metric.
-                    \item \textbf{Zero-Velocity Surfaces}: Hill regions and energy gateways.
+                    \item \textbf{Zero-Velocity Surfaces}: Hill regions, DROs, and GMAT setup.
                 \end{itemize}
             \end{block}
         \end{column}
@@ -154,9 +154,9 @@
                 \begin{itemize}\setlength{\itemsep}{3pt}
                     \item \textbf{Equilibrium Points}: Collinear ($L_1, L_2, L_3$) and Triangular ($L_4, L_5$).
                     \item \textbf{Linearization}: Eigenstructure of the variational matrix.
-                    \item \textbf{Periodic Orbits}: Planar Lyapunov, vertical, and 3D Halo orbits.
-                    \item \textbf{Richardson Expansions}: 3rd-order analytical seed generation.
-                    \item \textbf{Computational Lab 3}: Non-symplectic vs. Symplectic integrators.
+                    \item \textbf{Periodic Orbits}: Lyapunov, Halo, NRHO, and mission heritage.
+                    \item \textbf{Differential Correction}: GMAT single-shooting Halo targeting.
+                    \item \textbf{Computational Lab 3}: Symplectic vs. non-symplectic integrators.
                 \end{itemize}
             \end{block}
         \end{column}
@@ -168,8 +168,8 @@
                     \item \textbf{Monodromy Matrix}: Floquet multipliers and orbital stability.
                     \item \textbf{Invariant Manifolds}: Stable ($W^s$) and unstable ($W^u$) tube structures.
                     \item \textbf{Heteroclinic Bridges}: Low-energy orbital connections.
-                    \item \textbf{Mission Architecture}: Lunar Gateway NRHO, GRAIL ballistic capture.
-                    \item \textbf{NASA GMAT}: Full ephemeris operational transition.
+                    \item \textbf{Mission Architecture}: GRAIL, ARTEMIS, and CAPSTONE profiles.
+                    \item \textbf{NASA GMAT}: Manifold step-off and full-ephemeris transition.
                 \end{itemize}
             \end{block}
         \end{column}
@@ -520,7 +520,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 10: ZERO-VELOCITY TOPOLOGY DIAGRAM (CORRECTED BOUNDARIES & LABELS)
+% SLIDE 10: ZERO-VELOCITY TOPOLOGY DIAGRAM
 % ==============================================================================
 \begin{frame}{Zero-Velocity Curves (ZVC): The Gateway Mechanism}
     \begin{columns}[t]
@@ -531,7 +531,7 @@
                     % Synodic Centerline Axis
                     \draw[->, line width=0.7pt, Charcoal!60] (-3.9,0) -- (4.4,0) node[right, font=\tiny\bfseries] {$x$};
                     
-                    % Upper Forbidden Region (Outside & Above Top Red Boundary)
+                    % Upper Forbidden Region
                     \fill[AlertRed!12] 
                         (-3.8, 1.55) .. controls (-1.1, 1.45) and (1.1, 0.85) .. (1.7, 0.35)
                         .. controls (2.2, 0.85) and (3.1, 1.15) .. (4.2, 1.55)
@@ -540,11 +540,10 @@
                         (-3.8, 1.55) .. controls (-1.1, 1.45) and (1.1, 0.85) .. (1.7, 0.35)
                         .. controls (2.2, 0.85) and (3.1, 1.15) .. (4.2, 1.55);
                         
-                    % Upper Label: Placed clearly OUTSIDE the red line in the upper forbidden region
                     \node[font=\scriptsize\bfseries, text=AlertRed, fill=white, rounded corners=1.5pt, inner sep=1.5pt] 
                         at (0, 1.95) {Forbidden Region ($2\Omega < C$)};
                     
-                    % Lower Forbidden Region (Outside & Below Bottom Red Boundary)
+                    % Lower Forbidden Region
                     \fill[AlertRed!12] 
                         (-3.8, -1.55) .. controls (-1.1, -1.45) and (1.1, -0.85) .. (1.7, -0.35)
                         .. controls (2.2, -0.85) and (3.1, -1.15) .. (4.2, -1.55)
@@ -553,11 +552,10 @@
                         (-3.8, -1.55) .. controls (-1.1, -1.45) and (1.1, -0.85) .. (1.7, -0.35)
                         .. controls (2.2, -0.85) and (3.1, -1.15) .. (4.2, -1.55);
                         
-                    % Lower Label: Placed clearly OUTSIDE the red line in the lower forbidden region
                     \node[font=\scriptsize\bfseries, text=AlertRed, fill=white, rounded corners=1.5pt, inner sep=1.5pt] 
                         at (0, -1.95) {Forbidden Region ($2\Omega < C$)};
                     
-                    % Primaries: Earth and Moon in the Allowed Corridor
+                    % Primaries
                     \coordinate (E) at (-1.4, 0);
                     \coordinate (M) at (2.7, 0);
                     \fill[SpiceBlue] (E) circle (6.5pt);
@@ -603,7 +601,110 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 11: THE FIVE LAGRANGE POINTS
+% SLIDE 11: MISSION EXAMPLES - SYNODIC FRAME & RESONANT REGIMES
+% ==============================================================================
+\begin{frame}{Mission Case Studies: Synodic Frame and Resonant Regimes}
+    \begin{columns}[t]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{\textbf{Artemis I / Orion Distant Retrograde Orbit}}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                    \item \textbf{Synodic Geometry:} Orion orbited the Moon in a retrograde sense ($R \approx 70,000\text{ km}$, period $\sim 14\text{ days}$) in the Earth-Moon rotating frame.
+                    \item \textbf{Coriolis Stabilization:} Retrograde velocity opposes Coriolis deflection, yielding multi-decade linear stability without active stationkeeping.
+                \end{itemize}
+            \end{block}
+            \vspace{-0.15cm}
+            \begin{block}{\textbf{TESS and IBEX Lunar Mean-Motion Resonances}}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{1.5pt}
+                    \item \textbf{TESS (2:1 MMR) and IBEX (3:1 MMR):} High-apogee geocentric orbits ($C > C_{L1}$) phased in the synodic frame so the Moon never aligns with apogee, preventing chaotic close encounters and Earth eclipses.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{\textbf{Synodic Flight Regimes and Mission Heritage}}
+                \scriptsize
+                \centering
+                \resizebox{\linewidth}{!}{%
+                \begin{tabular}{lccc}
+                    \toprule
+                    \textbf{Mission} & \textbf{Synodic Orbit} & \textbf{Jacobi ($C$)} & \textbf{Key Advantage} \\
+                    \midrule
+                    IBEX (2008) & 3:1 Lunar MMR & $C > C_{L1}$ & Phased lunar avoidance \\
+                    TESS (2018) & 2:1 Lunar MMR & $C > C_{L1}$ & Low-$\Delta V$ thermal stability \\
+                    Orion (2022) & Lunar DRO & $C < C_{L2}$ & Deep-well crew safety \\
+                    Gateway & $L_2$ 9:2 NRHO & $C < C_{L2}$ & Eclipse-free Earth relay \\
+                    \bottomrule
+                \end{tabular}%
+                }
+            \end{exampleblock}
+            \vspace{0.05cm}
+            \begin{alertblock}{\textbf{Space Domain Awareness (xGEO)}}
+                \scriptsize
+                In inertial ECI coordinates, DROs and MMRs appear as precessing ellipses; in the synodic frame, they close into symmetric epicycloids.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 12: NASA GMAT EXAMPLE 1 - SYNODIC FRAME & GATEWAY
+% ==============================================================================
+\begin{frame}[fragile]{NASA GMAT Lab 1: Synodic Frame and $L_1$ Gateway Transit}
+    \begin{columns}[t]
+        \begin{column}{0.46\textwidth}
+            \begin{block}{\textbf{Constructing the Synodic Frame}}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{2pt}
+                    \item \textbf{Barycentric Origin:} Define \texttt{EarthMoonBary} as the center of mass of \texttt{\{Earth, Luna\}}.
+                    \item \textbf{Rotating Axes:} Use \texttt{ObjectReferenced} with \texttt{XAxis = R} (Earth$\to$Luna) and \texttt{ZAxis = N} (orbit normal).
+                    \item \textbf{Pure CR3BP Physics:} Isolate point masses \texttt{\{Earth, Luna\}} with drag and SRP disabled.
+                \end{itemize}
+            \end{block}
+            \vspace{-0.1cm}
+            \begin{exampleblock}{\textbf{Gateway Threshold Experiment}}
+                \scriptsize
+                Initializing at $X_0 = 315,208\text{ km}$ ($0.82\,L^*$) with $V_{Y0} = -0.2254\text{ km/s}$ sets $C_0 = 3.164 < C_{L1}$, opening the $L_1$ throat for ballistic capture.
+            \end{exampleblock}
+        \end{column}
+        
+        \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=gmatstyle]
+% 1. Barycenter & Synodic Rotating Frame
+Create Barycenter EarthMoonBary;
+EarthMoonBary.BodyNames = {Earth, Luna};
+
+Create CoordinateSystem EarthMoonRot;
+EarthMoonRot.Origin    = EarthMoonBary;
+EarthMoonRot.Axes      = ObjectReferenced;
+EarthMoonRot.XAxis     = R;
+EarthMoonRot.ZAxis     = N;
+EarthMoonRot.Primary   = Earth;
+EarthMoonRot.Secondary = Luna;
+
+% 2. Spacecraft Initialized Near L1 Throat
+Create Spacecraft GatewayProbe;
+GatewayProbe.CoordinateSystem = EarthMoonRot;
+GatewayProbe.DisplayStateType = Cartesian;
+GatewayProbe.X  = 315208.0;   GatewayProbe.Y  = 0.0;
+GatewayProbe.VX = 0.0;        GatewayProbe.VY = -0.2254;
+
+% 3. Pure CR3BP Point-Mass Force Model
+Create ForceModel CR3BP_FM;
+CR3BP_FM.CentralBody = Earth;
+CR3BP_FM.PointMasses = {Earth, Luna};
+CR3BP_FM.Drag = None;  CR3BP_FM.SRP = Off;
+
+BeginMissionSequence;
+Propagate RK89Prop(GatewayProbe) {GatewayProbe.ElapsedDays = 6.95};
+\end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 13: THE FIVE LAGRANGE POINTS
 % ==============================================================================
 \begin{frame}{Equilibrium Solutions: The Five Lagrange (Libration) Points}
     \begin{columns}[t]
@@ -645,7 +746,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 12: COLLINEAR POINTS MATHEMATICS
+% SLIDE 14: COLLINEAR POINTS MATHEMATICS
 % ==============================================================================
 \begin{frame}{Solving for the Collinear Points ($L_1, L_2, L_3$)}
     \begin{columns}[t]
@@ -700,7 +801,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 13: TRIANGULAR POINTS & ROUTH STABILITY
+% SLIDE 15: TRIANGULAR POINTS & ROUTH STABILITY
 % ==============================================================================
 \begin{frame}{Triangular Points ($L_4, L_5$) and The Routh Stability Criterion}
     \begin{columns}[t]
@@ -739,7 +840,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 14: LINEARIZATION AROUND COLLINEAR POINTS
+% SLIDE 16: LINEARIZATION AROUND COLLINEAR POINTS
 % ==============================================================================
 \begin{frame}{Linearization Around Collinear Libration Points}
     \begin{columns}[t]
@@ -787,7 +888,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 15: PERIODIC ORBIT FAMILIES
+% SLIDE 17: PERIODIC ORBIT FAMILIES
 % ==============================================================================
 \begin{frame}{Periodic and Quasi-Periodic Libration Orbit Families}
     \begin{columns}[t]
@@ -823,7 +924,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 16: NRHO AND THE LUNAR GATEWAY
+% SLIDE 18: NRHO AND THE LUNAR GATEWAY
 % ==============================================================================
 \begin{frame}{Near-Rectilinear Halo Orbits (NRHO) and Lunar Gateway}
     \begin{columns}[t]
@@ -860,7 +961,95 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 17: INVARIANT MANIFOLDS THEORY
+% SLIDE 19: MISSION EXAMPLES - LIBRATION DYNAMICS
+% ==============================================================================
+\begin{frame}{Mission Case Studies: Libration Point Flight Heritage}
+    \begin{columns}[t]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{\textbf{Collinear Halo and Lissajous Missions ($L_1, L_2$)}}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{2pt}
+                    \item \textbf{ISEE-3 (1978):} First operational Halo orbit mission (Sun-Earth $L_1$, $A_z \approx 120,000\text{ km}$), pioneering libration stationkeeping.
+                    \item \textbf{SOHO and JWST:} Sun-Earth $L_1$ Halo (continuous solar monitoring) and $L_2$ Halo (sunshield thermal isolation).
+                    \item \textbf{Queqiao and Queqiao-2 (CNSA):} Earth-Moon $L_2$ Southern Halo orbits providing continuous relay for lunar far-side landers (Chang'e-4/6).
+                \end{itemize}
+            \end{block}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \begin{block}{\textbf{Triangular Equilibria ($L_4, L_5$) Exploration}}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{2pt}
+                    \item \textbf{NASA Lucy Mission (2021--2033):} Multi-asteroid tour visiting Sun-Jupiter $L_4$ (Greek) and $L_5$ (Trojan) swarms stabilized by Routh's criterion ($\mu \approx 9.54 \times 10^{-4} < \mu_{\text{Routh}}$).
+                \end{itemize}
+            \end{block}
+            \vspace{-0.1cm}
+            \begin{exampleblock}{\textbf{Annual Stationkeeping ($\Delta V_{\text{SK}}$) Benchmarks}}
+                \scriptsize
+                \centering
+                \resizebox{\linewidth}{!}{%
+                \begin{tabular}{lcc}
+                    \toprule
+                    \textbf{Mission / Regime} & \textbf{Libration Point} & \textbf{Annual $\Delta V_{\text{SK}}$} \\
+                    \midrule
+                    JWST (Halo) & Sun-Earth $L_2$ & $\sim 2\text{--}4\text{ m/s/yr}$ \\
+                    Queqiao (Halo) & Earth-Moon $L_2$ & $\sim 15\text{--}30\text{ m/s/yr}$ \\
+                    Gateway (9:2 NRHO) & Earth-Moon $L_2$ & $\sim 2\text{--}5\text{ m/s/yr}$ \\
+                    \bottomrule
+                \end{tabular}%
+                }
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 20: NASA GMAT EXAMPLE 2 - L2 HALO SHOOTING TARGETER
+% ==============================================================================
+\begin{frame}[fragile]{NASA GMAT Lab 2: Differential Correction of an $L_2$ Halo Orbit}
+    \begin{columns}[t]
+        \begin{column}{0.46\textwidth}
+            \begin{block}{\textbf{Single-Shooting Boundary Value Setup}}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{2pt}
+                    \item \textbf{Libration Origin:} Define \texttt{LibrationPoint EarthMoonL2} and center the rotating frame \texttt{L2Rot} directly on $L_2$.
+                    \item \textbf{Half-Period Symmetry ($xz$-Plane):} Periodic Halo orbits cross $Y = 0$ perpendicularly ($\dot{X} = 0, \dot{Z} = 0$).
+                    \item \textbf{GMAT Differential Corrector:} Starting from a Richardson 3rd-order seed, vary $V_{Y0}$ to drive $V_X(T/2) \to 0$ at $Y = 0$.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        
+        \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=gmatstyle]
+% 1. Define L2 Libration Point & Local Rotating Frame
+Create LibrationPoint EarthMoonL2;
+EarthMoonL2.Primary   = Earth;
+EarthMoonL2.Secondary = Luna;
+EarthMoonL2.Point     = L2;
+
+Create CoordinateSystem L2Rot;
+L2Rot.Origin  = EarthMoonL2;
+L2Rot.Axes    = ObjectReferenced;
+L2Rot.XAxis   = R;   L2Rot.ZAxis = N;
+L2Rot.Primary = Earth; L2Rot.Secondary = Luna;
+
+% 2. Single-Shooting Differential Corrector for Halo Closure
+Create DifferentialCorrector DC;
+BeginMissionSequence;
+
+Target DC {SolveMode = Solve, ExitMode = DiscardAndContinue};
+   Vary DC(HaloSat.VY = -0.155, {Perturbation = 1e-5, ...
+           Lower = -0.5, Upper = 0.5, MaxStep = 0.02});
+   Propagate CR3BP_Prop(HaloSat) {HaloSat.L2Rot.Y = 0.0};
+   Achieve DC(HaloSat.L2Rot.VX = 0.0, {Tolerance = 1e-6});
+EndTarget;
+\end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 21: INVARIANT MANIFOLDS THEORY
 % ==============================================================================
 \begin{frame}{Invariant Manifold Theory: The Monodromy Matrix}
     \begin{columns}[t]
@@ -898,23 +1087,22 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 18: MANIFOLD TUBES & CISLUNAR TRANSIT (HIGH CONTRAST & VISIBLE TEXT)
+% SLIDE 22: MANIFOLD TUBES & CISLUNAR TRANSIT
 % ==============================================================================
 \begin{frame}{Invariant Manifold Tubes: The Interplanetary Superhighway}
     \begin{columns}[t]
         \begin{column}{0.52\textwidth}
             \begin{center}
                 \vspace{-0.15cm}
-                \begin{tikzpicture}[scale=1.04, >=Stealth]
+                \begin{tikzpicture}[scale=0.96, >=Stealth]
                     % Periodic Halo Orbit Gamma
                     \draw[line width=1.5pt, SpiceBlue] (0,0) ellipse (0.36cm and 1.15cm);
                     \draw[->, line width=1.1pt, SpiceBlue] (0.36, 0.05) -- (0.36, -0.05);
                     
-                    % Halo Orbit Label - High contrast white text on SpiceBlue badge placed clearly above
                     \node[fill=SpiceBlue, text=white, rounded corners=2pt, inner sep=2.5pt, font=\scriptsize\bfseries] 
                         at (0, 1.55) {Periodic Halo Orbit $\Gamma$};
                     
-                    % Unstable Manifold Tube W^u (Flowing Rightward)
+                    % Unstable Manifold Tube W^u
                     \draw[line width=1.2pt, AlertRed] (0, 1.15) .. controls (1.2, 1.35) and (2.5, 0.8) .. (3.8, 0.4);
                     \draw[line width=1.2pt, AlertRed] (0, -1.15) .. controls (1.2, -1.35) and (2.5, -0.8) .. (3.8, -0.4);
                     \draw[AlertRed, dashed, line width=0.8pt] (1.8, 0) ellipse (0.18cm and 0.82cm);
@@ -925,11 +1113,10 @@
                     \draw[->, line width=1.1pt, AlertRed] (1.3, 1.05) -- (1.7, 0.95);
                     \draw[->, line width=1.1pt, AlertRed] (1.3, -1.05) -- (1.7, -0.95);
                     
-                    % Unstable Tube Label - High contrast white text on AlertRed badge
                     \node[fill=AlertRed, text=white, rounded corners=2pt, inner sep=2.5pt, font=\scriptsize\bfseries] 
                         at (2.4, 1.40) {$W^u$ (Unstable Tube)};
                     
-                    % Stable Manifold Tube W^s (Flowing Leftward into Halo)
+                    % Stable Manifold Tube W^s
                     \draw[line width=1.2pt, UdeAGreen] (-3.8, 0.4) .. controls (-2.5, 0.8) and (-1.2, 1.35) .. (0, 1.15);
                     \draw[line width=1.2pt, UdeAGreen] (-3.8, -0.4) .. controls (-2.5, -0.8) and (-1.2, -1.35) .. (0, -1.15);
                     \draw[UdeAGreen, dashed, line width=0.8pt] (-1.8, 0) ellipse (0.18cm and 0.82cm);
@@ -940,7 +1127,6 @@
                     \draw[->, line width=1.1pt, UdeAGreen] (-2.2, 0.72) -- (-1.8, 0.85);
                     \draw[->, line width=1.1pt, UdeAGreen] (-2.2, -0.72) -- (-1.8, -0.85);
                     
-                    % Stable Tube Label - High contrast white text on UdeAGreen badge
                     \node[fill=UdeAGreen, text=white, rounded corners=2pt, inner sep=2.5pt, font=\scriptsize\bfseries] 
                         at (-2.4, 1.40) {$W^s$ (Stable Tube)};
                 \end{tikzpicture}
@@ -961,7 +1147,83 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 19: COMPUTATIONAL LAB 3: SYMPLECTIC VS. STANDARD INTEGRATION
+% SLIDE 23: MISSION EXAMPLES - CISLUNAR TRANSIT & MANIFOLDS
+% ==============================================================================
+\begin{frame}{Mission Case Studies: Low-Energy Manifold Cislunar Transits}
+    \begin{columns}[t]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{\textbf{Ballistic Lunar Capture: GRAIL and CAPSTONE}}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{2pt}
+                    \item \textbf{NASA GRAIL (2011):} Twin lunar probes traversed Sun-Earth $L_1$ weak stability boundaries ($\sim 1.5\text{M km}$ apogee) to enter Earth-Moon $L_1$ stable manifolds ($W^s$), saving $>200\text{ m/s}$ vs. Hohmann insertion.
+                    \item \textbf{CAPSTONE (2022):} Executed a 4-month Ballistic Lunar Transfer (BLT) into the Artemis 9:2 NRHO via solar tidal perigee raising and manifold insertion.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \begin{block}{\textbf{Heteroclinic Bridges: ARTEMIS and Genesis}}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{2pt}
+                    \item \textbf{NASA ARTEMIS (2010):} Transferred two THEMIS probes from geocentric orbits onto Earth-Moon $L_1$ and $L_2$ orbits using heteroclinic connections ($W^u(L_1) \cap W^s(L_2)$).
+                    \item \textbf{Genesis (2001):} First spacecraft to exploit Sun-Earth $L_1 \to L_2$ heteroclinic manifold tubes for near-zero-$\Delta V$ Earth sample return.
+                \end{itemize}
+            \end{block}
+            \vspace{-0.1cm}
+            \begin{alertblock}{\textbf{Mission Design Trade-Off}}
+                \scriptsize
+                \textbf{Direct Hohmann:} $3\text{--}5\text{ days}$ TOF, high LOI $\Delta V \approx 850\text{ m/s}$. \\
+                \textbf{Manifold BLT:} $90\text{--}120\text{ days}$ TOF, minimal capture $\Delta V < 50\text{ m/s}$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 24: NASA GMAT EXAMPLE 3 - MANIFOLD STEP-OFF & CAPTURE
+% ==============================================================================
+\begin{frame}[fragile]{NASA GMAT Lab 3: Manifold Step-Off and Ballistic Lunar Capture}
+    \begin{columns}[t]
+        \begin{column}{0.46\textwidth}
+            \begin{block}{\textbf{Python-to-GMAT Manifold Pipeline}}
+                \scriptsize
+                \begin{itemize}\setlength{\itemsep}{2pt}
+                    \item \textbf{Eigenvector Step-Off:} From Python's Monodromy matrix $\mathbf{M}$, perturb the converged Halo state along $\mathbf{v}_s$:
+                    $\mathbf{x}_0^s = \mathbf{x}_\Gamma - \epsilon \hat{\mathbf{v}}_s$ ($\epsilon \approx 50\text{ km}$).
+                    \item \textbf{Multi-Body Ephemeris:} Activate \texttt{\{Earth, Luna, Sun\}} point masses and SRP to model solar-assisted ballistic capture.
+                    \item \textbf{Stopping Condition:} Propagate along the manifold tube until \texttt{Luna.Periapsis} capture.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        
+        \begin{column}{0.52\textwidth}
+\begin{lstlisting}[style=gmatstyle]
+% 1. State Perturbed Along Stable Manifold Eigenvector v_s
+Create Spacecraft ManifoldProbe;
+ManifoldProbe.CoordinateSystem = EarthMoonRot;
+ManifoldProbe.DisplayStateType = Cartesian;
+ManifoldProbe.X  = 438120.5;   ManifoldProbe.Y  = -1240.8;
+ManifoldProbe.Z  = -48910.2;
+ManifoldProbe.VX = 0.0142;     ManifoldProbe.VY = -0.1489;
+ManifoldProbe.VZ = 0.0085;
+
+% 2. Multi-Body Cislunar Force Model (Earth + Luna + Sun)
+Create ForceModel EphemFM;
+EphemFM.CentralBody = Earth;
+EphemFM.PointMasses = {Earth, Luna, Sun};
+EphemFM.SRP         = On;
+
+% 3. Propagate Along Manifold Tube to Ballistic Capture
+BeginMissionSequence;
+Propagate RK89Prop(ManifoldProbe) ...
+          {ManifoldProbe.Luna.Periapsis};
+\end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 25: COMPUTATIONAL LAB 3: SYMPLECTIC VS. STANDARD INTEGRATION
 % ==============================================================================
 \begin{frame}{Computational Lab 3: Symplectic vs. Non-Symplectic Integrators}
     \begin{columns}[t]
@@ -992,7 +1254,7 @@
 \end{frame}
 
 % ==============================================================================
-% SLIDE 20: PYTHON IMPLEMENTATION (CR3BP ODE INTEGRATOR)
+% SLIDE 26: PYTHON IMPLEMENTATION (CR3BP ODE INTEGRATOR)
 % ==============================================================================
 \begin{frame}[fragile]{Python Implementation: CR3BP Equations and Jacobi Tracking}
 \begin{lstlisting}[style=pythoncode]
@@ -1009,7 +1271,7 @@ def cr3bp_derivs(t, state, mu):
     ax = 2.0*vy + x - (1.0 - mu)*(x + mu)/d1**3 - mu*(x - 1.0 + mu)/d2**3
     ay = -2.0*vx + y - (1.0 - mu)*y/d1**3 - mu*y/d2**3
     az = -(1.0 - mu)*z/d1**3 - mu*z/d2**3
-    return [vx, vy, vz, ax, ay, vz]
+    return [vx, vy, vz, ax, ay, az]
 
 def compute_jacobi_constant(state, mu):
     """Calculates the conserved Jacobi Integral C for a given 6-state."""
@@ -1025,47 +1287,47 @@ MU_EARTH_MOON = 0.0121505856
 \end{frame}
 
 % ==============================================================================
-% SLIDE 21: MISSION DESIGN IN NASA GMAT
+% SLIDE 27: TRANSITION FROM CR3BP TO FULL-EPHEMERIS GMAT OPERATIONS
 % ==============================================================================
-\begin{frame}[fragile]{Modeling Libration Points and Rotating Frames in NASA GMAT}
+\begin{frame}[fragile]{From Idealized CR3BP to Full-Ephemeris GMAT Operations}
     \begin{columns}[t]
         \begin{column}{0.50\textwidth}
-            \begin{block}{\textbf{Transition to Operational Flight Models}}
+            \begin{block}{\textbf{Operational Ephemeris Fidelity Ladder}}
                 \scriptsize
-                While CR3BP provides analytical manifold seeds, operational cislunar missions must transition into full ephemeris propagators (NASA GMAT, Copernicus):
+                Analytical CR3BP seeds must be transitioned into NASA GMAT's JPL \texttt{DE421} ephemeris model for flight operations:
                 \begin{itemize}\setlength{\itemsep}{2pt}
-                    \item In GMAT, libration points ($L_1, L_2$) are defined as dynamic celestial barycenters.
-                    \item The user sets up an \texttt{ObjectReferenced} rotating frame centered on Earth-Moon $L_2$.
+                    \item \textbf{Lunar Eccentricity ($e \approx 0.0549$):} Primary separation $R(t)$ pulsates, causing $C(t)$ to oscillate slightly ($\sim 10^{-5}$).
+                    \item \textbf{Solar Gravity and SRP:} Perturbs $L_1/L_2$ Halo orbits, turning periodic loops into quasi-periodic trajectories requiring periodic $\Delta V_{\text{SK}}$.
                 \end{itemize}
             \end{block}
         \end{column}
         
         \begin{column}{0.48\textwidth}
 \begin{lstlisting}[style=gmatstyle]
-% Define Earth-Moon Barycenter and Libration Point
-Create Barycenter EarthMoonBary;
-EarthMoonBary.BodyNames = {Earth, Luna};
+% Activate High-Fidelity JPL DE421 Ephemeris
+GMAT SolarSystem.EphemerisSource = 'DE421';
 
-Create LibrationPoint EarthMoonL2;
-EarthMoonL2.Primary   = Earth;
-EarthMoonL2.Secondary = Luna;
-EarthMoonL2.Point     = L2;
+% Full Multi-Body Cislunar Force Model
+Create ForceModel OperationalFM;
+OperationalFM.CentralBody = Earth;
+OperationalFM.PointMasses = {Earth, Luna, Sun};
+OperationalFM.Drag        = None;
+OperationalFM.SRP         = On;
+OperationalFM.GravityField.Earth.Degree = 8;
+OperationalFM.GravityField.Earth.Order  = 8;
 
-% Configure Earth-Moon Synodic Rotating Frame
-Create CoordinateSystem EarthMoonRot;
-EarthMoonRot.Origin    = EarthMoonL2;
-EarthMoonRot.Axes      = ObjectReferenced;
-EarthMoonRot.XAxis     = R;
-EarthMoonRot.ZAxis     = N;
-EarthMoonRot.Primary   = Earth;
-EarthMoonRot.Secondary = Luna;
+% Stationkeeping Targeter at Apolune Crossings
+Create ImpulsiveBurn SK_Burn;
+SK_Burn.CoordinateSystem = Local;
+SK_Burn.Origin = Luna;
+SK_Burn.Axes   = VNB;
 \end{lstlisting}
         \end{column}
     \end{columns}
 \end{frame}
 
 % ==============================================================================
-% SLIDE 22: SUMMARY & NEXT STEPS
+% SLIDE 28: SUMMARY & NEXT STEPS
 % ==============================================================================
 \begin{frame}{Summary and Upcoming Computational Workshop}
     \begin{columns}[t]
@@ -1073,10 +1335,10 @@ EarthMoonRot.Secondary = Luna;
             \begin{block}{\textbf{Key Astrodynamic Takeaways}}
                 \scriptsize
                 \begin{enumerate}\setlength{\itemsep}{2pt}
-                    \item \textbf{The Synodic Frame:} By transforming to a frame corotating with Earth and Moon, multi-body equations become autonomous ($\dot{\mathbf{x}} = \mathbf{f}(\mathbf{x})$).
-                    \item \textbf{Jacobi Invariance:} The Jacobi Constant $C$ maps Zero-Velocity Surfaces, defining physical energy corridors between primaries.
-                    \item \textbf{Equilibria:} $L_1, L_2, L_3$ act as gateways; $L_4, L_5$ are gyroscopically stabilized for $\mu < 0.03852$.
-                    \item \textbf{Manifolds as Trajectory Tubes:} Stable and unstable manifolds form natural, fuel-free pathways across cislunar space.
+                    \item \textbf{The Synodic Frame:} Transforming to a corotating frame reveals autonomous dynamics ($\dot{\mathbf{x}} = \mathbf{f}(\mathbf{x})$), DROs, and resonant corridors.
+                    \item \textbf{Jacobi Invariance:} The Jacobi Constant $C$ maps Zero-Velocity Surfaces, governing $L_1/L_2$ gateway access.
+                    \item \textbf{Equilibria:} $L_1, L_2, L_3$ host Halo/NRHO relay orbits (JWST, Queqiao, Gateway); $L_4, L_5$ host Trojan swarms ($\mu < 0.03852$).
+                    \item \textbf{Manifolds and GMAT:} Stable/unstable tubes enable ballistic lunar capture (GRAIL), transitioned into DE421 ephemeris via GMAT differential correctors.
                 \end{enumerate}
             \end{block}
         \end{column}
@@ -1088,7 +1350,7 @@ EarthMoonRot.Secondary = Luna;
                     \item \textbf{Reading Assignment:} Battin, Ch. 8 and Koon, Lo, Marsden, Ross: \textit{Dynamical Systems, the Three-Body Problem, and Space Mission Design}.
                     \item \textbf{Computational Lab 3:}
                     Implement an implicit Gauss-Legendre integrator in Python and compare $C$-drift against standard \texttt{scipy.integrate.RK45} over 100 Halo revolutions.
-                    \item \textbf{Project Milestone:} Differential correction of Southern $L_2$ Halo orbits.
+                    \item \textbf{Project Milestone:} Differential correction of Southern $L_2$ Halo orbits in Python and NASA GMAT.
                 \end{itemize}
             \end{exampleblock}
         \end{column}

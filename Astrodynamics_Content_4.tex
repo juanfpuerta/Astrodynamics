@@ -269,6 +269,156 @@
 \end{frame}
 
 % ==============================================================================
+% SLIDE 5 (NEW): CANONICAL NON-DIMENSIONAL UNITS DIAGRAM
+% ==============================================================================
+\begin{frame}{Canonical Non-Dimensional Units in the CR3BP}
+    \begin{center}
+        \vspace{-0.18cm}
+        \begin{tikzpicture}[>=Stealth, font=\scriptsize]
+            % ------------------------------------------------------------------
+            % LEFT PANEL: PHYSICAL DIMENSIONAL SYSTEM
+            % ------------------------------------------------------------------
+            \draw[rounded corners=4pt, fill=white, draw=DarkSlate!45, line width=0.9pt] 
+                (-7.05, -0.45) rectangle (-2.40, 2.75);
+            \fill[DarkSlate, rounded corners=3pt] (-7.05, 2.32) rectangle (-2.40, 2.75);
+            \node[text=white, font=\scriptsize\bfseries] at (-4.725, 2.535) {1. Physical Dimensional System};
+
+            % Physical Axis & Barycenter
+            \draw[->, Charcoal!70, line width=0.7pt] (-6.80, 1.25) -- (-2.55, 1.25) node[above left, font=\tiny] {$X_{\text{phys}}$};
+            \coordinate (Bp) at (-5.50, 1.25);
+            \coordinate (M1p) at (-6.20, 1.25);
+            \coordinate (M2p) at (-3.30, 1.25);
+
+            % Circular Orbit Rate Indicator
+            \draw[densely dashed, UdeAGold!90!black, line width=0.75pt] (Bp) ++(-14:1.75) arc (-14:15:1.75);
+            \draw[->, UdeAGold!90!black, line width=0.8pt] (Bp) ++(14:1.75) -- ++(104:0.13);
+            \node[text=UdeAGold!85!black, font=\tiny\bfseries] at (-3.85, 2.06) {$\Omega = \sqrt{G(m_1+m_2)/R^3}$};
+
+            % Primaries (Physical)
+            \fill[SpiceBlue] (M1p) circle (6.5pt);
+            \node[above=6pt, text=SpiceBlue, font=\tiny\bfseries] at (M1p) {$m_1$};
+            \fill[gray!80!black] (M2p) circle (3.8pt);
+            \node[above=5pt, text=gray!80!black, font=\tiny\bfseries] at (M2p) {$m_2$};
+            \fill[DarkSlate] (Bp) circle (1.8pt);
+            \node[above=3pt, text=DarkSlate, font=\tiny] at (Bp) {Barycenter};
+
+            % Dimension Arrows r1, r2, and R
+            \draw[<->, Charcoal, line width=0.65pt] (-6.20, 0.72) -- (-5.50, 0.72) 
+                node[midway, below=1pt, font=\tiny] {$r_1$};
+            \draw[<->, Charcoal, line width=0.65pt] (-5.50, 0.72) -- (-3.30, 0.72) 
+                node[midway, below=1pt, font=\tiny] {$r_2$};
+            \draw[<->, SpiceBlue, line width=0.85pt] (-6.20, 0.22) -- (-3.30, 0.22) 
+                node[midway, fill=white, inner sep=1pt, font=\tiny\bfseries, text=SpiceBlue] {$R = r_1 + r_2$ [km]};
+
+            % Physical Constants Summary
+            \node[align=center, font=\tiny, text=Charcoal] at (-4.725, -0.18) 
+                {$G = 6.674\times 10^{-11}\text{ m}^3/\text{kg}\cdot\text{s}^2$, \quad $T_{\text{phys}} = \frac{2\pi}{\Omega}$};
+
+            % ------------------------------------------------------------------
+            % CENTER TRANSFORMATION BRIDGE: NORMALIZATION SCALES
+            % ------------------------------------------------------------------
+            \draw[->, line width=2.2pt, UdeAGold] (-2.22, 1.00) -- (-0.28, 1.00);
+            \node[fill=UdeAGreen, text=white, rounded corners=2.5pt, inner sep=2.5pt, font=\tiny\bfseries] 
+                at (-1.25, 2.52) {Canonical Scales};
+
+            \node[draw=UdeAGreen, fill=white, rounded corners=2.5pt, inner sep=2.5pt, align=left, font=\fontsize{5.3pt}{6.6pt}\selectfont] 
+                at (-1.25, 1.72) {
+                    $\mathbf{[L]} = R = 1$\\
+                    $\mathbf{[M]} = m_1 + m_2 = 1$\\
+                    $\mathbf{[T]} = \Omega^{-1} = 1$
+                };
+
+            \node[draw=UdeAGold, fill=UdeAGold!14, rounded corners=2.5pt, inner sep=2.5pt, align=center, font=\fontsize{5.4pt}{6.6pt}\selectfont] 
+                at (-1.25, 0.22) {
+                    \textbf{Mass Parameter:}\\
+                    $\mu = \dfrac{m_2}{m_1 + m_2}$
+                };
+
+            % ------------------------------------------------------------------
+            % RIGHT PANEL: CANONICAL NON-DIMENSIONAL SYSTEM
+            % ------------------------------------------------------------------
+            \draw[rounded corners=4pt, fill=white, draw=UdeAGreen!70, line width=1.0pt] 
+                (-0.10, -0.45) rectangle (7.05, 2.75);
+            \fill[UdeAGreen, rounded corners=3pt] (-0.10, 2.32) rectangle (7.05, 2.75);
+            \node[text=white, font=\scriptsize\bfseries] at (3.475, 2.535) {2. Canonical Non-Dimensional System (Synodic Frame)};
+
+            % Canonical Synodic Axis
+            \draw[->, Charcoal, line width=0.8pt] (0.25, 1.25) -- (6.75, 1.25) node[above left, font=\tiny\bfseries] {$x$ [-]};
+            \draw[->, Charcoal!60, line width=0.6pt] (2.25, 0.45) -- (2.25, 2.15) node[right, font=\tiny] {$y$ [-]};
+
+            \coordinate (Bc) at (2.25, 1.25);
+            \coordinate (M1c) at (1.20, 1.25);
+            \coordinate (M2c) at (5.60, 1.25);
+
+            % Canonical Angular Rate & Period Arc
+            \draw[densely dashed, UdeAGreen!80, line width=0.75pt] (Bc) ++(-12:2.45) arc (-12:13:2.45);
+            \draw[->, UdeAGreen, line width=0.85pt] (Bc) ++(12:2.45) -- ++(102:0.13);
+            \node[fill=white, inner sep=1pt, text=UdeAGreen, font=\tiny\bfseries] at (4.45, 2.04) {$\Omega = 1$, \quad $T = 2\pi$};
+
+            % Primaries (Canonical)
+            \fill[SpiceBlue] (M1c) circle (6.5pt);
+            \node[above=6pt, text=SpiceBlue, font=\tiny\bfseries] at (M1c) {$m_1 = 1 - \mu$};
+            \node[below=5pt, text=SpiceBlue!85!black, font=\tiny] at (M1c) {$x_1 = -\mu$};
+
+            \fill[gray!80!black] (M2c) circle (3.8pt);
+            \node[above=5pt, text=gray!80!black, font=\tiny\bfseries] at (M2c) {$m_2 = \mu$};
+            \node[below=5pt, text=gray!85!black, font=\tiny] at (M2c) {$x_2 = 1 - \mu$};
+
+            \fill[DarkSlate] (Bc) circle (2.0pt);
+            \node[above right=2pt and 1pt, text=DarkSlate, font=\tiny\bfseries] at (Bc) {$(0,0)$};
+
+            % Canonical Lever-Arm Balance Arrows
+            \draw[<->, AlertRed, line width=0.75pt] (1.20, 0.55) -- (2.25, 0.55) 
+                node[midway, below=1pt, font=\tiny\bfseries, text=AlertRed] {$\mu$};
+            \draw[<->, UdeAGreen, line width=0.75pt] (2.25, 0.55) -- (5.60, 0.55) 
+                node[midway, below=1pt, font=\tiny\bfseries, text=UdeAGreen] {$1 - \mu$};
+            \draw[<->, DarkSlate, line width=0.9pt] (1.20, 0.05) -- (5.60, 0.05) 
+                node[midway, fill=white, inner sep=1.5pt, font=\tiny\bfseries, text=DarkSlate] {Canonical Separation $= \mu + (1-\mu) = \mathbf{1}$};
+
+            % Center of Mass Balance Identity
+            \node[align=center, font=\tiny, text=Charcoal] at (3.475, -0.26) 
+                {\textbf{Barycenter Balance:} $(1-\mu)(-\mu) + \mu(1-\mu) = 0$};
+
+            % ------------------------------------------------------------------
+            % BOTTOM ROW: THREE CONSEQUENCE & BENCHMARK CARDS
+            % ------------------------------------------------------------------
+            % Card 1: Simplified Constants
+            \draw[rounded corners=3pt, fill=white, draw=UdeAGreen!60, line width=0.8pt] 
+                (-7.05, -2.02) rectangle (-2.50, -0.65);
+            \fill[UdeAGreen, rounded corners=2pt] (-7.05, -0.98) rectangle (-2.50, -0.65);
+            \node[text=white, font=\tiny\bfseries] at (-4.775, -0.815) {Consequence 1: Unity Constants};
+            \node[align=left, font=\tiny, text=Charcoal] at (-4.775, -1.50) {
+                $\bullet\ G = 1$, \quad $\Omega = 1$, \quad $T = 2\pi$\\
+                $\bullet\ \text{Characteristic Speed: } V^* = L^*/T^* = 1$\\
+                $\bullet\ \text{Eliminates } G, M, R \text{ from EOMs}$
+            };
+
+            % Card 2: Single Parameter Universality
+            \draw[rounded corners=3pt, fill=white, draw=UdeAGold, line width=0.8pt] 
+                (-2.28, -2.02) rectangle (2.28, -0.65);
+            \fill[UdeAGold, rounded corners=2pt] (-2.28, -0.98) rectangle (2.28, -0.65);
+            \node[text=DarkSlate, font=\tiny\bfseries] at (0.00, -0.815) {Consequence 2: Single Parameter $\mu$};
+            \node[align=left, font=\tiny, text=Charcoal] at (0.00, -1.50) {
+                $\bullet\ \mu \in (0, 0.5] \text{ uniquely defines system}$\\
+                $\bullet\ \text{Primary: } m_1 = 1-\mu \text{ at } (-\mu, 0, 0)$\\
+                $\bullet\ \text{Secondary: } m_2 = \mu \text{ at } (1-\mu, 0, 0)$
+            };
+
+            % Card 3: Earth-Moon Canonical Benchmark
+            \draw[rounded corners=3pt, fill=white, draw=SpiceBlue!70, line width=0.8pt] 
+                (2.50, -2.02) rectangle (7.05, -0.65);
+            \fill[SpiceBlue, rounded corners=2pt] (2.50, -0.98) rectangle (7.05, -0.65);
+            \node[text=white, font=\tiny\bfseries] at (4.775, -0.815) {Earth--Moon System Benchmark};
+            \node[align=left, font=\tiny, text=Charcoal] at (4.775, -1.50) {
+                $\bullet\ \mu \approx 0.0121506 \quad (m_1 \approx 0.98785)$\\
+                $\bullet\ L^* = 384,400\text{ km}, \quad T^* \approx 4.342\text{ d}$\\
+                $\bullet\ V^* \approx 1.0245\text{ km/s}, \quad T = 2\pi \leftrightarrow 27.32\text{ d}$
+            };
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ==============================================================================
 % SLIDE 5: KINEMATICS IN THE SYNODIC FRAME
 % ==============================================================================
 \begin{frame}{Kinematics in the Synodic (Rotating) Reference Frame}
